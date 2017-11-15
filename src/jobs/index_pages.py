@@ -28,4 +28,4 @@ if __name__ == "__main__":
 
     with open(os.path.join("data","fever","pages.p"),"wb+") as f:
         with Indexer(f) as indexer:
-            s3_iterator(client,resource,"wiki-dump/intro/",os.getenv("S3_BUCKET"),indexer.index_page)
+            s3_iterator(client,resource,"wiki-dump/intro/","wiki-dump/intro/",os.getenv("S3_BUCKET"),indexer.index_page)
