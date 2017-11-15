@@ -12,6 +12,12 @@ class Indexer:
         self.logger.debug("Index Page: {0}".format(key))
         self.pages.append(key)
 
+    def load(self):
+        self.pages.extend(pickle.load(self.file))
+
+    def get_block(self,block,num_blocks=50):
+        return self.pages[block*len(self.pages)//num_blocks:(block+1)*len(self.pages)//num_blocks]
+
     def __enter__(self):
         return self
 
