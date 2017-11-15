@@ -19,8 +19,9 @@ def download_dir(client, resource, dist, bucket, writer):
                 download_dir(client, resource, subdir.get('Prefix'), bucket, writer)
         if result.get('Contents') is not None:
             for file in result.get('Contents'):
-                print(file.get('Key').replace(dist,""))
+                #print(file.get('Key').replace(dist,""))
 
                 obj = client.get_object(Bucket=bucket, Key=file.get("Key"))
-                print(obj["Body"].read().decode("utf-8"))
+                writer.save(file.get("Key").replace(dist,""), obj["Body"].read().decode("utf-8"))
+
                 #resource.meta.client.download_file(bucket, file.get('Key'), local + os.sep + clean(file.get('Key')))
