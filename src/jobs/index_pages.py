@@ -38,6 +38,6 @@ if __name__ == "__main__":
     resource = boto3.resource("s3")
     resource.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
 
-    with open(os.path.join("data","fever","pagse.p"),"wb+") as f:
+    with open(os.path.join("data","fever","pages.p"),"wb+") as f:
         with Indexer(f) as indexer:
             s3_iterator(client,resource,"wiki-dump/intro/",os.getenv("S3_BUCKET"),indexer.index_page)
