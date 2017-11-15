@@ -1,32 +1,13 @@
 import boto3
 import os
-import pickle
 from botocore import UNSIGNED
 from botocore.client import Config
 from botocore.handlers import disable_signing
 
+from dataset.s3.index import Indexer
 from dataset.s3.iterator import s3_iterator
 from util.log_helper import LogHelper
 
-
-class Indexer:
-    def __init__(self,file):
-        self.pages = []
-        self.file = file
-        self.logger = LogHelper.get_logger(__name__)
-        self.logger.info("Indexing Pages")
-
-    def index_page(self,key):
-
-        logger.debug("Index Page: {0}".format(key))
-        self.pages.append(key)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        logger.info("Saving index")
-        pickle.dump(self.pages,self.file)
 
 if __name__ == "__main__":
     LogHelper.setup()
