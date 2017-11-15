@@ -12,7 +12,7 @@ from util.log_helper import LogHelper
 class Indexer:
     def __init__(self,file):
         self.pages = []
-        self.file = ""
+        self.file = file
         self.logger = LogHelper.get_logger(__name__)
         self.logger.info("Indexing Pages")
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
         logger.debug("Creating data dir")
         os.makedirs(intro_path)
 
-    
+
     #Use boto3 to download all pages from intros section from s3
     client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
     resource = boto3.resource("s3")
