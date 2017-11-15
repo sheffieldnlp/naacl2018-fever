@@ -32,7 +32,7 @@ if __name__ == "__main__":
     resource.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
 
     block_keys = []
-    with open(os.path.join("data","fever","pages.p"),"wb+") as f:
+    with open(os.path.join("data","fever","pages.p"),"rb") as f:
         indexer = Indexer(f)
         indexer.load()
         block_keys.extend(indexer.get_block(block))
@@ -40,6 +40,8 @@ if __name__ == "__main__":
     with Writer(block,"page",os.path.join("data","fever")) as writer:
         for key in tqdm(block_keys):
             full_key = "wiki-dump/intro/"+key
-            obj = client.get_object(Bucket=os.getenv("S3_BUCKET"), Key=full_key)
-
-            writer.save(key, obj["Body"].read().decode("utf-8"))
+            try:
+                obj = client.get_object(Bucket=os.getenv("S3_BUCKET"), Key=full_key)
+                writer.save(key, obj["Body"].read().decode("utf-8"))
+            except:
+                logger.error("Could not download {0}" .format(full_key))
