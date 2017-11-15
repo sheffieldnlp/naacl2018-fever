@@ -1,25 +1,14 @@
-import logging
-
 import boto3
 import os
 from botocore.handlers import disable_signing
-from dataset.s3.download_directory import download_dir
+from dataset.s3.iterator import download_dir
 from botocore import UNSIGNED
 from botocore.client import Config
 from dataset.s3.local_writer import Writer
-
-FORMAT = '[%(levelname)s] %(asctime)s - %(name)s - %(message)s'
-
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-ch.setFormatter(logging.Formatter(FORMAT))
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(ch)
-
+from util.log_helper import LogHelper
 
 if __name__ == "__main__":
+    logger = LogHelper.get_logger(__name__)
     logger.info("Preparing Dataset")
 
     intro_path = os.path.join("data","fever")
