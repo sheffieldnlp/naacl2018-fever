@@ -33,6 +33,13 @@ if __name__ == "__main__":
     logger = LogHelper.get_logger(__name__)
     logger.info("Index Pages in Dataset")
 
+    logger.debug("Checking if fever data dir exists")
+    intro_path = os.path.join("data", "fever")
+    if not os.path.exists(intro_path):
+        logger.debug("Creating data dir")
+        os.makedirs(intro_path)
+
+    
     #Use boto3 to download all pages from intros section from s3
     client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
     resource = boto3.resource("s3")
