@@ -15,6 +15,9 @@ class Corpus:
         self.preprocessing = preprocessing
 
     def __iter__(self):
+        self.active_block_iter = None
+        self.active_block = None
+        self.active_block_number = None
         return self
 
 

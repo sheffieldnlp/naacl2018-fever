@@ -1,5 +1,7 @@
 import os
 
+from gensim.corpora import Dictionary
+
 from dataset.block import Block
 from dataset.corpus import Corpus
 from util.log_helper import LogHelper
@@ -18,16 +20,21 @@ def flatten(l):
 def read_words(wikifile):
     return flatten([line.split(" ") for line in read_text(wikifile)])
 
+def read_dic(dic,pp):
+    return lambda doc: dic.doc2bow(pp(doc))
+
 if __name__ == "__main__":
     LogHelper.setup()
     logger = LogHelper.get_logger(__name__)
     logger.info("Prepare dataset")
 
-    blocks = 1
+    blocks = 50
 
     corpus = Corpus("page",os.path.join("data","fever"),blocks, read_words)
-    for doc in corpus:
-        d1 = doc
+    dic = Dictionary(corpus)
+    dic.save(os.path.join("data","fever","dict"))
 
-    #tfidf = TfidfModel(corpus)
+    corpus = Corpus("page",os.path.join("data","fever"),blocks, read_dic(dic,read_words))
+    tfidf = TfidfModel(corpus)
+    tfidf.save(os.path.join("data","fever","tfidf"))
 
