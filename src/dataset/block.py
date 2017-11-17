@@ -3,7 +3,7 @@ import pickle
 import os
 
 
-class Writer(object):
+class Block(object):
     def __init__(self,block,name,path):
         self.volume = block
         self.path = path
@@ -31,3 +31,10 @@ class Writer(object):
 
     def __enter__(self):
         return self
+
+    def list(self):
+        return self.data.keys()
+
+    def load(self):
+        with open((os.path.join(self.path, self.name + "-" + str(self.volume) + ".p")), "rb") as f:
+            self.data = pickle.load(self.data, f)

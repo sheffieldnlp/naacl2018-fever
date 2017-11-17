@@ -1,15 +1,15 @@
-import boto3
 import os
 import sys
-from tqdm import tqdm
+
+import boto3
 from botocore import UNSIGNED
 from botocore.client import Config
 from botocore.handlers import disable_signing
+from tqdm import tqdm
 
+from dataset.block import Block
 from dataset.s3.index import Indexer
-from dataset.s3.local_writer import Writer
 from util.log_helper import LogHelper
-
 
 if __name__ == "__main__":
     block = int(sys.argv[1])-1
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         indexer.load()
         block_keys.extend(indexer.get_block(block))
 
-    with Writer(block,"page",os.path.join("data","fever")) as writer:
+    with Block(block, "page", os.path.join("data", "fever")) as writer:
         for key in tqdm(block_keys):
             full_key = "wiki-dump/intro/"+key
             try:
