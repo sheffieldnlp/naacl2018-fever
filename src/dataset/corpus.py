@@ -28,7 +28,7 @@ class Corpus:
             self.active_block_number += 1
 
         self.logger.info("Trying to load block {0}".format(self.active_block_number))
-        if self.active_block_number > self.blocks:
+        if self.active_block_number >= self.blocks:
             self.logger.info("No more blocks")
             raise StopIteration
 
