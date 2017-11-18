@@ -5,7 +5,7 @@ from botocore import UNSIGNED
 from botocore.client import Config
 from botocore.handlers import disable_signing
 
-from dataset.index import Indexer
+from dataset.s3.index import Indexer
 from dataset.s3.iterator import s3_iterator
 from util.log_helper import LogHelper
 
@@ -29,3 +29,4 @@ if __name__ == "__main__":
     with open(os.path.join("data","fever","pages.p"),"wb+") as f:
         with Indexer(f) as indexer:
             s3_iterator(client,resource,"wiki-dump/intro/","wiki-dump/intro/",os.getenv("S3_BUCKET"),indexer.index_page)
+

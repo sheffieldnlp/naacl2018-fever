@@ -8,7 +8,7 @@ from botocore.handlers import disable_signing
 from tqdm import tqdm
 
 from dataset.block import Block
-from dataset.index import Indexer
+from dataset.s3.index import Indexer
 from util.log_helper import LogHelper
 
 if __name__ == "__main__":

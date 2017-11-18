@@ -56,5 +56,5 @@ class Corpus:
                 self.active_block_number = None
                 raise e
 
-        return self.preprocessing(self.active_block[n])
+        return n, self.preprocessing(self.active_block[n])
 

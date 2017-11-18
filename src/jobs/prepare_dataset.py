@@ -2,7 +2,6 @@ import os
 
 from gensim.corpora import Dictionary
 
-from dataset.block import Block
 from dataset.corpus import Corpus
 from util.log_helper import LogHelper
 from gensim.models.tfidfmodel import *
