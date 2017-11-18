@@ -41,6 +41,7 @@ if __name__ == "__main__":
 
     corpus = Corpus("page",os.path.join("data","fever"),blocks, read_dic(dic,read_words))
     ri = ReverseIndex(corpus)
+    print(ri.docs(dic.doc2bow("Leonardo went to the sea".split())))
 
 
 #    corpus = Corpus("page",os.path.join("data","fever"),blocks, read_dic(dic,read_words))
