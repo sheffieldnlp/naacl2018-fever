@@ -2,46 +2,28 @@ import sys
 
 import os
 
-from sqlalchemy import create_engine, Column, Integer, String, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
 from dataset.corpus import Corpus
-
-Base = declarative_base()
+from dataset.persistence.engine import get_engine
+from dataset.persistence.page import Page
 
 from tqdm import tqdm
 
+from dataset.persistence.session import get_session
 from util.log_helper import LogHelper
 
-
-engine = create_engine('sqlite:///data/fever/pages.db')
-
-
-blocks = int(sys.argv[1])
-
-LogHelper.setup()
-logger = LogHelper.get_logger("convert")
-
-
-class Page(Base):
-    __tablename__ = "page"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    doc = Column(Text)
+if __name__ == "__main__":
+    blocks = int(sys.argv[1])
+    LogHelper.setup()
+    logger = LogHelper.get_logger("convert")
 
 
 
-Session = sessionmaker(bind=engine)
-if not engine.dialect.has_table(engine, Page.__tablename__):
-    Base.metadata.create_all(engine)
-
-session = Session()
-blk = Corpus("page",os.path.join("data","fever"),blocks,lambda x:x)
+    blk = Corpus("page",os.path.join("data","fever"),blocks,lambda x:x)
+    engine = get_engine("pages")
+    session = get_session(engine)
 
 
-
-for page,body in tqdm(blk):
-    p = Page(name=page, doc=body)
-    session.add(p)
-session.commit()
+    for page,body in tqdm(blk):
+        p = Page(name=page, doc=body)
+        session.add(p)
+    session.commit()
