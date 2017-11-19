@@ -23,7 +23,13 @@ if __name__ == "__main__":
     session = get_session(engine)
 
 
-    for page,body in tqdm(blk):
+    for idx,data in tqdm(enumerate(blk)):
+        page, body = data
         p = Page(name=page, doc=body)
         session.add(p)
+
+        if idx%10000 == 9999:
+            print("Commit")
+            session.commit()
+
     session.commit()
