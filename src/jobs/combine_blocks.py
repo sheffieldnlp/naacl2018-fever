@@ -29,7 +29,7 @@ if __name__ == "__main__":
         session.add(p)
 
         if idx%10000 == 9999:
-            print("Commit")
+            logger.info("Commit")
             session.commit()
 
     session.commit()
