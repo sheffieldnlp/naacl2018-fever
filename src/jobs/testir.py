@@ -77,18 +77,23 @@ if __name__ == "__main__":
     corpus = Corpus("page",os.path.join("data","fever"),blocks,read_words)
 
 
-    if not os.path.exists(os.path.join("data","fever","reverse_index_unigram.p")):
-        logger.warn("Reverse index missing - reconstructing")
-        ri = ReverseIndex(corpus, pp)
-        ri.save(os.path.join("data","fever","reverse_index_unigram.p"))
-    else:
-        ri = ReverseIndex(None,pp)
-        ri.load(os.path.join("data","fever","reverse_index_unigram.p"))
+#    if not os.path.exists(os.path.join("data","fever","reverse_index_unigram.p")):
+#        logger.warn("Reverse index missing - reconstructing")
+#        ri = ReverseIndex(corpus, pp)
+#        ri.save(os.path.join("data","fever","reverse_index_unigram.p"))
+#    else:
+#        ri = ReverseIndex(None,pp)
+#        ri.load(os.path.join("data","fever","reverse_index_unigram.p"))
 
-    print(ri.docs("Leonardo went to the sea".split()))
+#    print(ri.docs("Leonardo went to the sea".split()))
+
+    dic = Dictionary.load(os.path.join("data", "fever", "dict"))
+    corpus = Corpus("page",os.path.join("data","fever"),blocks, read_dic(dic,read_words))
+    tfidf = TfidfModel.load(os.path.join("data" ,"fever","tfidf"))
+
+    print(tfidf[["the","dog"]])
 
 
-#    corpus = Corpus("page",os.path.join("data","fever"),blocks, read_dic(dic,read_words))
 #    tfidf = TfidfModel(corpus,dictionary=dic)
 #    sim = Similarity(os.path.join("data" ,"fever","sim"),tfidf,num_features=1182440)
 

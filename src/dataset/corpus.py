@@ -58,3 +58,5 @@ class Corpus:
 
         return n, self.preprocessing(self.active_block[n])
 
+    def __getitem__(self, item):
+        return self.active_block[item]
