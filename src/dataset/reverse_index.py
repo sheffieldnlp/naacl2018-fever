@@ -24,7 +24,9 @@ class ReverseIndex:
         return ret
 
     def save(self,file):
-        pickle.dump(self.lookup,file)
+        with open(file,"wb+") as f:
+            pickle.dump(self.lookup,f)
 
     def load(self,file):
-        self.lookup = pickle.load(file)
+        with open(file,"rb") as f:
+            self.lookup = pickle.load(f)
