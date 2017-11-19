@@ -5,12 +5,13 @@ from tqdm import tqdm
 
 
 class ReverseIndex:
-    def __init__(self,docs):
+    def __init__(self,docs, preprocessing):
         self.lookup = defaultdict(set)
+        self.preprocess = preprocessing
 
         if docs is not None:
             for title,words in tqdm(docs):
-                self.add(title,words)
+                self.add(title,self.preprocess(words))
 
     def add(self,title,words):
         for word in words:
@@ -18,7 +19,7 @@ class ReverseIndex:
 
     def docs(self,phrase):
         ret = []
-        for word in phrase:
+        for word in self.preprocess(phrase):
             ret.extend(self.lookup[word])
         return ret
 

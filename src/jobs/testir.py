@@ -1,4 +1,6 @@
 import os
+
+import unicodedata
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel
 
@@ -19,7 +21,7 @@ def read_lines(wikifile):
     return [line for line in wikifile.split("\n")]
 
 def read_text(wikifile):
-    return [line.split('\t')[1] if len(line.split('\t'))>1 else "" for line in read_lines(wikifile) ]
+    return [normalize(line.split('\t')[1]) if len(line.split('\t'))>1 else "" for line in read_lines(wikifile) ]
 
 def flatten(l):
     return [item for sublist in l for item in sublist]
@@ -27,18 +29,62 @@ def flatten(l):
 def read_words(wikifile):
     return flatten([line.split(" ") for line in read_text(wikifile)])
 
+
+def normalize(text):
+    """Resolve different type of unicode encodings."""
+    return unicodedata.normalize('NFD', text)
+
 def read_dic(dic,pp):
     return lambda doc: dic.doc2bow(pp(doc))
+
+# Stop words and preprocessing https://github.com/facebookresearch/DrQA/blob/master/drqa/retriever/utils.py
+STOPWORDS = {
+    'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your',
+    'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she',
+    'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their',
+    'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that',
+    'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+    'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an',
+    'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of',
+    'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through',
+    'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down',
+    'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then',
+    'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any',
+    'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor',
+    'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can',
+    'will', 'just', 'don', 'should', 'now', 'd', 'll', 'm', 'o', 're', 've',
+    'y', 'ain', 'aren', 'couldn', 'didn', 'doesn', 'hadn', 'hasn', 'haven',
+    'isn', 'ma', 'mightn', 'mustn', 'needn', 'shan', 'shouldn', 'wasn', 'weren',
+    'won', 'wouldn', "'ll", "'re", "'ve", "n't", "'s", "'d", "'m", "''", "``"
+}
+
+
+def stopWord(w):
+    return w in STOPWORDS
+
+def preprocess(words):
+    return list(filter(lambda w: not stopWord(w), map(lambda w:w.lower(),words)))
 
 if __name__ == "__main__":
     LogHelper.setup()
     logger = LogHelper.get_logger(__name__)
     logger.info("Prepare dataset")
 
-    blocks = 1
+    blocks = 50
+
+    pp = preprocess
 
     corpus = Corpus("page",os.path.join("data","fever"),blocks,read_words)
-    ri = ReverseIndex(corpus)
+
+
+    if not os.path.exists(os.path.join("data","fever","reverse_index_unigram.p")):
+        logger.warn("Reverse index missing - reconstructing")
+        ri = ReverseIndex(corpus, pp)
+        ri.save(os.path.join("data","fever","reverse_index_unigram.p"))
+    else:
+        ri = ReverseIndex(None,pp)
+        ri.load(os.path.join("data","fever","reverse_index_unigram.p"))
+
     print(ri.docs("Leonardo went to the sea".split()))
 
 
