@@ -9,3 +9,4 @@ class Page(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     doc = Column(Text)
+    raw = Column(Text)

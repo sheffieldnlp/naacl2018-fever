@@ -1,0 +1,5 @@
+step 1 Index files - generates pages.p. an index of all page names
+step 2 Download files from S3 and save all the blocks
+step 3a convert blocks to sql
+step 3b build dictionary/tf-idf dict
+step 3c construct reverse index

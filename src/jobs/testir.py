@@ -12,6 +12,9 @@ from gensim.corpora import Dictionary
 from gensim.similarities import Similarity
 
 from dataset.corpus import Corpus
+from dataset.persistence.engine import get_engine
+from dataset.persistence.page import Page
+from dataset.persistence.session import get_session
 from dataset.reverse_index import ReverseIndex
 from util.log_helper import LogHelper
 from gensim.models.tfidfmodel import *
@@ -68,30 +71,39 @@ def preprocess(words):
 if __name__ == "__main__":
     LogHelper.setup()
     logger = LogHelper.get_logger(__name__)
-    logger.info("Prepare dataset")
+    logger.info("FEVER IR")
 
     blocks = 50
-
     pp = preprocess
-
     corpus = Corpus("page",os.path.join("data","fever"),blocks,read_words)
 
+    engine = get_engine("pages")
+    session = get_session(engine)
 
-#    if not os.path.exists(os.path.join("data","fever","reverse_index_unigram.p")):
-#        logger.warn("Reverse index missing - reconstructing")
-#        ri = ReverseIndex(corpus, pp)
-#        ri.save(os.path.join("data","fever","reverse_index_unigram.p"))
-#    else:
-#        ri = ReverseIndex(None,pp)
-#        ri.load(os.path.join("data","fever","reverse_index_unigram.p"))
 
-#    print(ri.docs("Leonardo went to the sea".split()))
+    logger.info("Query")
+    res = session.query(Page).filter(Page.doc.like("%leonardo%"))
 
-    dic = Dictionary.load(os.path.join("data", "fever", "dict"))
-    corpus = Corpus("page",os.path.join("data","fever"),blocks, read_dic(dic,read_words))
-    tfidf = TfidfModel.load(os.path.join("data" ,"fever","tfidf"))
+    for r in res:
+        logger.info("Result: {0}".format(r.name))
 
-    print(tfidf[["the","dog"]])
+
+    #if not os.path.exists(os.path.join("data","fever","reverse_index_unigram.p")):
+    #    logger.warn("Reverse index missing - reconstructing")
+    #    ri = ReverseIndex(corpus, pp)
+    #    ri.save(os.path.join("data","fever","reverse_index_unigram.p"))
+    #else:
+    #    logger.info("Loading Reverse Index")
+    #    ri = ReverseIndex(None,pp)
+    #    ri.load(os.path.join("data","fever","reverse_index_unigram.p"))
+
+    #logger.info("Done")
+    #print(ri.docs("Leonardo went to the sea".split()))
+
+    #dic = Dictionary.load(os.path.join("data", "fever", "dict"))
+    #corpus = Corpus("page",os.path.join("data","fever"),blocks, read_dic(dic,read_words))
+    #tfidf = TfidfModel.load(os.path.join("data" ,"fever","tfidf"))
+
 
 
 #    tfidf = TfidfModel(corpus,dictionary=dic)

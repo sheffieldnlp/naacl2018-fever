@@ -1,0 +1,3 @@
+[submodule "lib/DrQA"]
+	path = lib/DrQA
+	url = git@github.com:facebookresearch/DrQA
