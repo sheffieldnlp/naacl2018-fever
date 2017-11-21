@@ -1,3 +1,9 @@
 [submodule "lib/DrQA"]
 	path = lib/DrQA
 	url = git@github.com:facebookresearch/DrQA
+[submodule "lib/allennlp"]
+	path = lib/allennlp
+	url = git@github.com:allenai/allennlp.git
+[submodule "lib/bi-att-flow"]
+	path = lib/bi-att-flow
+	url = git@github.com:allenai/lib/bi-att-flow

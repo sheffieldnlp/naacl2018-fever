@@ -1,6 +1,6 @@
 from scipy.sparse import hstack
 from features.vocab import Vocab
-from nltk.translate.bleu_score import sentence_bleu
+from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 import numpy as np
 def ngrams(input, n):
     input = input.split(' ')
@@ -84,7 +84,8 @@ class LexFeatureFunction(FeatureFunction):
 
 class BleuOverlapFeatureFuntion(FeatureFunction):
     def process(self,data):
-        return np.array(map(lambda instance: [sentence_bleu([instance["s2_words"]], instance["s1_words"])],data))
+        smth = SmoothingFunction().method3
+        return np.array(list(map(lambda instance: [sentence_bleu([instance["s2_words"]], instance["s1_words"],smoothing_function=smth)],data)))
 
 class UnigramFeatureFunction(LexFeatureFunction):
     def process(self,data):

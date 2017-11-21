@@ -20,4 +20,4 @@ features = Features([BleuOverlapFeatureFuntion()])
 features.generate_vocab(train)
 fs = features.load(train)
 
-print(list(fs[0]))
+print(fs[0])

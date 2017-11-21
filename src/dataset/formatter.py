@@ -27,6 +27,6 @@ class SNLIFormatter(Formatter):
             return None
 
         s1_pos, s1_words = self.extract_words(line['sentence1_parse'])
-        s2_pos, s2_words = self.extract_words(line['sentence1_parse'])
+        s2_pos, s2_words = self.extract_words(line['sentence2_parse'])
 
         return {"data":{"s1_pos":s1_pos,"s1_words":s1_words, "s2_pos":s2_pos, "s2_words": s2_words}, "label":annotation}
