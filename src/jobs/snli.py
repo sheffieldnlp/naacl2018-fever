@@ -11,3 +11,5 @@ formatter = SNLIFormatter(SNLILabelSchema())
 
 train = DataSet(file=train_file,reader=jlr,formatter=formatter)
 train.read()
+
+print(train.data)

@@ -14,6 +14,11 @@ class Formatter():
 
 
 class SNLIFormatter(Formatter):
+
+    def extract_words(self,parse):
+        toks = [tok.strip() for tok in parse.replace(")","").split("(")  if " " in tok.strip() and len(tok.strip())]
+        return list(zip(*[tok.split(" ") for tok in toks]))
+
     def format_line(self,line):
 
         annotation = line["gold_label"]
@@ -21,7 +26,7 @@ class SNLIFormatter(Formatter):
         if annotation == "-":
             return None
 
-        print(line['sentence1_binary_parse'])
+        s1_pos, s1_words = self.extract_words(line['sentence1_parse'])
+        s2_pos, s2_words = self.extract_words(line['sentence1_parse'])
 
-
-        return None
+        return {"data":{"s1_pos":s1_pos,"s1_words":s1_words, "s2_pos":s2_pos, "s2_words": s2_words}, "label":annotation}
