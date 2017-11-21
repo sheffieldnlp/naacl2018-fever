@@ -1,16 +1,9 @@
 import sys
-
 import os
-
 import json
 
 from dataset.corpus import Corpus
-from dataset.persistence.engine import get_engine
-from dataset.persistence.page import Page
-
 from tqdm import tqdm
-
-from dataset.persistence.session import get_session
 from util.log_helper import LogHelper
 
 
@@ -31,6 +24,39 @@ def read_dic(dic,pp):
     return lambda doc: dic.doc2bow(pp(doc))
 
 
+class BlockWriter():
+    def __init__(self,path,max):
+        self.added = 0
+        self.block = 0
+        self.max = max
+        self.path = path
+        self.file = None
+
+    def write(self,line):
+        self.file.write(line+"\n")
+
+        if self.added % self.max == self.max - 1:
+            self.nextblock()
+
+        self.added +=1
+
+
+    def __enter__(self):
+        self.nextblock()
+        return self
+
+
+    def nextblock(self):
+        self.block = (self.block + 1) if self.block is not None else 0
+        if self.file is not None:
+            self.file.close()
+        self.file = open(os.path.join("data", "fever", "wiki", "wiki-{0}.jsonl".format(str.zfill(str(self.block),3))), "w+")
+
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.close()
+
+
 
 if __name__ == "__main__":
     blocks = int(sys.argv[1])
@@ -40,13 +66,6 @@ if __name__ == "__main__":
     blk = Corpus("page",os.path.join("data","fever"),blocks,read_words)
 
 
-    with open(os.path.join("data","fever","wiki","all-wiki.jsonl"),"w+") as f:
-        for idx,data in tqdm(enumerate(blk)):
-
-            page, body = data
-            f.write(json.dumps({"id":page , "text": " ".join(body)})+"\n")
-
-        #    if idx % 10000 == 9999:
-        #        logger.info("Commit")
-        #        session.commit()
-
+    with BlockWriter(os.path.join("data","fever","wiki"),50000) as f:
+        for page, body in tqdm(blk):
+            f.write(json.dumps({"id":page , "text": " ".join(body)}))
