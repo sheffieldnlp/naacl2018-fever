@@ -1,135 +1,114 @@
-from allennlp.data import Vocabulary
-from allennlp.data.dataset_readers import SquadReader
-from allennlp.models.reading_comprehension.bidaf import BidirectionalAttentionFlow
-from allennlp.modules import TextFieldEmbedder
+import argparse
+from contextlib import ExitStack
 import json
-import logging
-from typing import Dict, List, Tuple
+from typing import Optional, IO, Dict, List
 
 from overrides import overrides
-from tqdm import tqdm
 
 from allennlp.common import Params
-from allennlp.common.checks import ConfigurationError
-from allennlp.common.file_utils import cached_path
-from allennlp.data.dataset import Dataset
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
-from allennlp.data.instance import Instance
-from allennlp.data.dataset_readers.reading_comprehension import util
-from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
-from allennlp.data.tokenizers import Token, Tokenizer, WordTokenizer
-
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+from allennlp.data import Token
+from allennlp.data.tokenizers.word_splitter import WordSplitter
+from allennlp.models.archival import Archive, load_archive
+from allennlp.service.predictors import Predictor
 
 
-@DatasetReader.register("squad")
-class SquadReader(DatasetReader):
+@WordSplitter.register('indexed_spaces')
+class JustSpacesWordSplitter(WordSplitter):
     """
-    Reads a JSON-formatted SQuAD file and returns a ``Dataset`` where the ``Instances`` have four
-    fields: ``question``, a ``TextField``, ``passage``, another ``TextField``, and ``span_start``
-    and ``span_end``, both ``IndexFields`` into the ``passage`` ``TextField``.  We also add a
-    ``MetadataField`` that stores the instance's ID, the original passage text, gold answer strings,
-    and token offsets into the original passage, accessible as ``metadata['id']``,
-    ``metadata['original_passage']``, ``metadata['answer_texts']`` and
-    ``metadata['token_offsets']``.  This is so that we can more easily use the official SQuAD
-    evaluation script to get metrics.
+    A ``WordSplitter`` that assumes you've already done your own tokenization somehow and have
+    separated the tokens by spaces.  We just split the input string on whitespace and return the
+    resulting list.  We use a somewhat odd name here to avoid coming too close to the more
+    commonly used ``SpacyWordSplitter``.
 
-    Parameters
-    ----------
-    tokenizer : ``Tokenizer``, optional (default=``WordTokenizer()``)
-        We use this ``Tokenizer`` for both the question and the passage.  See :class:`Tokenizer`.
-        Default is ```WordTokenizer()``.
-    token_indexers : ``Dict[str, TokenIndexer]``, optional
-        We similarly use this for both the question and the passage.  See :class:`TokenIndexer`.
-        Default is ``{"tokens": SingleIdTokenIndexer()}``.
+    Note that we use ``sentence.split()``, which means that the amount of whitespace between the
+    tokens does not matter.  This will never result in spaces being included as tokens.
     """
-    def __init__(self,
-                 tokenizer: Tokenizer = None,
-                 token_indexers: Dict[str, TokenIndexer] = None) -> None:
-        self._tokenizer = tokenizer or WordTokenizer()
-        self._token_indexers = token_indexers or {'tokens': SingleIdTokenIndexer()}
-
     @overrides
-    def read(self, file_path: str):
-        # if `file_path` is a URL, redirect to the cache
-        file_path = cached_path(file_path)
-
-        logger.info("Reading file at %s", file_path)
-        with open(file_path) as dataset_file:
-            dataset_json = json.load(dataset_file)
-            dataset = dataset_json['data']
-        logger.info("Reading the dataset")
-        instances = []
-        for article in tqdm(dataset):
-            for paragraph_json in article['paragraphs']:
-                paragraph = paragraph_json["context"]
-                tokenized_paragraph = self._tokenizer.tokenize(paragraph)
-
-                for question_answer in paragraph_json['qas']:
-                    question_text = question_answer["question"].strip().replace("\n", "")
-                    answer_texts = [answer['text'] for answer in question_answer['answers']]
-                    span_starts = [answer['answer_start'] for answer in question_answer['answers']]
-                    span_ends = [start + len(answer) for start, answer in zip(span_starts, answer_texts)]
-                    instance = self.text_to_instance(question_text,
-                                                     paragraph,
-                                                     zip(span_starts, span_ends),
-                                                     answer_texts,
-                                                     tokenized_paragraph)
-                    instances.append(instance)
-        if not instances:
-            raise ConfigurationError("No instances were read from the given filepath {}. "
-                                     "Is the path correct?".format(file_path))
-        return Dataset(instances)
-
-    @overrides
-    def text_to_instance(self,  # type: ignore
-                         question_text: str,
-                         passage_text: str,
-                         char_spans: List[Tuple[int, int]] = None,
-                         answer_texts: List[str] = None,
-                         passage_tokens: List[Token] = None) -> Instance:
-        # pylint: disable=arguments-differ
-        if not passage_tokens:
-            passage_tokens = self._tokenizer.tokenize(passage_text)
-        char_spans = char_spans or []
-
-        # We need to convert character indices in `passage_text` to token indices in
-        # `passage_tokens`, as the latter is what we'll actually use for supervision.
-        token_spans: List[Tuple[int, int]] = []
-        passage_offsets = [(token.idx, token.idx + len(token.text)) for token in passage_tokens]
-        for char_span_start, char_span_end in char_spans:
-            (span_start, span_end), error = util.char_span_to_token_span(passage_offsets,
-                                                                         (char_span_start, char_span_end))
-            if error:
-                logger.debug("Passage: %s", passage_text)
-                logger.debug("Passage tokens: %s", passage_tokens)
-                logger.debug("Question text: %s", question_text)
-                logger.debug("Answer span: (%d, %d)", char_span_start, char_span_end)
-                logger.debug("Token span: (%d, %d)", span_start, span_end)
-                logger.debug("Tokens in answer: %s", passage_tokens[span_start:span_end + 1])
-                logger.debug("Answer: %s", passage_text[char_span_start:char_span_end])
-            token_spans.append((span_start, span_end))
-
-        return util.make_reading_comprehension_instance(self._tokenizer.tokenize(question_text),
-                                                        passage_tokens,
-                                                        self._token_indexers,
-                                                        passage_text,
-                                                        token_spans,
-                                                        answer_texts)
-
+    def split_words(self, sentence: str) -> List[Token]:
+        tokens = [Token(text=t,idx=0) for t in sentence.split()]
+        for id,token in enumerate(tokens):
+            if id == 0:
+                continue
+            token.idx = tokens[id-1].idx + len(tokens[id-1].text) + 1
+        return tokens
     @classmethod
-    def from_params(cls, params: Params) -> 'SquadReader':
-        tokenizer = Tokenizer.from_params(params.pop('tokenizer', {}))
-        token_indexers = TokenIndexer.dict_from_params(params.pop('token_indexers', {}))
+    def from_params(cls, params: Params) -> 'WordSplitter':
         params.assert_empty(cls.__name__)
-        return cls(tokenizer=tokenizer, token_indexers=token_indexers)
+        return cls()
+
+def _run(predictor: Predictor,
+         input_file: IO,
+         output_file: Optional[IO],
+         batch_size: int,
+         cuda_device: int) -> None:
+
+    def _run_predictor(batch_data):
+        if len(batch_data) == 1:
+            result = predictor.predict_json(batch_data[0], cuda_device)
+            # Batch results return a list of json objects, so in
+            # order to iterate over the result below we wrap this in a list.
+            results = [result]
+        else:
+            results = predictor.predict_batch_json(batch_data, cuda_device)
+
+        for model_input, output in zip(batch_data, results):
+            string_output = json.dumps(output)
+
+            print("input: ", model_input)
+            print("prediction: ", string_output)
+
+            if output_file:
+                output_file.write(string_output + "\n")
+
+    batch_json_data = []
+    for line in input_file:
+        if not line.isspace():
+            # Collect batch size amount of data.
+            json_data = json.loads(line)
+            batch_json_data.append(json_data)
+            if len(batch_json_data) == batch_size:
+                _run_predictor(batch_json_data)
+                batch_json_data = []
+
+    # We might not have a dataset perfectly divisible by the batch size,
+    # so tidy up the scraps.
+    if batch_json_data:
+        _run_predictor(batch_json_data)
+
+
+def predict(args: argparse.Namespace) -> None:
+    archive = load_archive(args.archive_file, cuda_device=args.cuda_device, overrides=args.overrides)
+    predictor = Predictor.from_archive(archive, "machine-comprehension")
 
 
 
+    # ExitStack allows us to conditionally context-manage `output_file`, which may or may not exist
+    with ExitStack() as stack:
+        input_file = stack.enter_context(args.input_file)  # type: ignore
+        output_file = stack.enter_context(args.output_file)  # type: ignore
+
+        _run(predictor, input_file, output_file, args.batch_size, args.cuda_device)
 
 
-dr = SquadReader()
-v = Vocabulary()
-tfe = TextFieldEmbedder()
 
-BidirectionalAttentionFlow(v)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('archive_file', type=str, help='the archived model to make predictions with')
+    parser.add_argument('input_file', type=argparse.FileType('r'), help='path to input file')
+    parser.add_argument('output_file', type=argparse.FileType('w'), help='path to output file')
+
+    batch_size = parser.add_mutually_exclusive_group(required=False)
+    batch_size.add_argument('--batch-size', type=int, default=1, help='The batch size to use for processing')
+    batch_size.add_argument('--batch_size', type=int, help=argparse.SUPPRESS)
+
+    cuda_device = parser.add_mutually_exclusive_group(required=False)
+    cuda_device.add_argument('--cuda-device', type=int, default=-1, help='id of GPU to use (if any)')
+    cuda_device.add_argument('--cuda_device', type=int, help=argparse.SUPPRESS)
+
+    parser.add_argument('-o', '--overrides',
+                           type=str,
+                           default="",
+                           help='a HOCON structure used to override the experiment configuration')
+
+    parser.set_defaults(func=predict)
+    predict(parser.parse_args())
