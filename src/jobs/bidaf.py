@@ -5,11 +5,13 @@ from typing import Optional, IO, Dict, List
 
 from overrides import overrides
 
-from allennlp.common import Params
-from allennlp.data import Token
+from allennlp.common import Params, JsonDict
+from allennlp.data import Token, Instance
 from allennlp.data.tokenizers.word_splitter import WordSplitter
 from allennlp.models.archival import Archive, load_archive
 from allennlp.service.predictors import Predictor
+from drqa import retriever
+from drqa.retriever import DocDB
 
 
 @WordSplitter.register('indexed_spaces')
@@ -35,6 +37,25 @@ class JustSpacesWordSplitter(WordSplitter):
     def from_params(cls, params: Params) -> 'WordSplitter':
         params.assert_empty(cls.__name__)
         return cls()
+
+
+@Predictor.register('drwikilookup')
+class BidafPredictor(Predictor):
+    """
+    Wrapper for the :class:`~allennlp.models.bidaf.BidirectionalAttentionFlow` model.
+    """
+    @overrides
+    def _json_to_instance(self, json: JsonDict) -> Instance:
+        """
+        Expects JSON that looks like ``{"question": "...", "doc": "..."}``.
+        """
+        question_text = json["question"]
+        passage_text = self.db.get_doc_text(json["doc"])
+        return self._dataset_reader.text_to_instance(question_text, passage_text)
+
+    def set_docdb(self,db):
+        self.db = db
+
 
 def _run(predictor: Predictor,
          input_file: IO,
@@ -76,11 +97,11 @@ def _run(predictor: Predictor,
         _run_predictor(batch_json_data)
 
 
-def predict(args: argparse.Namespace) -> None:
+def predict(args: argparse.Namespace,docdb) -> None:
     archive = load_archive(args.archive_file, cuda_device=args.cuda_device, overrides=args.overrides)
-    predictor = Predictor.from_archive(archive, "machine-comprehension")
+    predictor = Predictor.from_archive(archive, "drwikilookup")
 
-
+    predictor.set_docdb(docdb)
 
     # ExitStack allows us to conditionally context-manage `output_file`, which may or may not exist
     with ExitStack() as stack:
@@ -89,10 +110,23 @@ def predict(args: argparse.Namespace) -> None:
 
         _run(predictor, input_file, output_file, args.batch_size, args.cuda_device)
 
+def process(db, ranker, query, k=1):
+    doc_names, doc_scores = ranker.closest_docs(query, k)
+    return doc_names()
+        #for page in doc_names:
+        #    print(ranker.text2spvec(db.get_doc_text(page)))
+
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
+
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('model', type=str, default=None)
+    parser.add_argument('db', type=str, default=None)
+
     parser.add_argument('archive_file', type=str, help='the archived model to make predictions with')
     parser.add_argument('input_file', type=argparse.FileType('r'), help='path to input file')
     parser.add_argument('output_file', type=argparse.FileType('w'), help='path to output file')
@@ -110,5 +144,13 @@ if __name__ == "__main__":
                            default="",
                            help='a HOCON structure used to override the experiment configuration')
 
+
+    args = parser.parse_args()
+
+#    ranker = retriever.get_class('tfidf')(tfidf_path=args.model)
+    db = DocDB(args.db)
+
+    #pages = process(db, ranker, "banana")
+
     parser.set_defaults(func=predict)
-    predict(parser.parse_args())
+    predict(args,db)
