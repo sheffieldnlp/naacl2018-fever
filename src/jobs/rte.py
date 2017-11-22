@@ -12,7 +12,7 @@ from allennlp.models.archival import Archive, load_archive
 from allennlp.service.predictors import Predictor
 from drqa import retriever
 from drqa.retriever import DocDB
-
+import numpy as np
 
 @WordSplitter.register('indexed_spaces')
 class JustSpacesWordSplitter(WordSplitter):
@@ -39,23 +39,6 @@ class JustSpacesWordSplitter(WordSplitter):
         return cls()
 
 
-@Predictor.register('drwikilookup')
-class BidafPredictor(Predictor):
-    """
-    Wrapper for the :class:`~allennlp.models.bidaf.BidirectionalAttentionFlow` model.
-    """
-    @overrides
-    def _json_to_instance(self, json: JsonDict) -> Instance:
-        """
-        Expects JSON that looks like ``{"question": "...", "doc": "..."}``.
-        """
-        question_text = json["question"]
-        passage_text = self.db.get_doc_text(json["doc"])
-        return self._dataset_reader.text_to_instance(question_text, passage_text)
-
-    def set_docdb(self,db):
-        self.db = db
-
 
 def _run(predictor: Predictor,
          input_file: IO,
@@ -73,13 +56,12 @@ def _run(predictor: Predictor,
             results = predictor.predict_batch_json(batch_data, cuda_device)
 
         for model_input, output in zip(batch_data, results):
-            premise = output['best_span_str']
-            hypothesis = model_input['question']
-
-            print(premise,hypothesis)
 
             if output_file:
-                output_file.write(json.dumps({"premise":premise,"hypothesis":hypothesis,"doc":model_input["doc"]}) + "\n")
+                vers = ["NEUTRAL","SUPPORTS", "REFUTES"]
+
+                a = vers[np.argmax(output['label_logits'])]
+                output_file.write( json.dumps({"claim":model_input["hypothesis"],"doc":model_input["doc"],"verdict":a}) + "\n")
 
     batch_json_data = []
     for line in input_file:
@@ -97,11 +79,10 @@ def _run(predictor: Predictor,
         _run_predictor(batch_json_data)
 
 
-def predict(args: argparse.Namespace,docdb) -> None:
+def predict(args: argparse.Namespace) -> None:
+    print(args.archive_file)
     archive = load_archive(args.archive_file, cuda_device=args.cuda_device, overrides=args.overrides)
-    predictor = Predictor.from_archive(archive, "drwikilookup")
-
-    predictor.set_docdb(docdb)
+    predictor = Predictor.from_archive(archive, "textual-entailment")
 
     # ExitStack allows us to conditionally context-manage `output_file`, which may or may not exist
     with ExitStack() as stack:
@@ -120,13 +101,6 @@ def process(db, ranker, query, k=1):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-
-
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('model', type=str, default=None)
-    parser.add_argument('db', type=str, default=None)
-
     parser.add_argument('archive_file', type=str, help='the archived model to make predictions with')
     parser.add_argument('input_file', type=argparse.FileType('r'), help='path to input file')
     parser.add_argument('output_file', type=argparse.FileType('w'), help='path to output file')
@@ -148,9 +122,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 #    ranker = retriever.get_class('tfidf')(tfidf_path=args.model)
-    db = DocDB(args.db)
 
     #pages = process(db, ranker, "banana")
 
     parser.set_defaults(func=predict)
-    predict(args,db)
+    predict(args)
