@@ -28,7 +28,8 @@ if __name__ == "__main__":
             for line in tqdm(f.readlines()):
                 js = json.loads(line)
                 pages = process(ranker,js['claim'],k=k)
-                f2.write(json.dumps({"question":js['claim'],"pages":list(pages)})+"\n")
+                js["predicted_pages"] = list(pages)
+                f2.write(json.dumps(js)+"\n")
 
 
 
