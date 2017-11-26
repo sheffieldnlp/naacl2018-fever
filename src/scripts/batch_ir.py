@@ -28,8 +28,7 @@ if __name__ == "__main__":
             for line in tqdm(f.readlines()):
                 js = json.loads(line)
                 pages = process(ranker,js['claim'],k=k)
-                for page, score in pages:
-                    f2.write(json.dumps({"question":js['claim'],"doc":page,"score":score})+"\n")
+                f2.write(json.dumps({"question":js['claim'],"pages":list(pages)})+"\n")
 
 
 
