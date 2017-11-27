@@ -4,3 +4,6 @@
 [submodule "lib/allennlp"]
 	path = lib/allennlp
 	url = git@github.com:allenai/allennlp.git
+[submodule "lib/fakenewschallenge"]
+	path = lib/fakenewschallenge
+	url = git@github.com:uclmr/fakenewschallenge.git
