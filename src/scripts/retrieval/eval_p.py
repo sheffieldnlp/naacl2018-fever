@@ -23,13 +23,10 @@ with open("data/fever/fever.{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
         evidence = set([t[1] for t in js["evidence"] if isinstance(t,list) and len(t)>1])
         predicted = [t[0] for t in js['predicted_pages']]
 
-
-
         for p in evidence:
             q += 1
             if preprocess(p) in predicted:
                 hits+= 1
-
-
+                
 
     print(hits/q)
