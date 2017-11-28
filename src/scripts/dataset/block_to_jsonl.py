@@ -1,11 +1,11 @@
-import sys
-import os
 import json
+import os
+import sys
 
-from dataset.corpus import Corpus
 from tqdm import tqdm
-from util.log_helper import LogHelper
 
+from common.util import LogHelper
+from dataset.corpus import Corpus
 
 
 def read_lines(wikifile):

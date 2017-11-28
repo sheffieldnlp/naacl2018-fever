@@ -1,10 +1,10 @@
 import os
 
 from gensim.corpora import Dictionary
-
-from dataset.corpus import Corpus
-from util.log_helper import LogHelper
 from gensim.models.tfidfmodel import *
+
+from common.util import LogHelper
+from dataset.corpus import Corpus
 
 
 def read_lines(wikifile):

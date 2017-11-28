@@ -65,6 +65,17 @@ stop_words = [
         "with", "within", "without", "would", "yet", "you", "your", "yours", "yourself", "yourselves"
         ]
 
+r = random.Random()
+lim_unigram = 5000
+target_size = 4
+hidden_size = 100
+train_keep_prob = 0.6
+l2_alpha = 0.00001
+learn_rate = 0.01
+clip_ratio = 5
+batch_size_train = 500
+epochs = 90
+
 
 # Define data class
 class FNCData:
@@ -161,37 +172,39 @@ def pipeline_train(docdb, train, test, lim_unigram):
     # Identify unique heads and bodies
     for instance in train.instances:
         head = instance['Headline']
-        body_id = instance['Body ID']
+        instance_body_ids = instance['Body IDs']
         if head not in heads_track:
             heads.append(head)
             heads_track[head] = 1
-        if body_id is not None and body_id not in bodies_track:
 
-            b = docdb.get_doc_text(preprocess(body_id))
-            if b is None:
-                print(body_id, preprocess(body_id))
-            bodies.append(b)
-            bodies_track[body_id] = 1
-            body_ids.append(body_id)
+        for body_id in instance_body_ids:
+            if body_id is not None and body_id not in bodies_track:
+
+                b = docdb.get_doc_text(preprocess(body_id))
+                if b is None:
+                    print(body_id, preprocess(body_id))
+                bodies.append(b)
+                bodies_track[body_id] = 1
 
     for instance in test.instances:
         head = instance['Headline']
-        body_id = instance['Body ID']
+        instance_body_ids = instance['Body IDs']
         if head not in test_heads_track:
             test_heads.append(head)
             test_heads_track[head] = 1
-        if body_id is not None and body_id not in test_bodies_track:
-            b = docdb.get_doc_text(preprocess(body_id))
-            if b is None:
-                print(body_id,preprocess(body_id))
-            test_bodies.append(b)
-            test_bodies_track[body_id] = 1
-            test_body_ids.append(body_id)
+        for body_id in instance_body_ids:
+            if body_id is not None and body_id not in bodies_track:
+                b = docdb.get_doc_text(preprocess(body_id))
+                if b is None:
+                    print(body_id, preprocess(body_id))
+                bodies.append(b)
+                bodies_track[body_id] = 1
 
     # Create reference dictionary
     for i, elem in enumerate(heads + body_ids):
         id_ref[elem] = i
 
+    del body_id
     # Create vectorizers and BOW and TF arrays for train set
     bow_vectorizer = CountVectorizer(max_features=lim_unigram, stop_words=stop_words)
     bow = bow_vectorizer.fit_transform(heads + bodies)  # Train set only
@@ -202,27 +215,32 @@ def pipeline_train(docdb, train, test, lim_unigram):
     tfidf_vectorizer = TfidfVectorizer(max_features=lim_unigram, stop_words=stop_words).\
         fit(heads + bodies + test_heads + test_bodies)  # Train and test sets
 
+
     # Process train set
     for instance in train.instances:
         head = instance['Headline']
-        body_id = instance['Body ID']
+        instance_body_ids = instance['Body IDs']
         head_tf = tfreq[id_ref[head]].reshape(1, -1)
-        body_tf = tfreq[id_ref[body_id]].reshape(1, -1)
         if head not in head_tfidf_track:
             head_tfidf = tfidf_vectorizer.transform([head]).toarray()
             head_tfidf_track[head] = head_tfidf
         else:
             head_tfidf = head_tfidf_track[head]
-        if body_id not in body_tfidf_track:
-            body_tfidf = tfidf_vectorizer.transform([docdb.get_doc_text(preprocess(body_id))]).toarray()
-            body_tfidf_track[body_id] = body_tfidf
-        else:
-            body_tfidf = body_tfidf_track[body_id]
-        if (head, body_id) not in cos_track:
-            tfidf_cos = cosine_similarity(head_tfidf, body_tfidf)[0].reshape(1, 1)
-            cos_track[(head, body_id)] = tfidf_cos
-        else:
-            tfidf_cos = cos_track[(head, body_id)]
+
+        body_tfidf = np.zeros((1,lim_unigram))
+        body_tf = np.zeros((1,lim_unigram))
+        for body_id in instance_body_ids:
+            tmp_body_tf = tfreq[id_ref[body_id]].reshape(1, -1)
+            body_tf += tmp_body_tf
+            if body_id not in body_tfidf_track:
+                tmp_body_tfidf = tfidf_vectorizer.transform([docdb.get_doc_text(preprocess(body_id))]).toarray()
+                body_tfidf_track[body_id] = tmp_body_tfidf
+            else:
+                tmp_body_tfidf = body_tfidf_track[body_id]
+            body_tfidf+= tmp_body_tfidf
+
+        tfidf_cos = cosine_similarity(head_tfidf, body_tfidf)[0].reshape(1, 1)
+
         feat_vec = np.squeeze(np.c_[head_tf, body_tf, tfidf_cos])
         train_set.append(feat_vec)
         train_stances.append(label_ref[instance['Stance']])
@@ -250,7 +268,7 @@ def pipeline_test(docdb, test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorize
     # Initialise
     test_set = []
     inst_ids = []
-    bodies = []
+    verdicts = []
     heads_track = {}
     bodies_track = {}
     cos_track = {}
@@ -258,7 +276,8 @@ def pipeline_test(docdb, test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorize
     # Process test set
     for instance in test.instances:
         head = instance['Headline']
-        body_id = instance['Body ID']
+        instance_body_ids = instance['Body IDs']
+        verdicts.append(instance["Verdict"])
         if head not in heads_track:
             head_bow = bow_vectorizer.transform([head]).toarray()
             head_tf = tfreq_vectorizer.transform(head_bow).toarray()[0].reshape(1, -1)
@@ -267,25 +286,30 @@ def pipeline_test(docdb, test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorize
         else:
             head_tf = heads_track[head][0]
             head_tfidf = heads_track[head][1]
-        if body_id not in bodies_track:
-            body_bow = bow_vectorizer.transform([docdb.get_doc_text(preprocess(body_id))]).toarray()
-            body_tf = tfreq_vectorizer.transform(body_bow).toarray()[0].reshape(1, -1)
-            body_tfidf = tfidf_vectorizer.transform([docdb.get_doc_text(preprocess(body_id))]).toarray().reshape(1, -1)
-            bodies_track[body_id] = (body_tf, body_tfidf)
-        else:
-            body_tf = bodies_track[body_id][0]
-            body_tfidf = bodies_track[body_id][1]
-        if (head, body_id) not in cos_track:
-            tfidf_cos = cosine_similarity(head_tfidf, body_tfidf)[0].reshape(1, 1)
-            cos_track[(head, body_id)] = tfidf_cos
-        else:
-            tfidf_cos = cos_track[(head, body_id)]
+
+        body_tfidf = np.zeros((1, lim_unigram))
+        body_tf = np.zeros((1, lim_unigram))
+        for body_id in instance_body_ids:
+            if body_id not in bodies_track:
+                body_bow = bow_vectorizer.transform([docdb.get_doc_text(preprocess(body_id))]).toarray()
+                tmp_body_tf = tfreq_vectorizer.transform(body_bow).toarray()[0].reshape(1, -1)
+                tmp_body_tfidf = tfidf_vectorizer.transform([docdb.get_doc_text(preprocess(body_id))]).toarray().reshape(1,
+                                                                                                                     -1)
+                bodies_track[body_id] = (body_tf, body_tfidf)
+            else:
+                tmp_body_tf = bodies_track[body_id][0]
+                tmp_body_tfidf = bodies_track[body_id][1]
+            body_tfidf += tmp_body_tfidf
+            body_tf += tmp_body_tf
+
+
+        tfidf_cos = cosine_similarity(head_tfidf, body_tfidf)[0].reshape(1, 1)
+
         feat_vec = np.squeeze(np.c_[head_tf, body_tf, tfidf_cos])
         inst_ids.append(instance["Fever ID"])
-        bodies.append(instance["Body ID"])
         test_set.append(feat_vec)
 
-    return inst_ids,bodies,test_set
+    return inst_ids,verdicts,test_set
 
 
 def load_model(sess):
@@ -303,7 +327,7 @@ def load_model(sess):
     saver.restore(sess, './lib/fakenewschallenge/model/model.checkpoint')
 
 
-def save_predictions(ids, bodies, pred, file):
+def save_predictions(ids, verdicts,pred, file):
 
     """
 
@@ -317,12 +341,12 @@ def save_predictions(ids, bodies, pred, file):
     """
 
     with open(file, 'w') as csvfile:
-        fieldnames = ['id',"doc",'Stance']
+        fieldnames = ['id',"verdict",'Stance']
         writer = DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
-        for id,b,p in zip(ids,bodies,pred):
-            writer.writerow({"id":id,"doc":b,'Stance': label_ref_rev[p]})
+        for id,verdict,p in zip(ids,verdicts,pred):
+            writer.writerow({"id":id,"verdict":verdict,'Stance': label_ref_rev[p]})
 
 
 
@@ -337,16 +361,7 @@ file_predictions = 'predictions_test.csv'
 
 
 # Initialise hyperparameters
-r = random.Random()
-lim_unigram = 5000
-target_size = 4
-hidden_size = 100
-train_keep_prob = 0.6
-l2_alpha = 0.00001
-learn_rate = 0.01
-clip_ratio = 5
-batch_size_train = 500
-epochs = 90
+
 
 
 # Load data sets
@@ -375,8 +390,9 @@ class FeverData():
                     pages = set([evidence[1] for evidence in js["evidence"] if isinstance(evidence,list) and len(evidence)>1 and preprocess(evidence[1]) in self.idx])
 
                 if len(pages):
-                    for page in pages:
-                        rows.append({"Fever ID":js["id"],"Headline":js["claim"], "Body ID": page,"Stance":js["verdict"]})
+                    rows.append({"Fever ID": js["id"], "Headline": js["claim"], "Body IDs": list(pages), "Stance": js["verdict"]})
+
+
                 #else:
                 #    rows.append({"Headline":js["claim"], "Body ID": None, "Stance":js["verdict"]})
 
@@ -395,7 +411,7 @@ n_train = len(raw_train.instances)
 train_set, train_stances, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer = \
     pipeline_train(db,raw_train, raw_test, lim_unigram=lim_unigram)
 feature_size = len(train_set[0])
-ids,bodies,test_set = pipeline_test(db,raw_test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer)
+ids,verdicts,test_set = pipeline_test(db,raw_test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer)
 
 
 # Define model
@@ -469,4 +485,4 @@ if mode == 'train':
 
 
 # Save predictions
-save_predictions(ids,bodies, test_pred, file_predictions)
+save_predictions(ids, verdicts, test_pred, file_predictions)

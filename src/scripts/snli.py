@@ -4,7 +4,7 @@ from dataset.data_set import DataSet
 from dataset.formatter import SNLIFormatter
 from dataset.label_schema import SNLILabelSchema
 from dataset.reader import JSONLineReader
-from features.feature_function import BleuOverlapFeatureFuntion, Features
+from shared.features.feature_function import BleuOverlapFeatureFuntion, Features
 
 train_file = os.path.join("data","snli","snli_1.0" ,"snli_1.0_train.jsonl")
 jlr = JSONLineReader()

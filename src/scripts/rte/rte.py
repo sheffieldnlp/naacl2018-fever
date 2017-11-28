@@ -1,20 +1,17 @@
+import argparse
+import json
 from contextlib import ExitStack
 from typing import Optional, IO, List
 
+import numpy as np
 from overrides import overrides
+from tqdm import tqdm
 
 from allennlp.common import JsonDict
 from allennlp.data import Instance
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
-from features.word_splitter import IndexedSpaces
-from tqdm import tqdm
-import numpy as np
-import json
-import argparse
-
 from retrieval.fever_doc_db import FeverDocDB
-
 
 
 @Predictor.register('drwiki-te')

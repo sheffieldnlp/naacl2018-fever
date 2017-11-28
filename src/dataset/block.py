@@ -1,8 +1,7 @@
+import os
 import pickle
 
-import os
-
-from util.log_helper import LogHelper
+from common.util import LogHelper
 
 
 class Block(object):

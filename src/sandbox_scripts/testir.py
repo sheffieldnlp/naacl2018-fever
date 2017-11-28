@@ -1,23 +1,13 @@
 import os
-
 import unicodedata
-from gensim.corpora import Dictionary
-from gensim.models import TfidfModel
 
+from gensim.models.tfidfmodel import *
 
-
-import os
-
-from gensim.corpora import Dictionary
-from gensim.similarities import Similarity
-
+from common.util import LogHelper
 from dataset.corpus import Corpus
 from dataset.persistence.engine import get_engine
 from dataset.persistence.page import Page
 from dataset.persistence.session import get_session
-from dataset.reverse_index import ReverseIndex
-from util.log_helper import LogHelper
-from gensim.models.tfidfmodel import *
 
 
 def read_lines(wikifile):

@@ -1,5 +1,7 @@
-from util.log_helper import LogHelper
 import pickle
+
+from common.util import LogHelper
+
 
 class Indexer:
     def __init__(self,file):
