@@ -1,23 +1,4 @@
-from shared.features.vocab import Vocab
 import numpy as np
-from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
-
-from shared.features.vocab import Vocab
-
-
-def ngrams(input, n):
-    input = input.split(' ')
-    output = []
-    for i in range(len(input) - n + 1):
-        output.append(input[i:i + n])
-    return output
-
-
-def char_ngrams(input, n):
-    output = []
-    for i in range(len(input) - n + 1):
-        output.append(input[i:i + n])
-    return output
 
 
 class Features():
@@ -43,7 +24,7 @@ class Features():
                 lambda datum: self.preprocessing(datum["data"]) if self.preprocessing is not None else datum["data"],
                 data))
 
-    def generate_vocab(self,dataset):
+    def inform(self,dataset):
         preprocessed = self.preprocess_all(dataset.data)
         print(len(preprocessed))
         for feature_function in self.feature_functions:
@@ -55,15 +36,11 @@ class FeatureFunction():
     def __init__(self):
         pass
 
-    def inform(self,data):
-        return self.process(data)
+    def inform(self,train,dev,test):
+        raise NotImplementedError("Not Implemented Here")
 
     def lookup(self,data):
         return self.process(data)
 
     def process(self,data):
         pass
-
-
-
-
