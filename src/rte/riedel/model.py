@@ -51,4 +51,5 @@ if __name__ == "__main__":
     dev.read()
     test.read()
 
-    f.inform(train,dev,test)
+    train_feats, dev_feats, test_feats = f.load(train,dev,test)
+    print(train_feats)
