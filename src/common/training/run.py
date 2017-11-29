@@ -16,7 +16,7 @@ def predict(model, data, batch_size):
     predicted = []
     for batch, size, start, end in batcher:
         d = prepare(batch)
-
+        model.eval()
         logits = model(d).cpu()
 
         predicted.extend(torch.max(logits, 1)[1])
@@ -44,6 +44,7 @@ def train(model, fs, batch_size, lr, epochs,dev=None):
         for batch, size, start, end in batcher:
             d,gold = prepare_with_labels(batch,labels[start:end])
 
+            model.train()
             optimizer.zero_grad()
             logits = model(d)
 
