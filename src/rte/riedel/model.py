@@ -71,7 +71,7 @@ class SimpleMLP(nn.Module):
 
 def train(model, fs, batch_size, lr, epochs):
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
     steps = 0
 
     data, labels = fs
