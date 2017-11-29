@@ -1,5 +1,5 @@
-from common.dataset import Block
-from common.util import LogHelper
+from common.dataset.block import Block
+from common.util.log_helper import LogHelper
 
 
 class Corpus:
