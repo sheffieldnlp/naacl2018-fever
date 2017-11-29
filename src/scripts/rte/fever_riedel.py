@@ -5,7 +5,7 @@ from common.training.options import gpu
 from common.training.run import train
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERFormatter, FEVERLabelSchema
-from rte.riedel.features import TermFrequencyFeatureFunction
+from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
 
 if __name__ == "__main__":

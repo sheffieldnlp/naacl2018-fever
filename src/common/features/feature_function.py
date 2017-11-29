@@ -32,11 +32,11 @@ class Features():
             test_fs.append(self.generate_or_load(ff, test, "test"))
 
 
-        return self.out(train_fs,train.data), self.out(dev_fs,dev.data), self.out(test_fs,test.data)
+        return self.out(train_fs,train), self.out(dev_fs,dev), self.out(test_fs,test)
 
     def out(self,features,ds):
         if ds is not None:
-            return np.hstack(features) if len(features) > 1 else features[0], self.labels(ds)
+            return np.hstack(features) if len(features) > 1 else features[0], self.labels(ds.data)
         return [[]],[]
 
     def generate_or_load(self,feature,dataset,name):

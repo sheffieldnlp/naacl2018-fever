@@ -5,7 +5,6 @@ from scipy.sparse import hstack
 
 from common.features.feature_function import FeatureFunction
 from common.util.array import flatten
-from retrieval.fever_doc_db import FeverDocDB
 
 import numpy as np
 
