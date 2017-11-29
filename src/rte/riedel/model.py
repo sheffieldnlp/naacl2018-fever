@@ -14,6 +14,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 from tqdm import tqdm
+import os
 
 def preprocess(p):
     return p.replace(" ","_").replace("(","-LRB-").replace(")","-RRB-").replace(":","-COLON-").split("#")[0]
@@ -29,6 +30,12 @@ def prepare(data):
     data = data.todense()
     v = torch.FloatTensor(np.array(data))
     return Variable(v)
+
+
+def gpu():
+    return os.getenv("GPU","no").lower() in ["1",1,"yes","true","t"]
+
+
 
 class FEVERFormatter(Formatter):
 
@@ -86,7 +93,12 @@ def predict(model, data, batch_size):
     predicted = []
     for batch, size, start, end in batcher:
         d = prepare(batch)
-        logits = model(d)
+
+        if gpu():
+            d.cuda()
+
+        logits = model(d).cpu()
+
         predicted.extend(torch.max(logits, 1)[1])
     return torch.stack(predicted)
 
@@ -111,13 +123,17 @@ def train(model, fs, batch_size, lr, epochs,dev=None):
 
         for batch, size, start, end in batcher:
             d,gold = prepare2(batch,labels[start:end])
+            if gpu():
+                d.cuda()
 
             optimizer.zero_grad()
             logits = model(d)
 
             loss = F.cross_entropy(logits, gold)
-
             loss.backward()
+
+            loss.cpu()
+
             epoch_loss += loss
             epoch_data += size
             optimizer.step()
@@ -148,6 +164,10 @@ if __name__ == "__main__":
     input_shape = train_feats[0].shape[1]
 
     model = SimpleMLP(input_shape,100,2)
+
+    if gpu():
+        model.cuda()
+
     train(model, train_feats, 500, 1e-2, 90,dev_feats)
 
 
