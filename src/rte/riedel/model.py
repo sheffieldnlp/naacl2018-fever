@@ -1,3 +1,5 @@
+from sklearn.metrics import accuracy_score
+
 from common.dataset.data_set import DataSet
 from common.dataset.formatter import Formatter
 from common.dataset.label_schema import LabelSchema
@@ -22,6 +24,11 @@ def prepare2(data,labels):
     v = torch.FloatTensor(np.array(data))
     return Variable(v), Variable(torch.LongTensor(labels))
 
+
+def prepare(data):
+    data = data.todense()
+    v = torch.FloatTensor(np.array(data))
+    return Variable(v)
 
 class FEVERFormatter(Formatter):
 
@@ -69,16 +76,39 @@ class SimpleMLP(nn.Module):
         return x
 
 
-def train(model, fs, batch_size, lr, epochs):
+def evaluate(model,data,labels,batch_size):
+    predicted = predict(model,data,batch_size)
+    return accuracy_score(labels,predicted.data.numpy().reshape(-1))
+
+def predict(model, data, batch_size):
+    batcher = Batcher(data, batch_size)
+
+    predicted = []
+    for batch, size, start, end in batcher:
+        d = prepare(batch)
+        logits = model(d)
+        predicted.extend(torch.max(logits, 1)[1])
+    return torch.stack(predicted)
+
+def train(model, fs, batch_size, lr, epochs,dev=None):
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
     steps = 0
 
     data, labels = fs
 
-    batcher = Batcher(data, batch_size)
+    data = data
+    labels = labels
+    if dev is not None:
+        dev_data,dev_labels = dev
+
 
     for epoch in tqdm(range(epochs)):
+        epoch_loss = 0
+        epoch_data = 0
+
+        batcher = Batcher(data, batch_size)
+
         for batch, size, start, end in batcher:
             d,gold = prepare2(batch,labels[start:end])
 
@@ -88,9 +118,13 @@ def train(model, fs, batch_size, lr, epochs):
             loss = F.cross_entropy(logits, gold)
 
             loss.backward()
+            epoch_loss += loss
+            epoch_data += size
             optimizer.step()
 
-
+        print("Average epoch loss: {0}".format((epoch_loss/epoch_data).data.numpy()))
+        if dev is not None:
+            print("Epoch Dev Accuracy {0}".format(evaluate(model,dev_data,dev_labels,batch_size)))
 
 if __name__ == "__main__":
     db = FeverDocDB("data/fever/drqa.db")
@@ -114,6 +148,6 @@ if __name__ == "__main__":
     input_shape = train_feats[0].shape[1]
 
     model = SimpleMLP(input_shape,100,2)
-    train(model, train_feats, 500, 1e-2, 90)
+    train(model, train_feats, 500, 1e-2, 90,dev_feats)
 
 
