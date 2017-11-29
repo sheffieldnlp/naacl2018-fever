@@ -38,14 +38,14 @@ class FNCFormatter(Formatter):
 
 
 if __name__ == "__main__":
-    bodies = Bodies("lib/fakenewschallenge/train_bodies.csv","lib/fakenewschallenge/test_bodies.csv")
+    bodies = Bodies("data/fnc-1/train_bodies.csv","data/fnc-1/competition_test_bodies.csv")
 
     f = Features([FNCTermFrequencyFeatureFunction(bodies)])
     csvr = CSVReader()
     formatter = FNCFormatter(FNCLabelSchema())
 
-    train_ds = DataSet(file="lib/fakenewschallenge/train_stances.csv", reader=csvr, formatter=formatter)
-    test_ds = DataSet(file="lib/fakenewschallenge/test_stances_unlabeled.csv", reader=csvr, formatter=formatter)
+    train_ds = DataSet(file="data/fnc-1/train_stances.csv", reader=csvr, formatter=formatter)
+    test_ds = DataSet(file="data/fnc-1/competition_test_stances.csv", reader=csvr, formatter=formatter)
 
     train_ds.read()
     test_ds.read()
