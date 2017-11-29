@@ -24,7 +24,7 @@ def prepare2(data,labels):
     data = data.todense()
     v = torch.FloatTensor(np.array(data))
     if gpu():
-        return Variable(v.cuda()), Variable(torch.LongTensor(labels.cuda()))
+        return Variable(v.cuda()), Variable(torch.LongTensor(labels).cuda())
     return Variable(v), Variable(torch.LongTensor(labels))
 
 
