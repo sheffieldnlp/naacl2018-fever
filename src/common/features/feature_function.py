@@ -2,34 +2,26 @@ import numpy as np
 
 
 class Features():
-    def __init__(self,features=list(),preprocessing=None):
+    def __init__(self,features=list(),preprocessing=None,label_name="label"):
         self.preprocessing = preprocessing
         self.feature_functions = features
         self.vocabs = dict()
+        self.label_name = label_name
 
     def load(self,dataset):
         fs = []
-        preprocessed = self.preprocess_all(dataset.data)
         for feature_function in self.feature_functions:
             print("Load {0}".format(feature_function))
-            fs.append(feature_function.lookup(preprocessed))
-        return np.hstack(fs),self.labels(dataset.data)
+            fs.append(feature_function.lookup(dataset))
+        return np.hstack(fs) if len(fs)>1 else fs,self.labels(dataset)
 
     def labels(self,data):
-        return [datum["label"] for datum in data]
+        return [datum[self.label_name] for datum in data]
 
-    def preprocess_all(self,data):
-        return list(
-            map(
-                lambda datum: self.preprocessing(datum["data"]) if self.preprocessing is not None else datum["data"],
-                data))
-
-    def inform(self,dataset):
-        preprocessed = self.preprocess_all(dataset.data)
-        print(len(preprocessed))
+    def inform(self,train,dev=None,test=None):
         for feature_function in self.feature_functions:
             print("Inform {0}".format(feature_function))
-            feature_function.inform(preprocessed)
+            feature_function.inform(train,dev,test)
 
 class FeatureFunction():
 

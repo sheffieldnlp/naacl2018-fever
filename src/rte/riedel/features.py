@@ -1,6 +1,8 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from scipy.sparse import hstack
+
 from common.features.feature_function import FeatureFunction
 from common.util.array import flatten
 from retrieval.fever_doc_db import FeverDocDB
@@ -73,7 +75,6 @@ class TermFrequencyFeatureFunction(FeatureFunction):
         self.bow = self.bow_vectorizer.fit_transform(claims + bodies)
 
         self.tfreq_vectorizer = TfidfTransformer(use_idf=False).fit(self.bow)
-        self.tfreq = self.tfreq_vectorizer.transform(self.bow).toarray()
 
         self.tfidf_vectorizer = TfidfVectorizer(max_features=self.lim_unigram,
                                            stop_words=TermFrequencyFeatureFunction.stop_words). \
@@ -82,49 +83,36 @@ class TermFrequencyFeatureFunction(FeatureFunction):
 
     def lookup(self,data):
         size = len(data)
-        processed = self.process(data)
-
-
-
-        #lu = self.vocab.lookup_sparse(processed,size)
-        #return lu
+        return self.process(data)
 
     def process(self,data):
-        cosines = []
+        claim_bow = self.bow_vectorizer.transform(self.claims(data))
+        claim_tfs = self.tfreq_vectorizer.transform(claim_bow)
+        claim_tfidf = self.tfidf_vectorizer.transform(self.claims(data))
 
-        for instance in data:
-            claim_tfidf = self.tfidf_vectorizer.transform(self.claims([instance])).toarray()
-            body_tfidf = [np.sum(self.tfidf_vectorizer.transform(self.bodies([instance])).toarray(),axis=0)]
+        body_texts = self.texts(data)
+        body_bow = self.bow_vectorizer.transform(body_texts)
+        body_tfs = self.tfreq_vectorizer.transform(body_bow)
+        body_tfidf = self.tfidf_vectorizer.transform(body_texts)
 
-            # Alternative is to concatenate everything into one doc
-            # body_tfidf = self.tfidf_vectorizer.transform([" ".join(self.bodies([instance]))]).toarray()
+        cosines = np.array([cosine_similarity(c, b)[0] for c,b in zip(claim_tfidf,body_tfidf)])
 
-            cosines.append(cosine_similarity(claim_tfidf, body_tfidf)[0].reshape(1, 1)[0][0])
+        return hstack([body_tfs,claim_tfs,cosines])
 
-        print(cosines)
+
     def claims(self,data):
         return [datum["claim"] for datum in data]
 
     def bodies(self,data):
-        return [self.doc_db.get_doc_text(id) for id in set(self.body_ids(data))]
+        return [self.doc_db.get_doc_text(id) for id in set(flatten(self.body_ids(data)))]
+
+    def texts(self,data):
+        return [" ".join([self.doc_db.get_doc_text(page) for page in instance]) for instance in self.body_ids(data)]
+
 
     def body_ids(self,data):
-        return flatten([datum[self.ename] for datum in data])
+        return [datum[self.ename] for datum in data]
 
 
 
-if __name__ == "__main__":
-    db = FeverDocDB("data/fever/drqa.db")
-    tfff = TermFrequencyFeatureFunction(db)
 
-    tfff.inform([{"claim":"This is a claim about japan",
-                  "evidence":["Japan","Pakistan"]
-                  },
-                 {"claim": "This is a claim about Estonia",
-                  "evidence": ["Estonia"]
-                  }
-                 ])
-
-    tfff.lookup([{"claim": "This is a claim about japan",
-                  "evidence": ["Japan", "Pakistan"]
-                  }])
