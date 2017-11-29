@@ -19,7 +19,8 @@ class Features():
 
     def inform(self,train,dev=None,test=None):
         for feature_function in self.feature_functions:
-            print("Inform {0}".format(feature_function))
+            print("Inform {0} with {1} data".format(feature_function,len(train.data)))
+
             feature_function.inform(train.data,
                                     dev.data if dev is not None else None,
                                     test.data if test is not None else None)

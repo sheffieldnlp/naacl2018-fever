@@ -5,7 +5,9 @@ class Formatter():
     def format(self,lines):
         formatted = []
         for line in lines:
-            formatted.append(self.format_line(line))
+            fl = self.format_line(line)
+            if fl is not None:
+                formatted.append(fl)
         return formatted
 
     def format_line(self,line):
