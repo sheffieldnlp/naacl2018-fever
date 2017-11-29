@@ -20,7 +20,9 @@ class Features():
     def inform(self,train,dev=None,test=None):
         for feature_function in self.feature_functions:
             print("Inform {0}".format(feature_function))
-            feature_function.inform(train,dev,test)
+            feature_function.inform(train.data,
+                                    dev.data if dev is not None else None,
+                                    test.data if test is not None else None)
 
 class FeatureFunction():
 
