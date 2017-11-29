@@ -23,12 +23,16 @@ def preprocess(p):
 def prepare2(data,labels):
     data = data.todense()
     v = torch.FloatTensor(np.array(data))
+    if gpu():
+        return Variable(v.cuda()), Variable(torch.LongTensor(labels.cuda()))
     return Variable(v), Variable(torch.LongTensor(labels))
 
 
 def prepare(data):
     data = data.todense()
     v = torch.FloatTensor(np.array(data))
+    if gpu():
+        return Variable(v.cuda())
     return Variable(v)
 
 
@@ -94,9 +98,6 @@ def predict(model, data, batch_size):
     for batch, size, start, end in batcher:
         d = prepare(batch)
 
-        if gpu():
-            d.cuda()
-
         logits = model(d).cpu()
 
         predicted.extend(torch.max(logits, 1)[1])
@@ -123,8 +124,6 @@ def train(model, fs, batch_size, lr, epochs,dev=None):
 
         for batch, size, start, end in batcher:
             d,gold = prepare2(batch,labels[start:end])
-            if gpu():
-                d.cuda()
 
             optimizer.zero_grad()
             logits = model(d)
