@@ -136,6 +136,8 @@ def train(model, fs, batch_size, lr, epochs,dev=None):
             optimizer.step()
 
         print("Average epoch loss: {0}".format((epoch_loss/epoch_data).data.numpy()))
+
+        print("Epoch Train Accuracy {0}".format(evaluate(model, data, labels, batch_size)))
         if dev is not None:
             print("Epoch Dev Accuracy {0}".format(evaluate(model,dev_data,dev_labels,batch_size)))
 
