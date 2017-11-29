@@ -36,7 +36,7 @@ class Features():
 
     def out(self,features,ds):
         if ds is not None:
-            return np.hstack(features) if len(features) > 1 else features, self.labels(ds)
+            return np.hstack(features) if len(features) > 1 else features[0], self.labels(ds)
         return [[]],[]
 
     def generate_or_load(self,feature,dataset,name):
