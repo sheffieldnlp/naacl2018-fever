@@ -1,10 +1,12 @@
 import torch
+import torch.nn.functional as F
+from sklearn.utils import shuffle
+
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score
-
 from common.training.batcher import Batcher, prepare, prepare_with_labels
+from common.util.random import SimpleRandom
 
-import torch.nn.functional as F
 
 def evaluate(model,data,labels,batch_size):
     predicted = predict(model,data,batch_size)
@@ -24,13 +26,15 @@ def predict(model, data, batch_size):
 
 def train(model, fs, batch_size, lr, epochs,dev=None):
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
     steps = 0
 
     data, labels = fs
 
     data = data
     labels = labels
+
+
     if dev is not None:
         dev_data,dev_labels = dev
 
@@ -38,6 +42,8 @@ def train(model, fs, batch_size, lr, epochs,dev=None):
     for epoch in tqdm(range(epochs)):
         epoch_loss = 0
         epoch_data = 0
+
+        shuffle(data,labels,random_state=SimpleRandom.get_instance().next_rand(1,100000))
 
         batcher = Batcher(data, batch_size)
 
