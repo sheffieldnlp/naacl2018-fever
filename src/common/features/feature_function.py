@@ -2,8 +2,7 @@ import numpy as np
 
 
 class Features():
-    def __init__(self,features=list(),preprocessing=None,label_name="label"):
-        self.preprocessing = preprocessing
+    def __init__(self,features=list(),label_name="label"):
         self.feature_functions = features
         self.vocabs = dict()
         self.label_name = label_name

@@ -3,11 +3,11 @@ import sys
 
 from tqdm import tqdm
 
+from common.dataset import Corpus
+from common.dataset import Page
+from common.dataset import get_engine
+from common.dataset import get_session
 from common.util import LogHelper
-from dataset.corpus import Corpus
-from dataset.persistence.engine import get_engine
-from dataset.persistence.page import Page
-from dataset.persistence.session import get_session
 
 if __name__ == "__main__":
     blocks = int(sys.argv[1])

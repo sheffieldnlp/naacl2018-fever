@@ -1,10 +1,11 @@
 import os
 
-from dataset.data_set import DataSet
-from dataset.formatter import SNLIFormatter
-from dataset.label_schema import SNLILabelSchema
-from dataset.reader import JSONLineReader
 from shared.features.feature_function import BleuOverlapFeatureFuntion, Features
+
+from common.dataset import DataSet
+from common.dataset import JSONLineReader
+from common.dataset import SNLIFormatter
+from common.dataset import SNLILabelSchema
 
 train_file = os.path.join("data","snli","snli_1.0" ,"snli_1.0_train.jsonl")
 jlr = JSONLineReader()

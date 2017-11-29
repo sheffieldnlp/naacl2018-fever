@@ -1,8 +1,7 @@
-from sqlalchemy import Table
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from dataset.persistence.page import Page
-from sqlalchemy.ext.declarative import declarative_base
+from common.dataset.persistence.page import Page
 
 def get_session(engine):
     Base = declarative_base()

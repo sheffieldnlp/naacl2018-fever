@@ -3,11 +3,11 @@ import unicodedata
 
 from gensim.models.tfidfmodel import *
 
+from common.dataset import Corpus
+from common.dataset import Page
+from common.dataset import get_engine
+from common.dataset import get_session
 from common.util import LogHelper
-from dataset.corpus import Corpus
-from dataset.persistence.engine import get_engine
-from dataset.persistence.page import Page
-from dataset.persistence.session import get_session
 
 
 def read_lines(wikifile):

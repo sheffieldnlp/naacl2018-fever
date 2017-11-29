@@ -5,9 +5,9 @@ from botocore import UNSIGNED
 from botocore.client import Config
 from botocore.handlers import disable_signing
 
+from common.dataset import Indexer
+from common.dataset import s3_iterator
 from common.util import LogHelper
-from dataset.s3.index import Indexer
-from dataset.s3.iterator import s3_iterator
 
 if __name__ == "__main__":
     LogHelper.setup()

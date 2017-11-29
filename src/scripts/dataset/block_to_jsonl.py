@@ -4,8 +4,8 @@ import sys
 
 from tqdm import tqdm
 
+from common.dataset import Corpus
 from common.util import LogHelper
-from dataset.corpus import Corpus
 
 
 def read_lines(wikifile):

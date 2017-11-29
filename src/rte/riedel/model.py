@@ -1,13 +1,11 @@
+from common.dataset import JSONLineReader
 from common.features.feature_function import Features
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.features import TermFrequencyFeatureFunction
 
-def simple_preproc(text):
-    return text.lower()
-
 if __name__ == "__main__":
     db = FeverDocDB("data/fever/drqa.db")
-    f = Features([TermFrequencyFeatureFunction(db)],preprocessing=simple_preproc)
+    f = Features([TermFrequencyFeatureFunction(db)])
 
 
     f.inform([{"claim":"This is a claim about japan",
@@ -29,3 +27,9 @@ if __name__ == "__main__":
                      "label": "H"
 
                   }]))
+
+
+    jlr = JSONLineReader()
+    formatter = TextAnnotationFormatter(FEVERLabelSchema())
+
+    DataSet(file=sexism_file, reader=jlr, formatter=formatter),
