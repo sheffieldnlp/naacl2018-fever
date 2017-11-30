@@ -24,7 +24,7 @@ def predict(model, data, batch_size):
         predicted.extend(torch.max(logits, 1)[1])
     return torch.stack(predicted)
 
-def train(model, fs, batch_size, lr, epochs,dev=None):
+def train(model, fs, batch_size, lr, epochs,dev=None,clip=None):
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
     steps = 0
@@ -59,10 +59,13 @@ def train(model, fs, batch_size, lr, epochs,dev=None):
 
             epoch_loss += loss.cpu()
             epoch_data += size
+
+            if clip is not None:
+                torch.nn.utils.clip_grad_norm(model.parameters(), clip)
             optimizer.step()
 
         print("Average epoch loss: {0}".format((epoch_loss/epoch_data).data.numpy()))
 
-        print("Epoch Train Accuracy {0}".format(evaluate(model, data, labels, batch_size)))
+        #print("Epoch Train Accuracy {0}".format(evaluate(model, data, labels, batch_size)))
         if dev is not None:
             print("Epoch Dev Accuracy {0}".format(evaluate(model,dev_data,dev_labels,batch_size)))

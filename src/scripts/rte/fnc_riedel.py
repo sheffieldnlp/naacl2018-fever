@@ -58,5 +58,5 @@ if __name__ == "__main__":
     if gpu():
         model.cuda()
 
-    train(model, train_feats, 500, 1e-2, 90,test_feats)
+    train(model, train_feats, 500, 1e-2, 90,test_feats,clip=5)
 
