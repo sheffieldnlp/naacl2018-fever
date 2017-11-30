@@ -37,6 +37,10 @@ class FEVERPredictionsFormatter(Formatter):
         if not isinstance(line['predicted_pages'][0],list):
             return None
 
+        if not isinstance(line['evidence'][0],list):
+            return None
+
+
         pages = [preprocess(ev[0]) for ev in line["predicted_pages"]]
 
         if any(map(lambda p: p not in self.index, pages)):
