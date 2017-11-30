@@ -15,7 +15,7 @@ class Features():
         test_fs = []
 
         for ff in self.feature_functions:
-            ffpath = os.path.join(self.base_path, type(ff).__name__)
+            ffpath = os.path.join(self.base_path, ff.get_name())
 
             if not os.path.exists(ffpath):
                 os.makedirs(ffpath)
@@ -40,7 +40,7 @@ class Features():
         return [[]],[]
 
     def generate_or_load(self,feature,dataset,name):
-        ffpath = os.path.join(self.base_path, type(feature).__name__)
+        ffpath = os.path.join(self.base_path, feature.get_name())
 
         if dataset is not None:
             if os.path.exists(os.path.join(ffpath,name)):

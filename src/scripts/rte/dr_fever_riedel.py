@@ -4,7 +4,7 @@ from common.features.feature_function import Features
 from common.training.options import gpu
 from common.training.run import train
 from retrieval.fever_doc_db import FeverDocDB
-from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
+from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema, FEVERPredictionsFormatter
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
 
@@ -12,20 +12,23 @@ if __name__ == "__main__":
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
 
-    f = Features([TermFrequencyFeatureFunction(db)])
+    f = Features([TermFrequencyFeatureFunction(db,naming="pred")])
+
     jlr = JSONLineReader()
 
-    formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
+    gold_formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
+    formatter = FEVERPredictionsFormatter(idx, FEVERLabelSchema())
 
-    train_ds = DataSet(file="data/fever/fever.train.jsonl", reader=jlr, formatter=formatter)
-    dev_ds = DataSet(file="data/fever/fever.dev.jsonl", reader=jlr, formatter=formatter)
-    test_ds = DataSet(file="data/fever/fever.test.jsonl", reader=jlr, formatter=formatter)
+
+    train_ds = DataSet(file="data/fever/fever.train.jsonl", reader=jlr, formatter=gold_formatter)
+    dev_ds = DataSet(file="data/fever/fever.dev.pages.p5.jsonl", reader=jlr, formatter=formatter)
+#    test_ds = DataSet(file="data/fever/fever.test.pages.p5.jsonl", reader=jlr, formatter=formatter)
 
     train_ds.read()
     dev_ds.read()
-    test_ds.read()
+#    test_ds.read()
 
-    train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, test_ds)
+    train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, None)
 
     input_shape = train_feats[0].shape[1]
 

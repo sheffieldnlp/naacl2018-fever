@@ -39,17 +39,18 @@ class TermFrequencyFeatureFunction(FeatureFunction):
         ]
 
 
-    def __init__(self,doc_db,lim_unigram=5000,gold=True):
+    def __init__(self,doc_db,lim_unigram=5000,naming=None,gold=True):
         super().__init__()
         self.doc_db = doc_db
         self.lim_unigram = lim_unigram
-
+        self.naming = naming
         if gold:
             self.ename = "evidence"
         else:
             self.ename = "predicted"
 
-
+    def get_name(self):
+        return type(self).__name__ + (("-" + self.naming) if self.naming is not None else "")
 
     def inform(self,train,dev=None,test=None):
         claims = self.claims(train)
