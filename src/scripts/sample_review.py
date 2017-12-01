@@ -20,6 +20,7 @@ pages = Corpus("page", "data/fever", 50,lambda x :x )
 for page,doc in pages:
     lut[page] = doc
 
+claim_evidence = defaultdict(lambda: [])
 
 
 # Connect to the database
@@ -58,8 +59,10 @@ try:
         cursor.execute(sql)
         result = cursor.fetchall()
 
+
         for res in result:
-            data.append(dict(res))
+            claim_evidence[res['id']].append(res)
+
 finally:
     connection.close()
 
@@ -67,33 +70,39 @@ finally:
 
 r = random.Random()
 
-r.shuffle(data)
-
-done = []
-for datum in data[:500]:
-    page = datum['entity']
-    try:
-        datum["original_page"] = lut[preprocess(page)]
-        datum["verdict_page"] = lut[preprocess(datum['page'])] if datum['page'] is not None else None
-        done.append(datum)
-    except:
-        continue
-import json
 
 
-with open("data/dump1.json","w+") as f:
-    json.dump(done[:100],f)
-
-with open("data/dump2.json", "w+") as f:
-    json.dump(done[100:200], f)
-
-with open("data/dump3.json", "w+") as f:
-    json.dump(done[200:300], f)
-
-with open("data/dump4.json", "w+") as f:
-    json.dump(done[300:400], f)
-
-with open("data/dump5.json", "w+") as f:
-    json.dump(done[400:500], f)
+keys = list(claim_evidence.keys())
+r.shuffle(keys)
 
 
+
+for i in range(0,500,100):
+
+    done = []
+    texts = dict()
+
+    for datum in keys[i:i+100]:
+        try:
+            id = datum
+            text = claim_evidence[id][0]["text"]
+            isOracle = claim_evidence[id][0]["isOracle"]
+            isReval = claim_evidence[id][0]["isReval"]
+            originalPage = preprocess(claim_evidence[id][0]["entity"])
+            verdicts = []
+            texts[originalPage] = lut[originalPage]
+
+
+            for evidence in claim_evidence[id]:
+                verdicts.append({"label":evidence["label"],"isOracleMaster":evidence["isOracleMaster"],"verifiable":evidence["verifiable"],"page":preprocess(evidence["page"]),"line":evidence["line_number"]})
+                texts[preprocess(evidence["page"])] = lut[preprocess(evidence["page"])]
+
+            done.append({"id":id,"text":text,"isOracle":isOracle,"isReval":isReval,"original_page":originalPage,"annotations":verdicts})
+
+        except:
+            continue
+    import json
+
+
+    with open("data/dump{0}.json".format(i),"w+") as f:
+        json.dump({"annotations":done,"texts":texts},f)
