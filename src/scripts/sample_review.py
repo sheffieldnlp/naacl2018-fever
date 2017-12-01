@@ -1,9 +1,26 @@
 from collections import defaultdict
 
+import pickle
 import pymysql.cursors
 import os
 
 import random
+
+from common.dataset.corpus import Corpus
+from common.util.log_helper import LogHelper
+def preprocess(p):
+    return p.replace(" ","_").replace("(","-LRB-").replace(")","-RRB-").replace(":","-COLON-").split("#")[0]
+
+
+lut = dict()
+
+LogHelper.setup()
+
+pages = Corpus("page", "data/fever", 50,lambda x :x )
+for page,doc in pages:
+    lut[page] = doc
+
+
 
 # Connect to the database
 connection = pymysql.connect(host=os.getenv("DB_HOST", "localhost"),
@@ -52,6 +69,31 @@ r = random.Random()
 
 r.shuffle(data)
 
-for datum in data[:100]:
+done = []
+for datum in data[:500]:
     page = datum['entity']
-print(data[:100])
+    try:
+        datum["original_page"] = lut[preprocess(page)]
+        datum["verdict_page"] = lut[preprocess(datum['page'])] if datum['page'] is not None else None
+        done.append(datum)
+    except:
+        continue
+import json
+
+
+with open("data/dump1.json","w+") as f:
+    json.dump(done[:100],f)
+
+with open("data/dump2.json", "w+") as f:
+    json.dump(done[100:200], f)
+
+with open("data/dump3.json", "w+") as f:
+    json.dump(done[200:300], f)
+
+with open("data/dump4.json", "w+") as f:
+    json.dump(done[300:400], f)
+
+with open("data/dump5.json", "w+") as f:
+    json.dump(done[400:500], f)
+
+
