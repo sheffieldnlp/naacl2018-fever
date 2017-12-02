@@ -52,4 +52,4 @@ class FEVERPredictionsFormatter(Formatter):
 
 class FEVERLabelSchema(LabelSchema):
     def __init__(self):
-        super().__init__(["supported","refuted","not enough information"])
+        super().__init__(["supported","refuted","not enough info"])
