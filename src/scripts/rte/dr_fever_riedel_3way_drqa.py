@@ -12,7 +12,7 @@ if __name__ == "__main__":
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
 
-    f = Features([TermFrequencyFeatureFunction(db,naming="pred3w")])
+    f = Features([TermFrequencyFeatureFunction(db,naming="pred3wdrqa")])
 
     jlr = JSONLineReader()
 
