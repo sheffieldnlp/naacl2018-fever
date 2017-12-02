@@ -1,8 +1,7 @@
 from common.dataset.reader import JSONLineReader
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
-import numpy as np
-
+import json
 
 
 jlr = JSONLineReader()
@@ -15,13 +14,33 @@ r = SimpleRandom.get_instance()
 
 
 
-for line in jlr.read("data/fever/fever.dev.jsonl"):
-    if isinstance(line["evidence"][0],int):
-        print(line["evidence"])
-        print(idx[r.next_rand(0,len(idx))])
+with open("data/fever/fever.dev.ns.rand.jsonl", "w+") as f:
+    for line in jlr.read("data/fever/fever.dev.jsonl"):
+        if isinstance(line["evidence"][0],int):
+            ev = []
+            for e in line['evidence']:
+                ev.append((e,idx[r.next_rand(0,len(idx))]))
+            line['evidence'] = ev
+        f.write(json.dumps(line)+"\n")
 
 
 
 
+with open("data/fever/fever.train.ns.rand.jsonl", "w+") as f:
+    for line in jlr.read("data/fever/fever.train.jsonl"):
+        if isinstance(line["evidence"][0],int):
+            ev = []
+            for e in line['evidence']:
+                ev.append((e,idx[r.next_rand(0,len(idx))]))
+            line['evidence'] = ev
+        f.write(json.dumps(line)+"\n")
 
 
+with open("data/fever/fever.test.ns.rand.jsonl", "w+") as f:
+    for line in jlr.read("data/fever/fever.test.jsonl"):
+        if isinstance(line["evidence"][0],int):
+            ev = []
+            for e in line['evidence']:
+                ev.append((e,idx[r.next_rand(0,len(idx))]))
+            line['evidence'] = ev
+        f.write(json.dumps(line)+"\n")
