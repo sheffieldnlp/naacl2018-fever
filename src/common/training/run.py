@@ -71,5 +71,5 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
             acc = evaluate(model,dev_data,dev_labels,batch_size)
             print("Epoch Dev Accuracy {0}".format(acc))
 
-            if early_stopping is not None and early_stopping(model,epoch,acc):
+            if early_stopping is not None and early_stopping(model,acc):
                 break
