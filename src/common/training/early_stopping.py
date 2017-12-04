@@ -11,13 +11,19 @@ class EarlyStopping():
 
     def __call__(self, model, acc):
         self.epoch += 1
+
+        if self.best_score is None:
+            self.best_score = acc
+
         if acc >= self.best_score:
             self.best_model = model
             self.best_score = acc
             return False
+
         elif self.epoch > self.best_epoch+self.patience:
             print("Early stopping: Terminate")
             return True
+
         print("Early stopping: Worse Round")
         return False
 
