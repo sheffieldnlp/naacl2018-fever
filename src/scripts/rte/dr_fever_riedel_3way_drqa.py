@@ -1,6 +1,7 @@
 from common.dataset.data_set import DataSet
 from common.dataset.reader import JSONLineReader
 from common.features.feature_function import Features
+from common.training.early_stopping import EarlyStopping
 from common.training.options import gpu
 from common.training.run import train
 from retrieval.fever_doc_db import FeverDocDB
@@ -37,5 +38,5 @@ if __name__ == "__main__":
     if gpu():
         model.cuda()
 
-    train(model, train_feats, 500, 1e-2, 90,dev_feats)
+    train(model, train_feats, 500, 1e-2, 90,dev_feats,EarlyStopping())
 
