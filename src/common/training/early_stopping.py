@@ -18,3 +18,7 @@ class EarlyStopping():
         elif self.epoch > self.best_epoch+self.patience:
             return True
         return False
+
+    def get_model(self):
+        return self.best_model
+

@@ -25,19 +25,11 @@ def predict(model, data, batch_size):
     return torch.stack(predicted)
 
 def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=None):
-
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
-    steps = 0
 
     data, labels = fs
-
-    data = data
-    labels = labels
-
-
     if dev is not None:
         dev_data,dev_labels = dev
-
 
     for epoch in tqdm(range(epochs)):
         epoch_loss = 0
@@ -72,4 +64,6 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
             print("Epoch Dev Accuracy {0}".format(acc))
 
             if early_stopping is not None and early_stopping(model,acc):
-                break
+                return early_stopping.best_model()
+
+    return model
