@@ -38,5 +38,5 @@ if __name__ == "__main__":
     if gpu():
         model.cuda()
 
-    train(model, train_feats, 500, 1e-2, 90,dev_feats,EarlyStopping())
+    train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping())
 
