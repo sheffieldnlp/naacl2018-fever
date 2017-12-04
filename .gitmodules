@@ -10,3 +10,6 @@
 [submodule "data/fnc-1"]
 	path = data/fnc-1
 	url = https://github.com/fakenewschallenge/fnc-1
+[submodule "lib/vpsolver"]
+	path = lib/vpsolver
+	url = https://github.com/fdabrandao/vpsolver.git
