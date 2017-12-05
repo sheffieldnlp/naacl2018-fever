@@ -5,6 +5,8 @@ from collections import defaultdict
 import pymysql.cursors
 import os
 # Connect to the database
+import sys
+
 connection = pymysql.connect(host=os.getenv("DB_HOST","localhost"),
                              user=os.getenv("DB_USER","root"),
                              password=os.getenv("DB_PASS",""),
@@ -51,13 +53,13 @@ finally:
 
 
 
-ts_refutes = set()
-ts_support = set()
-ts_notenough = set()
+ts_refutes = []
+ts_support = []
+ts_notenough = []
 
-ds_refutes = set()
-ds_support = set()
-ds_notenough = set()
+ds_refutes = []
+ds_support = []
+ds_notenough = []
 
 pages = list(page_evidence.keys())
 r = random.Random(12453)
@@ -68,111 +70,63 @@ tsr_done = False
 tsn_done = False
 tss_done = False
 
+
+target = 3333
+
+
+def fits_s(page, target, supports):
+    claim_ids = page_evidence[page].keys()
+    cl_support = [id for id in claim_ids if any(ev["label"] == "SUPPORTS" for ev in page_evidence[page][id])]
+    return len(supports)+len(cl_support) <= target
+
+def fits_r(page, target, refutes):
+    claim_ids = page_evidence[page].keys()
+    cl_refutes = [id for id in claim_ids if any(ev["label"] == "REFUTES" for ev in page_evidence[page][id])]
+    return len(refutes)+len(cl_refutes) <= target
+
+
+def fits_n(page, target, notenough):
+    claim_ids = page_evidence[page].keys()
+    cl_notenough = [id for id in claim_ids if any(ev["verifiable"] == "NOT ENOUGH INFO" for ev in page_evidence[page][id])]
+    return len(notenough)+len(cl_notenough) <= target
+
+
+
+
+
+
+def add(page, added, supports, refutes, notenough):
+    claim_ids = page_evidence[page].keys()
+
+    cl_support = [id for id in claim_ids if any(ev["label"] == "SUPPORTS" for ev in page_evidence[page][id])]
+    cl_refutes = [id for id in claim_ids if any(ev["label"] == "REFUTES" for ev in page_evidence[page][id])]
+    cl_notenough = [id for id in claim_ids if any(ev["verifiable"] == "NOT ENOUGH INFO" for ev in page_evidence[page][id])]
+
+    supports.extend(cl_support)
+    refutes.extend(cl_refutes)
+    notenough.extend(cl_notenough)
+
+    added.append(page)
+
+
+
+
+def costs(page):
+    claim_ids = page_evidence[page].keys()
+
+    cl_support = set([id for id in claim_ids if any(ev["label"] == "SUPPORTS" for ev in page_evidence[page][id])])
+    cl_refutes = set([id for id in claim_ids if any(ev["label"] == "REFUTES" for ev in page_evidence[page][id])])
+    cl_notenough = set([id for id in claim_ids if any(ev["verifiable"] == "NOT ENOUGH INFO" for ev in page_evidence[page][id])])
+
+    return len(cl_support),len(cl_refutes),len(cl_notenough)
+
+added = []
+
+print("3")
+print("{0} {0} {0}".format(target))
+print(len(pages))
 for page in pages:
-    print(page)
-
-    if page is None:
-        continue
+    print("{0} {1} {2} 1".format(*costs(page)))
 
 
-    if len(ts_support) < 3333:
-        for claim in page_evidence[page].keys():
-            for evidence in page_evidence[page][claim]:
-                if evidence["label"] == "SUPPORTS":
-                    ts_support.add(claim)
-    else:
-        tss_done = True
 
-    if len(ts_refutes) < 3333:
-        for claim in page_evidence[page].keys():
-            for evidence in page_evidence[page][claim]:
-                if evidence["label"] == "REFUTES":
-                    ts_refutes.add(claim)
-    else:
-        tsr_done = True
-
-    if len(ts_notenough) < 3333:
-        for claim in page_evidence[page].keys():
-            for evidence in page_evidence[page][claim]:
-                if evidence["verifiable"] == "NOT ENOUGH INFO":
-                    ts_notenough.add(claim)
-                    print(len(ts_notenough))
-    else:
-        tsn_done = True
-
-    if len(ds_support) < 3333 and tss_done and tsr_done and tsn_done:
-        for claim in page_evidence[page].keys():
-            for evidence in page_evidence[page][claim]:
-                if evidence["label"] == "SUPPORTS":
-                    ds_support.add(claim)
-
-
-    if len(ds_refutes) < 3333 and tss_done and tsr_done and tsn_done:
-        for claim in page_evidence[page].keys():
-            for evidence in page_evidence[page][claim]:
-                if evidence["label"] == "REFUTES":
-                    ds_refutes.add(claim)
-
-    if len(ds_notenough) < 3333 and tss_done and tsr_done and tsn_done:
-        for claim in page_evidence[page].keys():
-            for evidence in page_evidence[page][claim]:
-                if evidence["verifiable"] == "NOT ENOUGH INFO":
-                    ds_notenough.add(claim)
-
-
-print(len(ts_support))
-print(len(ts_refutes))
-print(len(ts_notenough))
-
-print(len(ds_support))
-print(len(ds_refutes))
-print(len(ds_notenough))
-
-
-with(open("data/fever/fever.test.jsonl","w+")) as f:
-    added = set()
-
-    for claim in ts_support:
-        f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"SUPPORTED","evidence":[(ev["aid"],ev["page"],ev["line_number"]) for ev in claim_evidence[claim] if ev["label"]=="SUPPORTS"]})+"\n")
-        added.add(claim)
-
-    for claim in ts_refutes:
-        f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"REFUTED","evidence":[(ev["aid"],ev["page"],ev["line_number"]) for ev in claim_evidence[claim] if ev["label"]=="REFUTES"]})+"\n")
-        added.add(claim)
-
-    for claim in ts_notenough:
-        f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"NOT ENOUGH INFO","evidence":[(ev["aid"]) for ev in claim_evidence[claim] if ev["verifiable"]=="NOT ENOUGH INFO"]})+"\n")
-        added.add(claim)
-
-
-    for clid in added:
-        del claim_evidence[clid]
-
-with(open("data/fever/fever.dev.jsonl","w+")) as f:
-    added = set()
-
-    for claim in ds_support:
-        f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"SUPPORTED","evidence":[(ev["aid"],ev["page"],ev["line_number"]) for ev in claim_evidence[claim] if ev["label"]=="SUPPORTS"]})+"\n")
-        added.add(claim)
-
-    for claim in ds_refutes:
-        f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"REFUTED","evidence":[(ev["aid"],ev["page"],ev["line_number"]) for ev in claim_evidence[claim] if ev["label"]=="REFUTES"]})+"\n")
-        added.add(claim)
-
-    for claim in ds_notenough:
-        f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"NOT ENOUGH INFO","evidence":[(ev["aid"]) for ev in claim_evidence[claim] if ev["verifiable"]=="NOT ENOUGH INFO"]})+"\n")
-        added.add(claim)
-
-    for clid in added:
-        del claim_evidence[clid]
-
-with(open("data/fever/fever.train.jsonl","w+")) as f:
-    added = set()
-
-    for claim in claim_evidence.keys():
-        if len([ev for ev in claim_evidence[claim] if ev["label"]=="SUPPORTS"]) > 0:
-            f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"SUPPORTED","evidence":[(ev["aid"],ev["page"],ev["line_number"]) for ev in claim_evidence[claim] if ev["label"]=="SUPPORTS"]})+"\n")
-        if len([ev for ev in claim_evidence[claim] if ev["label"] == "REFUTES"]) > 0:
-            f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"REFUTED","evidence":[(ev["aid"],ev["page"],ev["line_number"]) for ev in claim_evidence[claim] if ev["label"]=="REFUTES"]})+"\n")
-        if len([ev for ev in claim_evidence[claim] if ev["verifiable"] == "NOT ENOUGH INFO"]) > 0:
-            f.write(json.dumps({"id":claim,"claim":claim_evidence[claim][0]["text"],"verdict":"NOT ENOUGH INFO","evidence":[(ev["aid"]) for ev in claim_evidence[claim] if ev["verifiable"]=="NOT ENOUGH INFO"]})+"\n")
