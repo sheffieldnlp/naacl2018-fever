@@ -5,7 +5,7 @@ from typing import Optional, IO
 
 import numpy as np
 from tqdm import tqdm
-from rte.parikh.predictor import TextualEntailmentPredictor
+from rte.parikh.predictor import *
 from common.features.word_splitter import IndexedSpaces
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
@@ -17,15 +17,14 @@ def _run(predictor: Predictor,
          output_file: Optional[IO],
          cuda_device: int) -> None:
 
-    def _run_predictor(item):
-        results = predictor.predict_batch_json(item, cuda_device)
-        model_input = item[0]
+    def _run_predictor(items):
+        results = predictor.predict_batch_json(items, cuda_device)
 
-        for idx, output in enumerate(results):
+        for model_input, predicted_output in zip(items,results):
             vers = ["SUPPORTED", "REFUTED","NOT ENOUGH INFO"]
-            a = vers[np.argmax(output['label_logits'])]
-            model_input["predicted_pages"][idx].append(a)
-        output_file.write(json.dumps(model_input) + "\n")
+            a = vers[np.argmax(predicted_output['label_logits'])]
+            model_input["prediction"] = a
+            output_file.write(json.dumps(model_input) + "\n")
 
     batch_json_data = []
     for line in tqdm(input_file):
@@ -38,7 +37,7 @@ def _run(predictor: Predictor,
 def predict(args: argparse.Namespace,docdb) -> None:
     print(args.archive_file)
     archive = load_archive(args.archive_file, cuda_device=args.cuda_device, overrides=args.overrides)
-    predictor = Predictor.from_archive(archive, "drwiki-te")
+    predictor = Predictor.from_archive(archive, "drwiki-te-pred-all")
     predictor.set_docdb(docdb)
 
     # ExitStack allows us to conditionally context-manage `output_file`, which may or may not exist

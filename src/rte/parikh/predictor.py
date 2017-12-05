@@ -26,3 +26,27 @@ class TextualEntailmentPredictor(Predictor):
             premise_text = self.db.get_doc_text(page)
             instances.append(self._dataset_reader.text_to_instance(premise_text, hypothesis_text))
         return instances
+
+
+
+@Predictor.register('drwiki-te-pred-all')
+class TextualEntailmentPredictor(Predictor):
+    @overrides
+    def _batch_json_to_instances(self, json: List[JsonDict]) -> List[Instance]:
+        instances = []
+        for blob in json:
+            instances.extend(self._json_to_instances(blob))
+        return instances
+
+    def set_docdb(self,db):
+        self.db = db
+
+    def _json_to_instances(self,json):
+        hypothesis_text = json["claim"]
+        instances = []
+        premise_texts = []
+        for page,score in json["predicted_pages"]:
+            premise_texts.append(self.db.get_doc_text(page))
+
+        instances.append(self._dataset_reader.text_to_instance(" ".join(premise_texts), hypothesis_text))
+        return instances
