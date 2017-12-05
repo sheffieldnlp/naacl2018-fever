@@ -6,6 +6,7 @@ from typing import Optional, IO
 import numpy as np
 from tqdm import tqdm
 from rte.parikh.predictor import TextualEntailmentPredictor
+from common.features.word_splitter import IndexedSpaces
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
 from retrieval.fever_doc_db import FeverDocDB
