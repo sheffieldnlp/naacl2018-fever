@@ -66,4 +66,6 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
             if early_stopping is not None and early_stopping(model,acc):
                 return early_stopping.get_model()
 
+    if early_stopping is not None:
+        return early_stopping.get_model()
     return model
