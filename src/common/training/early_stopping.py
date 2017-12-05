@@ -18,6 +18,7 @@ class EarlyStopping():
         if acc >= self.best_score:
             self.best_model = model
             self.best_score = acc
+            self.best_epoch = self.epoch
             return False
 
         elif self.epoch > self.best_epoch+self.patience:

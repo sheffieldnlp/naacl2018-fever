@@ -76,4 +76,4 @@ if __name__ == "__main__":
     model = train(model, train_feats, 500, 1e-2, 90,dev_feats,clip=5,early_stopping=EarlyStopping())
 
     test_data, test_labels = test_feats
-    evaluate(model,test_data, test_labels, 500)
+    print("FEVER SCORE {0}".format(evaluate(model,test_data, test_labels, 500)))
