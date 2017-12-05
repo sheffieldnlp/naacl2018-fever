@@ -3,6 +3,7 @@ from common.dataset.formatter import Formatter
 from common.dataset.label_schema import LabelSchema
 from common.dataset.reader import CSVReader, JSONLineReader
 from common.features.feature_function import Features
+from common.training.early_stopping import EarlyStopping
 from common.training.options import gpu
 from common.training.run import train, evaluate
 from rte.riedel.fnc_features import FNCTermFrequencyFeatureFunction
@@ -72,7 +73,7 @@ if __name__ == "__main__":
     if gpu():
         model.cuda()
 
-    model = train(model, train_feats, 500, 1e-2, 90,dev_feats,clip=5)
+    model = train(model, train_feats, 500, 1e-2, 90,dev_feats,clip=5,early_stopping=EarlyStopping())
 
     test_data, test_labels = test_feats
     evaluate(model,test_data, test_labels, 500)
