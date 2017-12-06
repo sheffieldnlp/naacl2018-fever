@@ -84,7 +84,7 @@ class FEVERReader(DatasetReader):
         fields['premise'] = TextField(premise_tokens, self._token_indexers)
         fields['hypothesis'] = TextField(hypothesis_tokens, self._token_indexers)
         if label:
-            fields['label'] = LabelField(label)
+            fields['label'] = LabelField(label,skip_indexing=True)
         return Instance(fields)
 
     @classmethod
