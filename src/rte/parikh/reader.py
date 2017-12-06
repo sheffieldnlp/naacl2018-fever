@@ -65,7 +65,7 @@ class FEVERReader(DatasetReader):
 
             premise = " ".join([self.db.get_doc_text(ev) for ev in set(instance["evidence"])])
             hypothesis = instance["claim"]
-            label = instance["label"]
+            label = instance["label_text"]
             instances.append(self.text_to_instance(premise, hypothesis, label))
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
@@ -84,7 +84,7 @@ class FEVERReader(DatasetReader):
         fields['premise'] = TextField(premise_tokens, self._token_indexers)
         fields['hypothesis'] = TextField(hypothesis_tokens, self._token_indexers)
         if label is not None:
-            fields['label'] = LabelField(label,skip_indexing=True)
+            fields['label'] = LabelField(label)
         return Instance(fields)
 
     @classmethod
