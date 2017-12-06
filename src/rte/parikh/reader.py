@@ -96,3 +96,4 @@ class FEVERReader(DatasetReader):
         return FEVERReader(db=db,
                            tokenizer=tokenizer,
                            token_indexers=token_indexers)
+
