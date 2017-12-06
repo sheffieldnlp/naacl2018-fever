@@ -83,7 +83,7 @@ class FEVERReader(DatasetReader):
         hypothesis_tokens = self._tokenizer.tokenize(hypothesis)
         fields['premise'] = TextField(premise_tokens, self._token_indexers)
         fields['hypothesis'] = TextField(hypothesis_tokens, self._token_indexers)
-        if label:
+        if label is not None:
             fields['label'] = LabelField(label,skip_indexing=True)
         return Instance(fields)
 
