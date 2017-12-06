@@ -63,7 +63,7 @@ class FEVERReader(DatasetReader):
             if instance is None:
                 continue
 
-            premise = " ".join(self.db.get_doc_text(instance["evidence"]))
+            premise = " ".join([self.db.get_doc_text(ev) for ev in set(instance["evidence"])])
             hypothesis = instance["claim"]
             label = instance["label"]
             instances.append(self.text_to_instance(premise, hypothesis, label))
