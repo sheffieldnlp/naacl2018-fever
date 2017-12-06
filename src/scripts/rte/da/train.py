@@ -115,6 +115,7 @@ if __name__ == "__main__":
                            type=str,
                            help='path to parameter file describing the model to be trained')
 
+    parser.add_argument("logdir",type=str)
     cuda_device = parser.add_mutually_exclusive_group(required=False)
     cuda_device.add_argument('--cuda-device', type=int, default=-1, help='id of GPU to use (if any)')
     cuda_device.add_argument('--cuda_device', type=int, help=argparse.SUPPRESS)
@@ -126,9 +127,10 @@ if __name__ == "__main__":
                            help='a HOCON structure used to override the experiment configuration')
 
 
+
     args = parser.parse_args()
 
     db = FeverDocDB(args.db)
 
     params = Params.from_file(args.param_path)
-    train_model(db,params,args,"logs")
+    train_model(db,params,args,args.logdir)
