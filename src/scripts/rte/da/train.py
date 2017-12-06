@@ -9,6 +9,7 @@ from allennlp.common.util import prepare_environment
 from allennlp.data import Vocabulary, Dataset, DataIterator, DatasetReader, Tokenizer, TokenIndexer
 from allennlp.models import Model, archive_model
 from allennlp.training import Trainer
+from common.util.log_helper import LogHelper
 from retrieval.fever_doc_db import FeverDocDB
 from rte.parikh.reader import FEVERReader
 
@@ -103,6 +104,11 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], args: arg
 
 
 if __name__ == "__main__":
+    LogHelper.setup()
+    LogHelper.get_logger("allennlp.training.trainer")
+    LogHelper.get_logger(__name__)
+
+
     parser = argparse.ArgumentParser()
     parser.add_argument('db', type=str, help='/path/to/saved/db.db')
     parser.add_argument('param_path',
