@@ -93,7 +93,6 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], args: arg
                                   validation_data,
                                   trainer_params)
 
-    params.assert_empty('base train command')
     trainer.train()
 
     # Now tar up results
