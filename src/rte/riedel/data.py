@@ -46,8 +46,36 @@ class FEVERPredictionsFormatter(Formatter):
         if any(map(lambda p: p not in self.index, pages)):
             return None
 
-        return {"claim":line["claim"], "evidence": pages, "label":self.label_schema.get_id(annotation)}
+        return {"claim":line["claim"], "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
+
+class FEVERPredictions2Formatter(Formatter):
+
+    def __init__(self,index,label_schema):
+        super().__init__(label_schema)
+        self.index = index
+    def format_line(self,line):
+        annotation = line["verdict"]
+
+        if 'predicted_pages' in line:
+            if not isinstance(line['predicted_pages'][0],list):
+                return None
+
+            pages = [preprocess(ev[0]) for ev in line["predicted_pages"]]
+
+        elif 'evidence' in line:
+            if not isinstance(line['evidence'][0],list):
+                return None
+
+            pages = [preprocess(ev[1]) for ev in line["evidence"]]
+
+        else:
+            pages = []
+
+        if any(map(lambda p: p not in self.index, pages)):
+            return None
+
+        return {"claim":line["claim"], "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
 class FEVERLabelSchema(LabelSchema):
