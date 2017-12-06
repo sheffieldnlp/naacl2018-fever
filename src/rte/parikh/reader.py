@@ -46,7 +46,7 @@ class FEVERReader(DatasetReader):
 
         self.db = db
 
-        self.formatter = FEVERPredictions2Formatter(self.db.get_doc_ids(), FEVERLabelSchema())
+        self.formatter = FEVERPredictions2Formatter(set(self.db.get_doc_ids()), FEVERLabelSchema())
         self.reader = JSONLineReader()
 
 
