@@ -13,3 +13,6 @@
 [submodule "lib/vpsolver"]
 	path = lib/vpsolver
 	url = https://github.com/fdabrandao/vpsolver.git
+[submodule "data/fever-data"]
+	path = data/fever-data
+	url = git@github.com:j6mes/fever-data
