@@ -16,6 +16,20 @@ connection = pymysql.connect(host=os.getenv("DB_HOST", "localhost"),
 
 claim_evidence = defaultdict(lambda: [])
 page_evidence = defaultdict(lambda: defaultdict(lambda: []))
+
+def evidence(claim_id):
+    cl_support = [ev for ev in claim_evidence[claim_id] if ev["label"] == "SUPPORTS" ]
+    cl_refutes = [ev for ev in claim_evidence[claim_id] if ev["label"] == "REFUTES" ]
+    cl_notenough = [ev for ev in claim_evidence[claim_id]  if ev["verifiable"] == "NOT ENOUGH INFO"]
+    return cl_support,cl_refutes,cl_notenough
+
+
+def acceptable(id):
+    s,r,n = evidence(id)
+    return (len(set([ev["aid"] for ev in s])) == len(set([ev["aid"] for ev in n])) and len(s)) \
+           or (len(set([ev["aid"] for ev in r])) == len(set([ev["aid"] for ev in n])) and len(r)) \
+           or (len(s) and len(r))
+
 try:
 
     with connection.cursor() as cursor:
@@ -55,11 +69,28 @@ def costs(cl_support,cl_refutes,cl_notenough):
 
 
 def claims(page):
-    claim_ids = page_evidence[page].keys()
+    claim_ids = list(filter(lambda id: not acceptable(id), page_evidence[page].keys()))
 
     cl_support = set([id for id in claim_ids if any(ev["label"] == "SUPPORTS" for ev in page_evidence[page][id])])
     cl_refutes = set([id for id in claim_ids if any(ev["label"] == "REFUTES" for ev in page_evidence[page][id])])
     cl_notenough = set([id for id in claim_ids if any(ev["verifiable"] == "NOT ENOUGH INFO" for ev in page_evidence[page][id])])
+
+
+    for claim in cl_support:
+        if claim in cl_notenough and len(set([ev["aid"] for ev in claim_evidence[claim] if ev["label"] == "SUPPORTS"])) > len(set([ev["aid"] for ev in claim_evidence[claim] if ev["verifiable"] == "NOT ENOUGH INFO"])):
+            cl_notenough.remove(claim)
+
+    for claim in cl_support:
+        if claim in cl_notenough and len(set([ev["aid"] for ev in claim_evidence[claim] if ev["label"] == "REFUTES"])) > len(set([ev["aid"] for ev in claim_evidence[claim] if ev["verifiable"] == "NOT ENOUGH INFO"])):
+            cl_notenough.remove(claim)
+
+
+    for claim in cl_notenough:
+        if claim in cl_support and len(set([ev["aid"] for ev in claim_evidence[claim] if ev["label"] == "SUPPORTS"])) < len(set([ev["aid"] for ev in claim_evidence[claim] if ev["verifiable"] == "NOT ENOUGH INFO"])):
+            cl_support.remove(claim)
+
+        if claim in cl_refutes and len(set([ev["aid"] for ev in claim_evidence[claim] if ev["label"] == "REFUTES"])) < len(set([ev["aid"] for ev in claim_evidence[claim] if ev["verifiable"] == "NOT ENOUGH INFO"])):
+            cl_refutes.remove(claim)
 
     return cl_support,cl_refutes,cl_notenough
 
@@ -197,8 +228,8 @@ print(sum((len(test_sup),len(test_ref),len(test_not),len(dev_sup),len(dev_ref),l
 
 
 train = train_sup+train_ref+train_not
-dev = train_sup+train_ref+train_not
-test = train_sup+train_ref+train_not
+dev = dev_sup+dev_ref+dev_not
+test = test_sup+test_ref+test_not
 
 
 r = random.Random(13842)

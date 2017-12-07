@@ -14,8 +14,16 @@ connection = pymysql.connect(host=os.getenv("DB_HOST", "localhost"),
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 
+
+def evidence(claim_id):
+    cl_support = [ev for ev in claim_evidence[claim_id] if ev["label"] == "SUPPORTS" ]
+    cl_refutes = [ev for ev in claim_evidence[claim_id] if ev["label"] == "REFUTES" ]
+    cl_notenough = [ev for ev in claim_evidence[claim_id]  if ev["verifiable"] == "NOT ENOUGH INFO"]
+    return cl_support,cl_refutes,cl_notenough
+
+
+
 claim_evidence = defaultdict(lambda: [])
-page_evidence = defaultdict(lambda: defaultdict(lambda: []))
 try:
 
     with connection.cursor() as cursor:
@@ -43,176 +51,71 @@ try:
         result = cursor.fetchall()
 
         for res in result:
-            page_evidence[res['entity']][res['id']].append(res)
             claim_evidence[res['id']].append(res)
 
 finally:
     connection.close()
 
 
-def costs(cl_support,cl_refutes,cl_notenough):
-    return len(cl_support),len(cl_refutes),len(cl_notenough)
+def process(ids):
+    data = []
+    print(len(ids))
+    for id in ids:
+
+        cl0 = claim_evidence[id][0]
+        support_evidence, refute_evidence, not_enough_info_evidence = evidence(id)
 
 
-def claims(page):
-    claim_ids = page_evidence[page].keys()
+        if len(set([ev["aid"] for ev in support_evidence])) > len(set([ev["aid"] for ev in not_enough_info_evidence])):
+            not_enough_info_evidence = []
 
-    cl_support = set([id for id in claim_ids if any(ev["label"] == "SUPPORTS" for ev in page_evidence[page][id])])
-    cl_refutes = set([id for id in claim_ids if any(ev["label"] == "REFUTES" for ev in page_evidence[page][id])])
-    cl_notenough = set([id for id in claim_ids if any(ev["verifiable"] == "NOT ENOUGH INFO" for ev in page_evidence[page][id])])
+        if len(set([ev["aid"] for ev in refute_evidence])) > len(set([ev["aid"] for ev in not_enough_info_evidence])):
+            not_enough_info_evidence = []
 
-    return cl_support,cl_refutes,cl_notenough
+        if len(set([ev["aid"] for ev in refute_evidence])) < len(set([ev["aid"] for ev in not_enough_info_evidence])):
+            support_evidence = []
 
-
-
-
-def balancing_heuristic(page):
-    s,r,n = costs(*claims(page))
-    return 4*s-r-n
+        if len(set([ev["aid"] for ev in refute_evidence])) < len(set([ev["aid"] for ev in not_enough_info_evidence])):
+            refute_evidence = []
 
 
-pages = list(page_evidence.keys())
-r = random.Random(33259)
-r.shuffle(pages)
-
-pq = []
-
-for page in pages:
-    heapq.heappush(pq,(balancing_heuristic(page),page))
-
-test_pages = []
-dev_pages = []
-train_pages = []
-
-train_sup = []
-dev_sup  =[]
-test_sup = []
+        pages = []
+        if len(support_evidence):
+            data.append({"id":id, "verifiable":"VERIFIABLE", "label":"SUPPORTS","text":cl0['text'],"evidence":[(ev['aid'],ev['page'],ev['line_number']) for ev in support_evidence]})
+        if len(refute_evidence):
+            data.append({"id": id, "verifiable":"VERIFIABLE", "label": "REFUTES", "text": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in refute_evidence]})
+        if len(not_enough_info_evidence):
+            data.append({"id": id, "verifiable":"NOT ENOUGH INFO", "label": None, "text": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in not_enough_info_evidence]})
+    return data
 
 
-train_ref = []
-dev_ref  =[]
-test_ref = []
+cnt=0
 
+with open("train.ids.json", "r") as f:
+    train_ids = json.load(f)
+    print(train_ids[:10])
+    train = process(train_ids)
 
-train_not = []
-dev_not  =[]
-test_not = []
+with open("dev.ids.json", "r") as f:
+    dev_ids = json.load(f)
+    print(dev_ids[:10])
+    dev = process(dev_ids)
 
+with open("test.ids.json", "r") as f:
+    test_ids = json.load(f)
+    print(test_ids[:10])
+    test = process(test_ids)
 
-cs, cr, cn = 0,0,0
-csd, crd, cnd = 0,0,0
+with open("train.jsonl","w+") as f:
+    for line in train:
+        f.write(json.dumps(line)+"\n")
 
-while True:
-    _,page = heapq.heappop(pq)
+with open("dev.jsonl","w+") as f:
+    for line in dev:
+        f.write(json.dumps(line)+"\n")
 
-    cl = claims(page)
-    s,r,n = costs(*cl)
+with open("test.jsonl","w+") as f:
+    for line in test:
+        f.write(json.dumps(line)+"\n")
 
-    test_sup.extend(cl[0])
-    test_ref.extend(cl[1])
-    test_not.extend(cl[2])
-
-    cs+= s
-    cr+= r
-    cn+= n
-
-    test_pages.append(page)
-
-    if cr>3333 and cn>3333:
-        break
-
-print(cs,cr,cn)
-
-
-while True:
-    _,page = heapq.heappop(pq)
-
-    cl = claims(page)
-    s,r,n = costs(*cl)
-
-    dev_sup.extend(cl[0])
-    dev_ref.extend(cl[1])
-    dev_not.extend(cl[2])
-
-    csd+= s
-    crd+= r
-    cnd+= n
-
-    dev_pages.append(page)
-
-    if crd>3333 and cnd>3333:
-        break
-
-while len(pq):
-    _, page = heapq.heappop(pq)
-    train_pages.append(page)
-
-    s,r,n = claims(page)
-    train_sup.extend(s)
-    train_ref.extend(r)
-    train_not.extend(n)
-
-print(csd,crd,cnd)
-
-test_s_remove = len(test_sup)-3333
-test_r_remove = len(test_ref)-3333
-test_n_remove = len(test_not)-3333
-
-dev_s_remove = len(dev_sup)-3333
-dev_r_remove = len(dev_ref)-3333
-dev_n_remove = len(dev_not)-3333
-
-
-r = random.Random(2149)
-r.shuffle(test_sup)
-r = random.Random(2129)
-r.shuffle(test_ref)
-r = random.Random(2649)
-r.shuffle(test_not)
-
-dropped_test = test_sup[:test_s_remove]+test_ref[:test_r_remove]+test_not[:test_n_remove]
-
-test_sup = test_sup[test_s_remove:]
-test_ref = test_ref[test_r_remove:]
-test_not = test_not[test_n_remove:]
-
-r = random.Random(3149)
-r.shuffle(dev_sup)
-r = random.Random(3129)
-r.shuffle(dev_ref)
-r = random.Random(3649)
-r.shuffle(dev_not)
-
-dropped_dev = dev_sup[:dev_s_remove]+dev_ref[:dev_r_remove]+dev_not[:dev_n_remove]
-
-dev_sup = dev_sup[dev_s_remove:]
-dev_ref = dev_ref[dev_r_remove:]
-dev_not = dev_not[dev_n_remove:]
-
-print(len(test_sup),len(test_ref),len(test_not))
-print(len(dev_sup),len(dev_ref),len(dev_not))
-print(len(train_sup),len(train_ref),len(train_not))
-
-print(sum((len(test_sup),len(test_ref),len(test_not),len(dev_sup),len(dev_ref),len(dev_not),len(train_sup),len(train_ref),len(train_not))))
-
-
-train = train_sup+train_ref+train_not
-dev = train_sup+train_ref+train_not
-test = train_sup+train_ref+train_not
-
-
-r = random.Random(13842)
-r.shuffle(train)
-
-r = random.Random(13843)
-r.shuffle(dev)
-
-r = random.Random(13844)
-r.shuffle(test)
-
-with open("train.ids.json","w+") as f:
-    json.dump(train,f)
-with open("dev.ids.json","w+") as f:
-    json.dump(dev,f)
-with open("test.ids.json","w+") as f:
-    json.dump(test,f)
+print(len(train),len(dev),len(test))
