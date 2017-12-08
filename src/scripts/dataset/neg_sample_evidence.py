@@ -16,10 +16,10 @@ r = SimpleRandom.get_instance()
 
 with open("data/fever/dev.ns.rand.jsonl", "w+") as f:
     for line in jlr.read("data/fever-data/dev.jsonl"):
-        if isinstance(line["evidence"][0],int):
+        if line["VERIFIABLE"]=="NOT ENOUGH INFO":
             ev = []
             for e in line['evidence']:
-                ev.append((e,idx[r.next_rand(0,len(idx))]))
+                ev.append((e[0],idx[r.next_rand(0,len(idx))],-1))
             line['evidence'] = ev
         f.write(json.dumps(line)+"\n")
 
@@ -28,19 +28,19 @@ with open("data/fever/dev.ns.rand.jsonl", "w+") as f:
 
 with open("data/fever/train.ns.rand.jsonl", "w+") as f:
     for line in jlr.read("data/fever-data/train.jsonl"):
-        if isinstance(line["evidence"][0],int):
+        if line["VERIFIABLE"] == "NOT ENOUGH INFO":
             ev = []
             for e in line['evidence']:
-                ev.append((e,idx[r.next_rand(0,len(idx))]))
+                ev.append((e[0], idx[r.next_rand(0, len(idx))], -1))
             line['evidence'] = ev
         f.write(json.dumps(line)+"\n")
 
 
 with open("data/fever/test.ns.rand.jsonl", "w+") as f:
     for line in jlr.read("data/fever-data/test.jsonl"):
-        if isinstance(line["evidence"][0],int):
+        if line["VERIFIABLE"] == "NOT ENOUGH INFO":
             ev = []
             for e in line['evidence']:
-                ev.append((e,idx[r.next_rand(0,len(idx))]))
+                ev.append((e[0], idx[r.next_rand(0, len(idx))], -1))
             line['evidence'] = ev
         f.write(json.dumps(line)+"\n")
