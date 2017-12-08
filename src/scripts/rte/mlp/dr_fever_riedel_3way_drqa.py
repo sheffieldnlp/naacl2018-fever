@@ -60,7 +60,7 @@ if __name__ == "__main__":
         final_model = model
     else:
         final_model = train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping())
-        model.save_state_dict("models/{0}.model".format(mname))
+        model.save(model.state_dict(), "models/{0}.model".format(mname))
 
 
     print_evaluation(final_model, dev_feats, FEVERLabelSchema())
