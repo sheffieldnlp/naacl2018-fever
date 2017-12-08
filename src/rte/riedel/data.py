@@ -13,7 +13,7 @@ class FEVERGoldFormatter(Formatter):
         super().__init__(label_schema)
         self.index = index
     def format_line(self,line):
-        annotation = line["verdict"]
+        annotation = line["label"]
 
         if not isinstance(line['evidence'][0],list):
             return None
@@ -32,7 +32,7 @@ class FEVERPredictionsFormatter(Formatter):
         super().__init__(label_schema)
         self.index = index
     def format_line(self,line):
-        annotation = line["verdict"]
+        annotation = line["label"]
 
         if not isinstance(line['predicted_pages'][0],list):
             return None
@@ -55,7 +55,7 @@ class FEVERPredictions2Formatter(Formatter):
         super().__init__(label_schema)
         self.index = index
     def format_line(self,line):
-        annotation = line["verdict"]
+        annotation = line["label"]
 
         if 'predicted_pages' in line:
             if not isinstance(line['predicted_pages'][0],list):
