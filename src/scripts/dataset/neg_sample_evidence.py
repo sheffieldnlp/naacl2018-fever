@@ -11,10 +11,7 @@ docdb = FeverDocDB("data/fever/drqa.db")
 
 idx = docdb.get_doc_ids()
 
-SimpleRandom.set_seeds()
-
-r = random.Random(SimpleRandom.get_seed())
-
+r = SimpleRandom.get_instance()
 
 with open("data/fever/test.ns.rand.jsonl", "w+") as f:
     for line in jlr.read("data/fever-data/test.jsonl"):
