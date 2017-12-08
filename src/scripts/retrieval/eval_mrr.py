@@ -15,18 +15,18 @@ def preprocess(p):
 q = 0
 score = 0
 
-with open("data/fever/fever.{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
+with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
     for idx,line in enumerate(f):
         js = json.loads(line)
         evidence = set([t[1] for t in js["evidence"] if isinstance(t,list) and len(t)>1])
         predicted = [t[0] for t in js['predicted_pages']]
         print(evidence)
-
         print(predicted)
 
-        for p in evidence:
-            q += 1
-            if preprocess(p) in predicted:
-                score+= (1/(predicted.index(preprocess(p))+1))
+        if js["verifiable"] == "VERIFIABLE":
+            for p in evidence:
+                q += 1
+                if preprocess(p) in predicted:
+                    score+= (1/(predicted.index(preprocess(p))+1))
 
     print(score/q)
