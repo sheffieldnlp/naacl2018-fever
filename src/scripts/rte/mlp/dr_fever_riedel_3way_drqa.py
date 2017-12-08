@@ -9,19 +9,19 @@ from common.features.feature_function import Features
 from common.training.early_stopping import EarlyStopping
 from common.training.options import gpu
 from common.training.run import train, predict, print_evaluation
+from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema, FEVERPredictionsFormatter
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
 
 if __name__ == "__main__":
+    SimpleRandom.set_seeds()
+
     maxdoc = sys.argv[1]
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
 
-    torch.manual_seed(1238)
-    if gpu():
-        torch.cuda.manual_seed(1238)
 
     f = Features([TermFrequencyFeatureFunction(db,naming="pred3wdrqa-p{0}".format(maxdoc))])
 

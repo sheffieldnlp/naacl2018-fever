@@ -35,7 +35,7 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
         epoch_loss = 0
         epoch_data = 0
 
-        shuffle(data,labels,random_state=SimpleRandom.get_instance().next_rand(1,100000))
+        shuffle(data,labels)
 
         batcher = Batcher(data, batch_size)
 
