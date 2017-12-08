@@ -71,9 +71,9 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
     return model
 
 
-def print_evaluation(model,ds,ls):
-    test_data, actual = ds.data
-    predictions = predict(model, test_data, 500)
+def print_evaluation(model,features,actual,ls):
+
+    predictions = predict(model, features, 500)
 
 
 

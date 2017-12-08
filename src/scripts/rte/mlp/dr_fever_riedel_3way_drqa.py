@@ -49,7 +49,6 @@ if __name__ == "__main__":
 
     final_model = train(model, train_feats, 500, 1e-2, 90,dev_feats,5,early_stopping=EarlyStopping())
 
-
-    print_evaluation(final_model, dev_ds, FEVERLabelSchema())
-    print_evaluation(final_model, test_ds, FEVERLabelSchema())
+    print_evaluation(final_model, dev_feats, dev_ds.data[1], FEVERLabelSchema())
+    print_evaluation(final_model, test_feats, test_ds.data[1], FEVERLabelSchema())
 
