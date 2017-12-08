@@ -23,8 +23,8 @@ if __name__ == "__main__":
     split = args.split
     ranker = retriever.get_class('tfidf')(tfidf_path=args.model)
 
-    with open("data/fever/fever.{0}.jsonl".format(split),"r") as f:
-        with open("data/fever/fever.{0}.pages.p{1}.jsonl".format(split,k),"w+") as f2:
+    with open("data/fever-data/{0}.jsonl".format(split),"r") as f:
+        with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"w+") as f2:
             for line in tqdm(f.readlines()):
                 js = json.loads(line)
                 pages = process(ranker,js['claim'],k=k)

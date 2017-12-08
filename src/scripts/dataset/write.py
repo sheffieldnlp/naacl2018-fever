@@ -81,11 +81,11 @@ def process(ids):
 
         pages = []
         if len(support_evidence):
-            data.append({"id":id, "verifiable":"VERIFIABLE", "label":"SUPPORTS","text":cl0['text'],"evidence":[(ev['aid'],ev['page'],ev['line_number']) for ev in support_evidence]})
+            data.append({"id":id, "verifiable":"VERIFIABLE", "label":"SUPPORTS","claim":cl0['text'],"evidence":[(ev['aid'],ev['page'],ev['line_number']) for ev in support_evidence]})
         if len(refute_evidence):
-            data.append({"id": id, "verifiable":"VERIFIABLE", "label": "REFUTES", "text": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in refute_evidence]})
+            data.append({"id": id, "verifiable":"VERIFIABLE", "label": "REFUTES", "claim": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in refute_evidence]})
         if len(not_enough_info_evidence):
-            data.append({"id": id, "verifiable":"NOT ENOUGH INFO", "label": None, "text": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in not_enough_info_evidence]})
+            data.append({"id": id, "verifiable":"NOT ENOUGH INFO", "label": None, "claim": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in not_enough_info_evidence]})
     return data
 
 

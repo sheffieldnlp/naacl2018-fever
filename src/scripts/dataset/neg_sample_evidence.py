@@ -14,8 +14,8 @@ r = SimpleRandom.get_instance()
 
 
 
-with open("data/fever/fever.dev.ns.rand.jsonl", "w+") as f:
-    for line in jlr.read("data/fever/fever.dev.jsonl"):
+with open("data/fever/dev.ns.rand.jsonl", "w+") as f:
+    for line in jlr.read("data/fever-data/dev.jsonl"):
         if isinstance(line["evidence"][0],int):
             ev = []
             for e in line['evidence']:
@@ -26,8 +26,8 @@ with open("data/fever/fever.dev.ns.rand.jsonl", "w+") as f:
 
 
 
-with open("data/fever/fever.train.ns.rand.jsonl", "w+") as f:
-    for line in jlr.read("data/fever/fever.train.jsonl"):
+with open("data/fever/train.ns.rand.jsonl", "w+") as f:
+    for line in jlr.read("data/fever-data/train.jsonl"):
         if isinstance(line["evidence"][0],int):
             ev = []
             for e in line['evidence']:
@@ -36,8 +36,8 @@ with open("data/fever/fever.train.ns.rand.jsonl", "w+") as f:
         f.write(json.dumps(line)+"\n")
 
 
-with open("data/fever/fever.test.ns.rand.jsonl", "w+") as f:
-    for line in jlr.read("data/fever/fever.test.jsonl"):
+with open("data/fever/test.ns.rand.jsonl", "w+") as f:
+    for line in jlr.read("data/fever-data/test.jsonl"):
         if isinstance(line["evidence"][0],int):
             ev = []
             for e in line['evidence']:
