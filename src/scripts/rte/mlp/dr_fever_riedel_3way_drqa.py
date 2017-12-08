@@ -19,11 +19,13 @@ if __name__ == "__main__":
     SimpleRandom.set_seeds()
 
     maxdoc = sys.argv[1]
+    ns_docsize = sys.argv[2]
+
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
 
 
-    f = Features([TermFrequencyFeatureFunction(db,naming="pred3wdrqa-p{0}".format(maxdoc))])
+    f = Features([TermFrequencyFeatureFunction(db,naming="pred3wdrqa-p{0}-p{1}".format(maxdoc,ns_docsize))])
 
     jlr = JSONLineReader()
 
@@ -31,7 +33,7 @@ if __name__ == "__main__":
     formatter = FEVERPredictionsFormatter(idx, FEVERLabelSchema())
 
 
-    train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(maxdoc), reader=jlr, formatter=gold_formatter)
+    train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(ns_docsize), reader=jlr, formatter=gold_formatter)
     dev_ds = DataSet(file="data/fever/dev.pages.p{0}.jsonl".format(maxdoc), reader=jlr, formatter=formatter)
     test_ds = DataSet(file="data/fever/test.pages.p{0}.jsonl".format(maxdoc), reader=jlr, formatter=formatter)
 
