@@ -14,15 +14,11 @@ class FEVERGoldFormatter(Formatter):
         self.index = index
     def format_line(self,line):
         annotation = line["label"]
+        if annotation is None:
+            annotation = line["verifiable"]
 
-        if not isinstance(line['evidence'][0],list):
-            return None
 
         pages = [preprocess(ev[1]) for ev in line["evidence"]]
-
-        if any(map(lambda p: p not in self.index, pages)):
-            return None
-
         return {"claim":line["claim"], "evidence": pages, "label":self.label_schema.get_id(annotation)}
 
 
@@ -33,19 +29,11 @@ class FEVERPredictionsFormatter(Formatter):
         self.index = index
     def format_line(self,line):
         annotation = line["label"]
-
-        if not isinstance(line['predicted_pages'][0],list):
-            return None
-
-        if not isinstance(line['evidence'][0],list):
-            return None
+        if annotation is None:
+            annotation = line["verifiable"]
 
 
         pages = [preprocess(ev[0]) for ev in line["predicted_pages"]]
-
-        if any(map(lambda p: p not in self.index, pages)):
-            return None
-
         return {"claim":line["claim"], "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
@@ -56,24 +44,17 @@ class FEVERPredictions2Formatter(Formatter):
         self.index = index
     def format_line(self,line):
         annotation = line["label"]
+        if annotation is None:
+            annotation = line["verifiable"]
 
         if 'predicted_pages' in line:
-            if not isinstance(line['predicted_pages'][0],list):
-                return None
-
             pages = [preprocess(ev[0]) for ev in line["predicted_pages"]]
 
         elif 'evidence' in line:
-            if not isinstance(line['evidence'][0],list):
-                return None
-
             pages = [preprocess(ev[1]) for ev in line["evidence"]]
 
         else:
             pages = []
-
-        if any(map(lambda p: p not in self.index, pages)):
-            return None
 
         return {"claim":line["claim"], "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
