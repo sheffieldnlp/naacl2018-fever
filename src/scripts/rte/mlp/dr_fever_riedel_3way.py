@@ -1,5 +1,6 @@
 import sys
 
+import torch
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 from common.dataset.data_set import DataSet
@@ -17,6 +18,10 @@ if __name__ == "__main__":
     maxdoc = sys.argv[1]
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
+
+    torch.manual_seed(1238)
+    if gpu():
+        torch.cuda.manual_seed(1238)
 
     f = Features([TermFrequencyFeatureFunction(db,naming="pred3w-p{0}".format(maxdoc))])
 
