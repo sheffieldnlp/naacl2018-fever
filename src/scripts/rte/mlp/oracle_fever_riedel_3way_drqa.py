@@ -22,7 +22,7 @@ def model_exists(mname):
 if __name__ == "__main__":
     SimpleRandom.set_seeds()
 
-    ns_docsize = sys.argv[2]
+    ns_docsize = sys.argv[1]
 
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
