@@ -77,7 +77,7 @@ def print_evaluation(model,data,ls):
 
 
 
-    labels = [ls.labels[i] for i, _ in enumerate(ls.labels)]
+    labels = [ls.idx[i] for i, _ in enumerate(ls.idx)]
     print(accuracy_score(actual, predictions))
     print(classification_report(actual, predictions, labels=labels))
     print(confusion_matrix(actual, predictions, labels=labels))
