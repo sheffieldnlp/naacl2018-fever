@@ -75,9 +75,13 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
 
 def print_evaluation(model,data,ls):
     features,actual = data
-    predictions = predict(model, features, 500).data.numpy()
+    predictions = predict(model, features, 500).data.numpy().reshape(-1).tolist()
 
     labels = [ls.idx[i] for i, _ in enumerate(ls.idx)]
+
+    actual = [labels[i] for i in actual]
+    predictions = [labels[i] for i in predictions]
+
     print(accuracy_score(actual, predictions))
-    print(classification_report(actual, predictions, labels=labels))
-    print(confusion_matrix(actual, predictions, labels=labels))
+    print(classification_report(actual, predictions))
+    print(confusion_matrix(actual, predictions))
