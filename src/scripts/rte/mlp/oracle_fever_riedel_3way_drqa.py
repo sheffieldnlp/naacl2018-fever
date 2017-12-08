@@ -27,7 +27,7 @@ if __name__ == "__main__":
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
 
-    mname = "oraclepred3wdrqa-p{1}".format(ns_docsize)
+    mname = "oraclepred3wdrqa-p{0}".format(ns_docsize)
 
     f = Features([TermFrequencyFeatureFunction(db,naming=mname)])
 
