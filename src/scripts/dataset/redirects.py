@@ -56,26 +56,27 @@ if __name__ == "__main__":
     idx = set(db.get_doc_ids())
     redirects = get_redirects()
 
+    split = "train"
+
     fixed = 0
     errs = 0
-    with open("data/fever-data/train.jsonl","r") as f:
-        for line in f:
-            js = json.loads(line)
+    with open("data/fever-data/{0}.jsonl".format(split),"r") as f:
 
-            evidence = js["evidence"]
+        with open("data/fever-data/{0}.resolved.jsonl".format(split), "w+") as g:
+            for line in f:
+                js = json.loads(line)
 
-            for ev in evidence:
-                if ev[1] is not None:
-                    ev[1] = ev[1].split("#")[0]
+                evidence = js["evidence"]
 
-                    m = clean(normalize(ev[1]))
-                    n = get_wiki_entry(ev[1])
+                for i,ev in enumerate(evidence):
+                    if ev[1] is not None:
+                        ev[1] = ev[1].split("#")[0]
 
-                    if m!=n:
-                        print(m,n)
-                        fixed+=1
+                        m = clean(normalize(ev[1]))
+                        n = get_wiki_entry(ev[1])
 
-                    if n is None:
-                        errs += 1
-    print(fixed)
-    print(errs)
+                        evidence[i][1] = n
+
+                g.write(json.dumps(js)+"\n")
+
+
