@@ -14,6 +14,8 @@ from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema, FEVERPredictio
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
 
+
+
 if __name__ == "__main__":
     maxdoc = sys.argv[1]
     db = FeverDocDB("data/fever/drqa.db")
@@ -51,13 +53,5 @@ if __name__ == "__main__":
     final_model = train(model, train_feats, 500, 1e-2, 90,dev_feats,5,early_stopping=EarlyStopping())
 
 
-    test_data,actual = test_ds.data
-
-    predictions = predict(final_model,test_data, 500)
-
-    ls = FEVERLabelSchema()
-
-    labels = [ls.labels[i] for i,_ in enumerate(ls.labels)]
-    print(accuracy_score(actual, predictions))
-    print(classification_report(actual, predictions,labels=labels))
-    print(confusion_matrix(actual,predictions,labels=labels))
+    print_evaluation(final_model, dev_ds, FEVERLabelSchema())
+    print_evaluation(final_model, test_ds, FEVERLabelSchema())

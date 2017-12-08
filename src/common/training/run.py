@@ -3,7 +3,7 @@ import torch.nn.functional as F
 from sklearn.utils import shuffle
 
 from tqdm import tqdm
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from common.training.batcher import Batcher, prepare, prepare_with_labels
 from common.util.random import SimpleRandom
 
@@ -69,3 +69,15 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
     if early_stopping is not None:
         return early_stopping.get_model()
     return model
+
+
+def print_evaluation(model,ds,ls):
+    test_data, actual = ds.data
+    predictions = predict(model, test_data, 500)
+
+
+
+    labels = [ls.labels[i] for i, _ in enumerate(ls.labels)]
+    print(accuracy_score(actual, predictions))
+    print(classification_report(actual, predictions, labels=labels))
+    print(confusion_matrix(actual, predictions, labels=labels))

@@ -8,7 +8,7 @@ from common.dataset.reader import JSONLineReader
 from common.features.feature_function import Features
 from common.training.early_stopping import EarlyStopping
 from common.training.options import gpu
-from common.training.run import train, predict
+from common.training.run import train, predict, print_evaluation
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema, FEVERPredictionsFormatter
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
@@ -50,13 +50,7 @@ if __name__ == "__main__":
 
     final_model = train(model, train_feats, 500, 1e-2, 90,dev_feats,5,early_stopping=EarlyStopping())
 
-    test_data, actual = test_ds.data
 
-    predictions = predict(final_model, test_data, 500)
+    print_evaluation(final_model, dev_ds, FEVERLabelSchema())
+    print_evaluation(final_model, test_ds, FEVERLabelSchema())
 
-    ls = FEVERLabelSchema()
-
-    labels = [ls.labels[i] for i, _ in enumerate(ls.labels)]
-    print(accuracy_score(actual, predictions))
-    print(classification_report(actual, predictions, labels=labels))
-    print(confusion_matrix(actual, predictions, labels=labels))
