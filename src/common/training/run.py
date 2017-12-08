@@ -24,7 +24,7 @@ def predict(model, data, batch_size):
         predicted.extend(torch.max(logits, 1)[1])
     return torch.stack(predicted)
 
-def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=None):
+def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=None,name=None):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
 
     data, labels = fs
@@ -66,16 +66,16 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
             if early_stopping is not None and early_stopping(model,acc):
                 return early_stopping.get_model()
 
+
     if early_stopping is not None:
         return early_stopping.get_model()
     return model
 
 
+
 def print_evaluation(model,data,ls):
     features,actual = data
-    predictions = predict(model, features, 500)
-
-
+    predictions = predict(model, features, 500).data.numpy()
 
     labels = [ls.idx[i] for i, _ in enumerate(ls.idx)]
     print(accuracy_score(actual, predictions))

@@ -15,6 +15,10 @@ from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema, FEVERPredictio
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
 
+import os
+
+def model_exists(mname):
+    return os.path.exists(os.path.join("models","{0}.model".format(mname)))
 
 
 if __name__ == "__main__":
@@ -23,7 +27,9 @@ if __name__ == "__main__":
     db = FeverDocDB("data/fever/drqa.db")
     idx = set(db.get_doc_ids())
 
-    f = Features([TermFrequencyFeatureFunction(db,naming="pred3w-p{0}".format(maxdoc))])
+    mname = "pred3w-p{0}".format(maxdoc)
+
+    f = Features([TermFrequencyFeatureFunction(db,naming=mname)])
 
     jlr = JSONLineReader()
 
@@ -48,8 +54,14 @@ if __name__ == "__main__":
     if gpu():
         model.cuda()
 
-    final_model = train(model, train_feats, 500, 1e-2, 90,dev_feats,5,early_stopping=EarlyStopping())
+
+    if model_exists(mname):
+        model.load_state_dict(torch.load("models/{0}.model".format(mname)))
+        final_model = model
+    else:
+        final_model = train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping())
+        model.save_state_dict("models/{0}.model".format(mname))
 
 
-    print_evaluation(final_model,dev_feats,FEVERLabelSchema())
-    print_evaluation(final_model,test_feats, FEVERLabelSchema())
+    print_evaluation(model,dev_feats,FEVERLabelSchema())
+    print_evaluation(model,test_feats, FEVERLabelSchema())
