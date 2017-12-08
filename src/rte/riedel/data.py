@@ -21,7 +21,7 @@ class FEVERGoldFormatter(FeverFormatter):
             annotation = line["verifiable"]
 
         pages = [preprocess(ev[1]) for ev in line["evidence"]]
-        return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation)}
+        return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
 class FEVERPredictionsFormatter(FeverFormatter):
