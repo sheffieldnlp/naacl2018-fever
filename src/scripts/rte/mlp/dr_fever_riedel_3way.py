@@ -8,7 +8,7 @@ from common.dataset.reader import JSONLineReader
 from common.features.feature_function import Features
 from common.training.early_stopping import EarlyStopping
 from common.training.options import gpu
-from common.training.run import train, predict
+from common.training.run import train, predict, print_evaluation
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema, FEVERPredictionsFormatter
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
