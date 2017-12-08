@@ -39,7 +39,7 @@ if __name__ == "__main__":
     dev_ds.read()
     test_ds.read()
 
-    train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, None)
+    train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, test_ds)
 
     input_shape = train_feats[0].shape[1]
 
