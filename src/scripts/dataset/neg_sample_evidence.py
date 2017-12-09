@@ -1,15 +1,23 @@
+import re
+
 from common.dataset.reader import JSONLineReader
 from common.util import random
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 import json
-import random
+from tqdm import tqdm
+
+
+def useless(title):
+    return  '-LRB-disambiguation-RRB-' in title.lower() or '-LRB-disambiguation_page-RRB-' in title.lower() or re.match(r'(List_of_.+)|(Index_of_.+)|(Outline_of_.+)',  title)
 
 jlr = JSONLineReader()
 
 docdb = FeverDocDB("data/fever/drqa.db")
 
-idx = docdb.get_doc_ids()
+idx = docdb.get_non_empty_doc_ids()
+idx = list(filter(lambda item: not useless(item),tqdm(idx)))
+
 
 r = SimpleRandom.get_instance()
 

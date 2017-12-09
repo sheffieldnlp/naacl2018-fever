@@ -65,6 +65,11 @@ class FEVERReader(DatasetReader):
                 continue
 
             premise = " ".join([self.db.get_doc_text(ev) for ev in set(instance["evidence"])])
+
+            if len(premise.strip()) == 0:
+                print(instance)
+                print("UNABLE TO LOAD")
+
             hypothesis = instance["claim"]
             label = instance["label_text"]
             instances.append(self.text_to_instance(premise, hypothesis, label))

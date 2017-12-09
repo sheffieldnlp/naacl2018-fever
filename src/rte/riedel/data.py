@@ -49,6 +49,7 @@ class FEVERPredictions2Formatter(FeverFormatter):
         else:
             pages = []
 
+
         return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
