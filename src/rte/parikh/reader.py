@@ -39,9 +39,11 @@ class FEVERReader(DatasetReader):
 
     def __init__(self,
                  db: FeverDocDB,
-                 tokenizer: Tokenizer = None,
+                 wiki_tokenizer: Tokenizer = None,
+                 claim_tokenizer: Tokenizer = None,
                  token_indexers: Dict[str, TokenIndexer] = None) -> None:
-        self._tokenizer = tokenizer or WordTokenizer()
+        self._wiki_tokenizer = wiki_tokenizer or WordTokenizer()
+        self._claim_tokenizer = claim_tokenizer or WordTokenizer()
         self._token_indexers = token_indexers or {'tokens': SingleIdTokenIndexer()}
 
         self.db = db
@@ -54,7 +56,6 @@ class FEVERReader(DatasetReader):
     def read(self, file_path: str):
 
         instances = []
-
 
         ds = FEVERDataSet(file_path,reader=self.reader, formatter=self.formatter)
         ds.read()
@@ -79,8 +80,8 @@ class FEVERReader(DatasetReader):
                          label: str = None) -> Instance:
         # pylint: disable=arguments-differ
         fields: Dict[str, Field] = {}
-        premise_tokens = self._tokenizer.tokenize(premise)
-        hypothesis_tokens = self._tokenizer.tokenize(hypothesis)
+        premise_tokens = self._wiki_tokenizer.tokenize(premise)
+        hypothesis_tokens = self._claim_tokenizer.tokenize(hypothesis)
         fields['premise'] = TextField(premise_tokens, self._token_indexers)
         fields['hypothesis'] = TextField(hypothesis_tokens, self._token_indexers)
         if label is not None:
@@ -89,11 +90,14 @@ class FEVERReader(DatasetReader):
 
     @classmethod
     def from_params(cls, params: Params) -> 'FEVERReader':
-        tokenizer = Tokenizer.from_params(params.pop('tokenizer', {}))
+        claim_tokenizer = Tokenizer.from_params(params.pop('claim_tokenizer', {}))
+        wiki_tokenizer = Tokenizer.from_params(params.pop('wiki_tokenizer', {}))
+
         token_indexers = TokenIndexer.dict_from_params(params.pop('token_indexers', {}))
         db = FeverDocDB(params.pop("db_path","data/fever.db"))
         params.assert_empty(cls.__name__)
         return FEVERReader(db=db,
-                           tokenizer=tokenizer,
+                           claim_tokenizer=claim_tokenizer,
+                           wiki_tokenizer=wiki_tokenizer,
                            token_indexers=token_indexers)
 

@@ -1,10 +1,4 @@
 {
-  "tokenizer": {
-      "type":"word",
-      "word_splitter": {
-        "type": "just_spaces"
-      }
-    },
   "dataset_reader": {
     "type": "fever",
     "token_indexers": {
@@ -13,10 +7,16 @@
         "lowercase_tokens": true
       }
     },
-    "tokenizer": {
+    "wiki_tokenizer": {
       "type":"word",
       "word_splitter": {
         "type": "just_spaces"
+      }
+    },
+    "claim_tokenizer": {
+      "type":"word",
+      "word_splitter": {
+        "type": "simple"
       }
     }
   },
@@ -28,7 +28,7 @@
       "tokens": {
         "type": "embedding",
         "projection_dim": 200,
-        "pretrained_file": "https://s3-us-west-2.amazonaws.com/allennlp/datasets/glove/glove.6B.300d.txt.gz",
+        "pretrained_file": "data/glove/glove.6B.300d.txt.gz",
         "embedding_dim": 300,
         "trainable": false
       }

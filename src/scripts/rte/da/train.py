@@ -53,9 +53,11 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], args: arg
         json.dump(serialization_params, param_file, indent=4)
 
     # Now we begin assembling the required parts for the Trainer.
+    ds_params = params.pop('dataset_reader', {})
     dataset_reader = FEVERReader(db,
-                                 tokenizer=Tokenizer.from_params(params.pop('tokenizer', {})),
-                                 token_indexers=TokenIndexer.dict_from_params(params.pop('token_indexers', {})))
+                                 wiki_tokenizer=Tokenizer.from_params(ds_params.pop('wiki_tokenizer', {})),
+                                 claim_tokenizer=Tokenizer.from_params(ds_params.pop('claim_tokenizer', {})),
+                                 token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})))
 
     train_data_path = params.pop('train_data_path')
     logger.info("Reading training data from %s", train_data_path)
