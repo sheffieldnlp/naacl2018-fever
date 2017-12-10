@@ -11,13 +11,16 @@
       "type":"word",
       "word_splitter": {
         "type": "just_spaces"
-      }
+      },
+      "end_tokens":["@@END@@"]
     },
     "claim_tokenizer": {
       "type":"word",
       "word_splitter": {
         "type": "simple"
-      }
+      },
+      "end_tokens":["@@END@@"]
+
     }
   },
   "train_data_path": "data/fever/train.ns.rand.jsonl",
