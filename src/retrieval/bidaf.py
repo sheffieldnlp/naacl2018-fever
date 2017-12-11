@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 
 import torch
 from torch.autograd import Variable
+from torch.nn import Linear,ReLU
 from torch.nn.functional import nll_loss
 
 from allennlp.common import Params
@@ -10,11 +11,31 @@ from allennlp.common.checks import ConfigurationError
 from allennlp.data import Vocabulary
 from allennlp.models.model import Model
 from allennlp.modules import Highway, MatrixAttention
-from allennlp.modules import Seq2SeqEncoder, SimilarityFunction, TimeDistributed, TextFieldEmbedder
+from allennlp.modules import Seq2SeqEncoder, SimilarityFunction, TimeDistributed, TextFieldEmbedder, FeedForward
 from allennlp.nn import util, InitializerApplicator, RegularizerApplicator
 from allennlp.training.metrics import BooleanAccuracy, CategoricalAccuracy, SquadEmAndF1
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+
+class FC3(torch.nn.Module):
+    def __init__(self,dim):
+        self.fc1 = Linear(dim,dim)
+        self.fc2 = Linear(dim,dim)
+        self.fc3 = Linear(dim,dim)
+        self.relu = ReLU()
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu(x)
+
+        x = self.fc2(x)
+        x = self.relu(x)
+
+        x = self.fc3(x)
+        x = self.relu(x)
+
+        return x
 
 
 @Model.register("bidaf")
@@ -87,6 +108,10 @@ class BidirectionalAttentionFlow(Model):
 
         encoding_dim = phrase_layer.get_output_dim()
         modeling_dim = modeling_layer.get_output_dim()
+
+        self._compat_layer = FC3(encoding_dim*4+modeling_dim)
+        self._compat_pred_layer = Linear(encoding_dim*4+modeling_dim,2)
+
         span_start_input_dim = encoding_dim * 4 + modeling_dim
         self._span_start_predictor = TimeDistributed(torch.nn.Linear(span_start_input_dim, 1))
 
@@ -120,6 +145,7 @@ class BidirectionalAttentionFlow(Model):
         self._span_end_accuracy = CategoricalAccuracy()
         self._span_accuracy = BooleanAccuracy()
         self._squad_metrics = SquadEmAndF1()
+        self._compat_accuracy = BooleanAccuracy()
         if dropout > 0:
             self._dropout = torch.nn.Dropout(p=dropout)
         else:
@@ -228,6 +254,12 @@ class BidirectionalAttentionFlow(Model):
 
         modeled_passage = self._dropout(self._modeling_layer(final_merged_passage, passage_lstm_mask))
         modeling_dim = modeled_passage.size(-1)
+
+
+        self._compat_logits = self._compat_layer()
+        self._compat_pred_layer = Linear(encoding_dim*4+modeling_dim,2)
+
+
 
         # Shape: (batch_size, passage_length, encoding_dim * 4 + modeling_dim))
         span_start_input = self._dropout(torch.cat([final_merged_passage, modeled_passage], dim=-1))
