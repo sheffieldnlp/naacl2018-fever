@@ -7,7 +7,7 @@ class DataSet():
 
 
     def read(self):
-        self.data.extend(filter(lambda record: record is not None, self.formatter.format(self.reader.read(self.file)[:10])))
+        self.data.extend(filter(lambda record: record is not None, self.formatter.format(self.reader.read(self.file))))
 
 
 
