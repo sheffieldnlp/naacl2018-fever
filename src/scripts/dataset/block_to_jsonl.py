@@ -4,8 +4,8 @@ import sys
 
 from tqdm import tqdm
 
-from common.dataset import Corpus
-from common.util import LogHelper
+from common.dataset.corpus import Corpus
+from common.util.log_helper import LogHelper
 
 
 def read_lines(wikifile):
@@ -68,4 +68,4 @@ if __name__ == "__main__":
 
     with BlockWriter(os.path.join("data","fever","wiki"),50000) as f:
         for page, body in tqdm(blk):
-            f.write(json.dumps({"id":page , "text": " ".join(body)}))
+            f.write(json.dumps({"id":page , "text": " ".join(body),"lines":body}))
