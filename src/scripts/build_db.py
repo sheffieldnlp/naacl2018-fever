@@ -134,6 +134,8 @@ if __name__ == '__main__':
                         help='Number of CPU processes (for tokenizing, etc)')
     args = parser.parse_args()
 
+    print(args.data_path)
+    print(args.save_path)
     store_contents(
         args.data_path, args.save_path, args.preprocess, args.num_workers
     )

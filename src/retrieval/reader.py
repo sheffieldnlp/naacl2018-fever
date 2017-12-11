@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List, Tuple
 import json
 import logging
 
@@ -8,6 +8,7 @@ import tqdm
 from allennlp.common import Params
 from allennlp.common.checks import ConfigurationError
 from allennlp.common.file_utils import cached_path
+from allennlp.data import Token
 from allennlp.data.dataset import Dataset
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.fields import Field, TextField, LabelField
@@ -16,9 +17,24 @@ from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
 from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from common.dataset.reader import JSONLineReader
 from retrieval.fever_doc_db import FeverDocDB
-from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema
+from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema, FeverFormatter, preprocess
 from common.dataset.data_set import DataSet as FEVERDataSet
+from allennlp.data.dataset_readers.reading_comprehension import util
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+
+
+class FEVERSentenceFormatter(FeverFormatter):
+    def format_line(self,line):
+        annotation = line["label"]
+        if annotation is None:
+            annotation = line["verifiable"]
+
+        pages = []
+        if 'evidence' in line:
+            pages = [(ev[2], preprocess(ev[1])) for ev in line["evidence"] if ev[1] is not None]
+
+        return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
 @DatasetReader.register("fever-sentence")
@@ -48,7 +64,7 @@ class FEVERSentenceReader(DatasetReader):
 
         self.db = db
 
-        self.formatter = FEVERPredictions2Formatter(set(self.db.get_doc_ids()), FEVERLabelSchema())
+        self.formatter = FEVERSentenceFormatter(set(self.db.get_doc_ids()), FEVERLabelSchema())
         self.reader = JSONLineReader()
 
 
@@ -64,15 +80,25 @@ class FEVERSentenceReader(DatasetReader):
             if instance is None:
                 continue
 
-            premise = " ".join([self.db.get_doc_text(ev) for ev in set(instance["evidence"])])
+            for page in set([ev[0] for ev in instance['evidence']]):
+                claim = instance['claim'].strip()
+                paragraph = self.db.get_doc_text(page)
+                tokenized_paragraph = self._wiki_tokenizer.tokenize(paragraph)
 
-            if len(premise.strip()) == 0:
-                print(instance)
-                print("UNABLE TO LOAD")
+                evidences = set([ev[1] for ev in instance['evidence'] if ev[0] == page])
 
-            hypothesis = instance["claim"]
-            label = instance["label_text"]
-            instances.append(self.text_to_instance(premise, hypothesis, label))
+                lines = self.db.get_doc_lines(page)
+                evidence_texts = [lines.split("\n")[line].split("\t")[1] for line in evidences]
+
+                span_starts = [paragraph.index(evidence_text) for evidence_text in evidence_texts]
+                span_ends =  [start + len(evidence_texts) for start, evidence_text in zip(span_starts, evidence_texts)]
+                instance = self.text_to_instance(claim,
+                                                 paragraph,
+                                                 zip(span_starts, span_ends),
+                                                 evidence_texts,
+                                                 tokenized_paragraph)
+
+
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
                                      "Is the path correct?".format(file_path))
@@ -106,63 +132,6 @@ class FEVERSentenceReader(DatasetReader):
                            wiki_tokenizer=wiki_tokenizer,
                            token_indexers=token_indexers)
 
-
-    """
-    Reads a JSON-formatted SQuAD file and returns a ``Dataset`` where the ``Instances`` have four
-    fields: ``question``, a ``TextField``, ``passage``, another ``TextField``, and ``span_start``
-    and ``span_end``, both ``IndexFields`` into the ``passage`` ``TextField``.  We also add a
-    ``MetadataField`` that stores the instance's ID, the original passage text, gold answer strings,
-    and token offsets into the original passage, accessible as ``metadata['id']``,
-    ``metadata['original_passage']``, ``metadata['answer_texts']`` and
-    ``metadata['token_offsets']``.  This is so that we can more easily use the official SQuAD
-    evaluation script to get metrics.
-
-    Parameters
-    ----------
-    tokenizer : ``Tokenizer``, optional (default=``WordTokenizer()``)
-        We use this ``Tokenizer`` for both the question and the passage.  See :class:`Tokenizer`.
-        Default is ```WordTokenizer()``.
-    token_indexers : ``Dict[str, TokenIndexer]``, optional
-        We similarly use this for both the question and the passage.  See :class:`TokenIndexer`.
-        Default is ``{"tokens": SingleIdTokenIndexer()}``.
-    """
-    def __init__(self,
-                 tokenizer: Tokenizer = None,
-                 token_indexers: Dict[str, TokenIndexer] = None) -> None:
-        self._tokenizer = tokenizer or WordTokenizer()
-        self._token_indexers = token_indexers or {'tokens': SingleIdTokenIndexer()}
-
-    @overrides
-    def read(self, file_path: str):
-        # if `file_path` is a URL, redirect to the cache
-        file_path = cached_path(file_path)
-
-        logger.info("Reading file at %s", file_path)
-        with open(file_path) as dataset_file:
-            dataset_json = json.load(dataset_file)
-            dataset = dataset_json['data']
-        logger.info("Reading the dataset")
-        instances = []
-        for article in tqdm(dataset):
-            for paragraph_json in article['paragraphs']:
-                paragraph = paragraph_json["context"]
-                tokenized_paragraph = self._tokenizer.tokenize(paragraph)
-
-                for question_answer in paragraph_json['qas']:
-                    question_text = question_answer["question"].strip().replace("\n", "")
-                    answer_texts = [answer['text'] for answer in question_answer['answers']]
-                    span_starts = [answer['answer_start'] for answer in question_answer['answers']]
-                    span_ends = [start + len(answer) for start, answer in zip(span_starts, answer_texts)]
-                    instance = self.text_to_instance(question_text,
-                                                     paragraph,
-                                                     zip(span_starts, span_ends),
-                                                     answer_texts,
-                                                     tokenized_paragraph)
-                    instances.append(instance)
-        if not instances:
-            raise ConfigurationError("No instances were read from the given filepath {}. "
-                                     "Is the path correct?".format(file_path))
-        return Dataset(instances)
 
     @overrides
     def text_to_instance(self,  # type: ignore
@@ -200,9 +169,3 @@ class FEVERSentenceReader(DatasetReader):
                                                         token_spans,
                                                         answer_texts)
 
-    @classmethod
-    def from_params(cls, params: Params) -> 'SquadReader':
-        tokenizer = Tokenizer.from_params(params.pop('tokenizer', {}))
-        token_indexers = TokenIndexer.dict_from_params(params.pop('token_indexers', {}))
-        params.assert_empty(cls.__name__)
-        return cls(tokenizer=tokenizer, token_indexers=token_indexers)

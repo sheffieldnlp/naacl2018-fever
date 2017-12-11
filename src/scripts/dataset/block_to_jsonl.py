@@ -63,9 +63,9 @@ if __name__ == "__main__":
     LogHelper.setup()
     logger = LogHelper.get_logger("convert")
 
-    blk = Corpus("page",os.path.join("data","fever"),blocks,read_words)
+    blk = Corpus("page",os.path.join("data","fever"),blocks,lambda x:(x,read_words(x)))
 
 
     with BlockWriter(os.path.join("data","fever","wiki"),50000) as f:
         for page, body in tqdm(blk):
-            f.write(json.dumps({"id":page , "text": " ".join(body),"lines":body}))
+            f.write(json.dumps({"id":page , "text": " ".join(body[1]),"lines":body[0]}))
