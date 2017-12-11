@@ -15,9 +15,10 @@ from allennlp.data.fields import Field, TextField, LabelField
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
 from allennlp.data.tokenizers import Tokenizer, WordTokenizer
+from allennlp.data.tokenizers.word_splitter import WordSplitter
 from common.dataset.reader import JSONLineReader
 from retrieval.fever_doc_db import FeverDocDB
-from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema, FeverFormatter, preprocess
+from rte.riedel.data import FEVERLabelSchema, FeverFormatter, preprocess
 from common.dataset.data_set import DataSet as FEVERDataSet
 from allennlp.data.dataset_readers.reading_comprehension import util
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -32,9 +33,11 @@ class FEVERSentenceFormatter(FeverFormatter):
 
         pages = []
         if 'evidence' in line:
-            pages = [(ev[2], preprocess(ev[1])) for ev in line["evidence"] if ev[1] is not None]
+            pages = [(preprocess(ev[1]),ev[2]) for ev in line["evidence"] if ev[1] is not None]
 
         return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
+
+
 
 
 @DatasetReader.register("fever-sentence")
@@ -87,18 +90,24 @@ class FEVERSentenceReader(DatasetReader):
 
                 evidences = set([ev[1] for ev in instance['evidence'] if ev[0] == page])
 
-                lines = self.db.get_doc_lines(page)
-                evidence_texts = [lines.split("\n")[line].split("\t")[1] for line in evidences]
 
-                span_starts = [paragraph.index(evidence_text) for evidence_text in evidence_texts]
-                span_ends =  [start + len(evidence_texts) for start, evidence_text in zip(span_starts, evidence_texts)]
-                instance = self.text_to_instance(claim,
+                lines = self.db.get_doc_lines(page)
+                if any(ev<0 for ev in evidences):
+                    span_ends = [0]
+                    span_starts = [0]
+                    evidence_texts = [""]
+
+                else:
+                    evidence_texts = [lines.split("\n")[line].split("\t")[1] for line in evidences]
+
+                    span_starts = [paragraph.index(evidence_text) for evidence_text in evidence_texts]
+                    span_ends =  [start + len(evidence_texts) for start, evidence_text in zip(span_starts, evidence_texts)]
+                inst = self.text_to_instance(claim,
                                                  paragraph,
                                                  zip(span_starts, span_ends),
                                                  evidence_texts,
                                                  tokenized_paragraph)
-
-
+                instances.append(inst)
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
                                      "Is the path correct?".format(file_path))
@@ -125,7 +134,7 @@ class FEVERSentenceReader(DatasetReader):
         wiki_tokenizer = Tokenizer.from_params(params.pop('wiki_tokenizer', {}))
 
         token_indexers = TokenIndexer.dict_from_params(params.pop('token_indexers', {}))
-        db = FeverDocDB(params.pop("db_path","data/fever.db"))
+        db = FeverDocDB(params.pop("db_path","data/fever/fever.db"))
         params.assert_empty(cls.__name__)
         return FEVERSentenceReader(db=db,
                            claim_tokenizer=claim_tokenizer,
@@ -162,7 +171,7 @@ class FEVERSentenceReader(DatasetReader):
                 logger.debug("Answer: %s", passage_text[char_span_start:char_span_end])
             token_spans.append((span_start, span_end))
 
-        return util.make_reading_comprehension_instance(self._tokenizer.tokenize(question_text),
+        return util.make_reading_comprehension_instance(self._claim_tokenizer.tokenize(question_text),
                                                         passage_tokens,
                                                         self._token_indexers,
                                                         passage_text,

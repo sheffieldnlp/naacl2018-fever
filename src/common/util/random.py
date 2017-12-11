@@ -26,8 +26,8 @@ class SimpleRandom():
     def get_seed():
         return os.getenv("RANDOM_SEED", 12459)
 
-    @classmethod
-    def set_seeds(cls):
+    @staticmethod
+    def set_seeds():
 
         torch.manual_seed(SimpleRandom.get_seed())
         if gpu():
