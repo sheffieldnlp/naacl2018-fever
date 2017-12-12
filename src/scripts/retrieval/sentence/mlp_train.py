@@ -47,8 +47,8 @@ class FEVERSentenceRelatednessFormatter(FeverFormatter):
 
         evidence_texts = []
         claim = self.tokenize(line['claim']).strip()
-        for page in set([ev[0] for ev in line['evidence']]):
-            evidences = set([ev[1] for ev in line['evidence'] if ev[0] == page])
+        for page in set([ev[1] for ev in line['evidence']]):
+            evidences = set([ev[2] for ev in line['evidence'] if ev[1] == page])
             lines = self.db.get_doc_lines(page)
             if any(ev<0 for ev in evidences):
                 evidence_texts = [""]
