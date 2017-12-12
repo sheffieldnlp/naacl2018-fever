@@ -20,7 +20,7 @@ import json
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], args: argparse.Namespace , serialization_dir: str) -> Model:
+def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int, serialization_dir: str) -> Model:
     """
     This function can be used as an entry point to running models in AllenNLP
     directly from a JSON specification using a :class:`Driver`. Note that if
@@ -89,6 +89,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], args: arg
         validation_data.index_instances(vocab)
 
     trainer_params = params.pop("trainer")
+    if cuda_device is not None:
+        args.trainer_params["cuda_device"] = cuda_device
     trainer = Trainer.from_params(model,
                                   serialization_dir,
                                   iterator,
@@ -118,11 +120,7 @@ if __name__ == "__main__":
                            help='path to parameter file describing the model to be trained')
 
     parser.add_argument("logdir",type=str)
-    cuda_device = parser.add_mutually_exclusive_group(required=False)
-    cuda_device.add_argument('--cuda-device', type=int, default=-1, help='id of GPU to use (if any)')
-    cuda_device.add_argument('--cuda_device', type=int, help=argparse.SUPPRESS)
-
-
+    parser.add_argument("--cuda-device", type=int, default=None, help='id of GPU to use (if any)')
     parser.add_argument('-o', '--overrides',
                            type=str,
                            default="",
@@ -135,4 +133,4 @@ if __name__ == "__main__":
     db = FeverDocDB(args.db)
 
     params = Params.from_file(args.param_path)
-    train_model(db,params,args,args.logdir)
+    train_model(db,params,args.cuda_device,args.logdir)
