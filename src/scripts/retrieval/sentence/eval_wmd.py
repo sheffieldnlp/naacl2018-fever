@@ -82,5 +82,5 @@ f1 = [ (tp[i] + tp[i])/(tp[i]+tp[i]+fp[i]+fn[i] ) for i in range(len(tp)) ]
 
 best = np.argmax(f1)
 
-print(f1[best])
+print(f1[best], tpr[best])
 print(thresh[best])
