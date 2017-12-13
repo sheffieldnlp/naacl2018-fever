@@ -18,24 +18,12 @@ from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from allennlp.data.tokenizers.word_splitter import WordSplitter
 from common.dataset.reader import JSONLineReader
 from retrieval.fever_doc_db import FeverDocDB
+from retrieval.sentence import FEVERSentenceFormatter
 from rte.riedel.data import FEVERLabelSchema, FeverFormatter, preprocess
 from common.dataset.data_set import DataSet as FEVERDataSet
 from allennlp.data.dataset_readers.reading_comprehension import util
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-
-
-class FEVERSentenceFormatter(FeverFormatter):
-    def format_line(self,line):
-        annotation = line["label"]
-        if annotation is None:
-            annotation = line["verifiable"]
-
-        pages = []
-        if 'evidence' in line:
-            pages = [(preprocess(ev[1]),ev[2]) for ev in line["evidence"] if ev[1] is not None]
-
-        return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
 

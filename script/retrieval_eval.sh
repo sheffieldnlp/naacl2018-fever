@@ -12,7 +12,10 @@ PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/eval_recall_all.py
 echo "k=10"
 PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/eval_recall.py --count 10 --split dev
 PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/eval_recall_all.py --count 10 --split dev
-PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/eval_p_oracle.py --count 10 --split dev
+
+echo "k=25"
+PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/eval_recall.py --count 25 --split dev
+PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/eval_recall_all.py --count 25 --split dev
 
 echo "k=100"
 PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/eval_recall.py --count 100 --split dev

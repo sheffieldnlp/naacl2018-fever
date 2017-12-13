@@ -16,6 +16,8 @@ PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/batch_ir.py  --mod
 PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/batch_ir.py  --model data/fever/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 100 --split dev > logs/ir.dev.100
 PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/batch_ir.py  --model data/fever/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 100 --split test > logs/ir.test.100
 
+PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/batch_ir.py  --model data/fever/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 25 --split dev > logs/ir.dev.25 &
+PYTHONPATH=src:lib/DrQA python src/scripts/retrieval/document/batch_ir.py  --model data/fever/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 25 --split test > logs/ir.test.25 &
 
 #Sample random pages for training not enough info
 PYTHONPATH=src:lib/DrQA python src/scripts/dataset/neg_sample_evidence.py > logs/ir.nse

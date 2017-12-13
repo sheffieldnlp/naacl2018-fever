@@ -13,6 +13,7 @@ from common.training.run import train, predict, print_evaluation
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 from retrieval.sent_features import SentenceTermFrequencyFeatureFunction
+from retrieval.sentence import FEVERSentenceRelatednessFormatter, FEVERSentenceFormatter
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema, FEVERPredictionsFormatter, FeverFormatter, preprocess
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
@@ -27,35 +28,6 @@ class RelatedLabelSchema(LabelSchema):
         super().__init__(["related","unrelated"])
 
 
-class FEVERSentenceRelatednessFormatter(FeverFormatter):
-
-    def __init__(self,idx, db,ls):
-        super().__init__(idx, ls)
-        self.label_schema = ls
-        self.ols = FEVERLabelSchema()
-        self.db = db
-
-    def format_line(self,line):
-        annotation = line["label"]
-        if annotation is None:
-            annotation = line["verifiable"]
-
-        if self.ols.get_id(annotation) != self.ols.get_id("not enough info"):
-            annotation = "related"
-        else:
-            annotation = "unrelated"
-
-        evidence_texts = []
-        claim = self.tokenize(line['claim']).strip()
-        for page in set([ev[1] for ev in line['evidence']]):
-            evidences = set([ev[2] for ev in line['evidence'] if ev[1] == page])
-            lines = self.db.get_doc_lines(page)
-            if any(ev<0 for ev in evidences):
-                evidence_texts = [""]
-            else:
-                evidence_texts = [lines.split("\n")[line].split("\t")[1].split() for line in evidences]
-
-        return {"claim":claim, "sentences": evidence_texts, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
 if __name__ == "__main__":
@@ -72,7 +44,7 @@ if __name__ == "__main__":
     f = Features([SentenceTermFrequencyFeatureFunction(db,naming=mname)])
     jlr = JSONLineReader()
 
-    formatter = FEVERSentenceRelatednessFormatter(idx, db, RelatedLabelSchema())
+    formatter = FEVERSentenceFormatter(idx, db, RelatedLabelSchema())
 
 
     train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(ns_docsize), reader=jlr, formatter=formatter)
