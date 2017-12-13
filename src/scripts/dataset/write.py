@@ -39,7 +39,7 @@ try:
           CASE
             WHEN verdict=1 THEN 'SUPPORTS'
             WHEN verdict=2 THEN 'REFUTES'
-          END as label, sentence.entity_id as entity, annotation.id as aid, verdict_line.page, verdict_line.line_number, testing, isOracle,isReval, isTestMode,isOracleMaster,isDiscounted from annotation
+          END as label, sentence.entity_id as entity, annotation.id as aid, annotation_verdict.id as vid, verdict_line.page, verdict_line.line_number, testing, isOracle,isReval, isTestMode,isOracleMaster,isDiscounted from annotation
         inner join claim on annotation.claim_id = claim.id
         left join annotation_verdict on annotation.id = annotation_verdict.annotation_id
         left join verdict_line on annotation_verdict.id = verdict_line.verdict_id
@@ -78,14 +78,25 @@ def process(ids):
         if len(set([ev["aid"] for ev in refute_evidence])) < len(set([ev["aid"] for ev in not_enough_info_evidence])):
             refute_evidence = []
 
+        s_s = defaultdict(lambda:[])
+        s_r = defaultdict(lambda:[])
+        s_nei = defaultdict(lambda:[])
 
-        pages = []
+        for e in support_evidence:
+            s_s[e['vid']].append((e['aid'],e['vid'],e['page'],e['line_number']))
+
+        for e in refute_evidence:
+            s_r[e['vid']].append((e['aid'],e['vid'],e['page'],e['line_number']))
+
+        for e in not_enough_info_evidence:
+            s_nei[e['vid']].append((e['aid'],e['vid'],e['page'],e['line_number']))
+
         if len(support_evidence):
-            data.append({"id":id, "verifiable":"VERIFIABLE", "label":"SUPPORTS","claim":cl0['text'],"evidence":[(ev['aid'],ev['page'],ev['line_number']) for ev in support_evidence]})
+            data.append({"id":id, "verifiable":"VERIFIABLE", "label":"SUPPORTS","claim":cl0['text'],"evidence":list(s_s.values()),"all_evidence":[(ev['aid'],ev['vid'],ev['page'],ev['line_number']) for ev in support_evidence]})
         if len(refute_evidence):
-            data.append({"id": id, "verifiable":"VERIFIABLE", "label": "REFUTES", "claim": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in refute_evidence]})
+            data.append({"id": id, "verifiable":"VERIFIABLE", "label": "REFUTES", "claim": cl0['text'], "evidence":list(s_r.values()), "all_evidence": [(ev['aid'],ev['vid'],ev['page'],ev['line_number']) for ev in refute_evidence]})
         if len(not_enough_info_evidence):
-            data.append({"id": id, "verifiable":"NOT ENOUGH INFO", "label": None, "claim": cl0['text'], "evidence": [(ev['aid'],ev['page'],ev['line_number']) for ev in not_enough_info_evidence]})
+            data.append({"id": id, "verifiable":"NOT ENOUGH INFO", "label": None, "claim": cl0['text'], "evidence":list(s_nei.values()), "all_evidence": [(ev['aid'],ev['vid'],ev['page'],ev['line_number']) for ev in not_enough_info_evidence]})
     return data
 
 

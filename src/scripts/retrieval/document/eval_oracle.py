@@ -12,16 +12,17 @@ k = args.count
 def preprocess(p):
     return p.replace(" ","_").replace("(","-LRB-").replace(")","-RRB-").replace(":","-COLON-")
 
-
+q = 0
+hits = 0
 
 recalls = []
-
 with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
 
-
     for idx,line in enumerate(f):
+
         q = 0
         hits = 0
+
 
         js = json.loads(line)
         evidence = set([t[1] for t in js["evidence"] if isinstance(t,list) and len(t)>1])
@@ -32,9 +33,12 @@ with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
                 q += 1
                 if preprocess(p) in predicted:
                     hits+= 1
+                break
+        else:
+            q+=1
+            hits+=1
 
-
-            recalls.append(hits/q)
+        recalls.append(hits/q)
 
 
     print(sum(recalls)/len(recalls))
