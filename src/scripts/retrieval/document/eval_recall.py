@@ -25,7 +25,5 @@ with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
                 if all(page in predicted for page in pages):
                     hits+=1
                     break
-                else:
-                    print(predicted, [annotation[2] for annotation in ev])
 
     print(hits/q)
