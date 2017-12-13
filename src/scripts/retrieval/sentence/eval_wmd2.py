@@ -1,7 +1,8 @@
 import os
 import wmd
 import spacy
-import numpy as np
+
+import json
 from sklearn import metrics
 from tqdm import tqdm
 
@@ -58,23 +59,15 @@ if os.getenv("TEST") is None:
                 y_true.append(1 if prediction in gold else 0)
                 y_scores.append(score)
 
-    import json
     json.dump({"true":y_true,"scores":y_scores},open("roc.all.json","w+"))
+else:
+    roc = json.load(open("roc.all.json","r"))
+    y_true = roc["true"]
+    y_scores = roc["scores"]
 
+    
 fpr,tpr,thresh = metrics.roc_curve(y_true,y_scores)
 
-fnr = [1-t for t in tpr]
-tnr = [1-t for t in fpr]
-
-fp = [f * len(y_true) for f in fpr]
-tp = [f * len(y_true) for f in tpr]
-tn = [f * len(y_true) for f in tnr]
-fn = [f * len(y_true) for f in fnr]
-
-
-f1 = [ (tp[i] + tp[i])/(tp[i]+tp[i]+fp[i]+fn[i] ) for i in range(len(tp)) ]
-
-best = np.argmax(f1)
-
-print(f1[best])
-print(thresh[best])
+print(fpr)
+print(tpr)
+print(thresh)
