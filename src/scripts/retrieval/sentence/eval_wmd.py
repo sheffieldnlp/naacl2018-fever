@@ -1,8 +1,12 @@
+import os
 import wmd
 import spacy
+from sklearn import metrics
+from tqdm import tqdm
 
 from common.dataset.data_set import DataSet
 from common.dataset.reader import JSONLineReader
+from common.util.array import flatten
 from retrieval.fever_doc_db import FeverDocDB
 from retrieval.sentence import FEVERSentenceRelatednessFormatter, FEVERSentenceFormatter, FEVERSentenceTextFormatter
 from scripts.retrieval.sentence.mlp_train import RelatedLabelSchema
@@ -14,7 +18,7 @@ def wmd_sim(claim,lines):
     cl = nlp(claim)
     scores = []
     for line in lines:
-        scores.append((cl.similarity(nlp(line)),line))
+        scores.append(cl.similarity(nlp(line)))
     return scores
 
 db = FeverDocDB("data/fever/fever.db")
@@ -27,5 +31,37 @@ dev_ds = DataSet(file="data/fever-data/dev.jsonl", reader=jlr, formatter=formatt
 
 dev_ds.read()
 
-for data in dev_ds.data:
-    print(data)
+def doc_lines(db,doc):
+    lines = db.get_doc_lines(doc)
+    return [line.split("\t")[1] if len(line.split("\t"))>1 else "" for line in lines.split("\n")]
+
+
+#thresh = 0.8
+
+y_true = []
+y_scores = []
+
+if os.getenv("TEST") is None:
+    for data in tqdm(dev_ds.data):
+        if data["label_text"] != "NOT ENOUGH INFO":
+            all_lines = []
+            for doc in data["docs"]:
+                lines = doc_lines(db,doc)
+                all_lines.extend(list(zip(wmd_sim(data["claim"], lines),enumerate(lines),[doc]*len(lines))))
+
+            #filtered = list(filter(lambda line: line[0] > thresh,all_lines))
+            gold = set([(ev[0],ev[1]) for ev in data["evidence"]])
+            predicted = set([(ev[0],(ev[2],ev[1][0])) for ev in all_lines])
+
+            for score, prediction in predicted:
+                y_true.append(1 if prediction in gold else 0)
+                y_scores.append(score)
+
+    import json
+    json.dump({"true":y_true,"scores":y_scores},open("roc.all.json","w+"))
+
+fpr,tpr,thresh = metrics.roc_curve(y_true,y_scores)
+
+print(fpr)
+print(tpr)
+print(thresh)

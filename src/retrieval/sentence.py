@@ -30,14 +30,15 @@ class FEVERSentenceTextFormatter(FeverFormatter):
             annotation = line["verifiable"]
 
         newpages = []
-
+        docs = []
         if 'evidence' in line:
             pages = set(flatten([[(ev[2],ev[3]) for ev in annotation if ev[2] is not None] for annotation in line["evidence"]]))
-            
+            docs = set(flatten([[ev[2] for ev in annotation if ev[2] is not None] for annotation in line["evidence"]]))
+
             for page in pages:
                 newpages.append((page[0],page[1],self.get_doc_line(page[0],page[1])))
 
-        return {"claim":self.tokenize(line["claim"]), "evidence": newpages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
+        return {"claim":self.tokenize(line["claim"]), "docs": docs, "evidence": newpages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
 
 
