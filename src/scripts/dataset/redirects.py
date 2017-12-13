@@ -56,7 +56,7 @@ if __name__ == "__main__":
     idx = set(db.get_doc_ids())
     redirects = get_redirects()
 
-    split = "train"
+    split = os.getenv("SPLIT")
 
     fixed = 0
     errs = 0
@@ -66,16 +66,26 @@ if __name__ == "__main__":
             for line in f:
                 js = json.loads(line)
 
-                evidence = js["evidence"]
+                evidence = js["all_evidence"]
 
                 for i,ev in enumerate(evidence):
-                    if ev[1] is not None:
-                        ev[1] = ev[1].split("#")[0]
+                    if ev[2] is not None:
+                        ev[2] = ev[2].split("#")[0]
+                        m = clean(normalize(ev[2]))
+                        n = get_wiki_entry(ev[2])
 
-                        m = clean(normalize(ev[1]))
-                        n = get_wiki_entry(ev[1])
+                        evidence[i][2] = n
 
-                        evidence[i][1] = n
+                evidence = js["evidence"]
+
+                for i, annotation in enumerate(evidence):
+                    for j,ev in enumerate(annotation):
+                        if ev[2] is not None:
+                            ev[2] = ev[2].split("#")[0]
+                            m = clean(normalize(ev[2]))
+                            n = get_wiki_entry(ev[2])
+
+                            evidence[i][j][2] = n
 
                 g.write(json.dumps(js)+"\n")
 
