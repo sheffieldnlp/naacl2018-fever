@@ -2,6 +2,7 @@ import os
 import wmd
 import spacy
 import numpy as np
+import json
 from sklearn import metrics
 from tqdm import tqdm
 
@@ -58,8 +59,13 @@ if os.getenv("TEST") is None:
                 y_true.append(1 if prediction in gold else 0)
                 y_scores.append(score)
 
-    import json
+
     json.dump({"true":y_true,"scores":y_scores},open("roc.all.json","w+"))
+else:
+    roc = json.load(open("roc.all.json","r"))
+    y_true = [r>0 for r in roc["true"]]
+    y_scores = roc["scores"]
+
 
 fpr,tpr,thresh = metrics.roc_curve(y_true,y_scores)
 
