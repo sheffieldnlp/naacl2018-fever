@@ -19,13 +19,14 @@ with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
         predicted = [t[0] for t in js['predicted_pages']]
 
         if js["verifiable"] == "VERIFIABLE":
-            q+=1
-            for ev in js['evidence']:
-                pages = [annotation[2] for annotation in ev]
-                if all(page in predicted for page in pages):
+
+            actual = [annotation[2] for annotation in js['all_evidence']]
+
+            for page in set(actual):
+                q += 1
+                if page in predicted:
                     hits+=1
-                    break
-                else:
-                    print(predicted, [annotation[2] for annotation in ev])
+
+
 
     print(hits/q)
