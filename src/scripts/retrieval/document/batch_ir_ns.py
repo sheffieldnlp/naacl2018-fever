@@ -35,8 +35,8 @@ if __name__ == "__main__":
                     ev = []
                     for idx,e in enumerate(line['evidence']):
                         if idx < len(pp):
-                            e[1] = pp[idx]
-                            e[2] = -1
+                            e[2] = pp[idx]
+                            e[3] = -1
                             ev.append(e)
                     line['evidence'] = ev
                 f2.write(json.dumps(line) + "\n")
