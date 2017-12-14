@@ -68,7 +68,7 @@ if __name__ == "__main__":
         model.cuda()
 
 
-    if model_exists(mname) and os.getenv("TRAIN").lower() not in ["y","1","t","yes"]:
+    if model_exists(mname) and os.getenv("TRAIN","").lower() not in ["y","1","t","yes"]:
         model.load_state_dict(torch.load("models/{0}.model".format(mname)))
         final_model = model
     else:
