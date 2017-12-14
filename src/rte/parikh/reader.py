@@ -63,8 +63,8 @@ class FEVERReader(DatasetReader):
         for instance in tqdm.tqdm(ds.data):
             if instance is None:
                 continue
-
-            premise = " ".join([self.db.get_doc_text(ev) for ev in set(instance["evidence"])])
+            pages = set(ev[0] for ev in instance["evidence"])
+            premise = " ".join([self.db.get_doc_text(p) for p in pages])
 
             if len(premise.strip()) == 0:
                 print(instance)
