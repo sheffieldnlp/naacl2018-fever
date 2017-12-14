@@ -1,10 +1,3 @@
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
-from scipy.sparse import hstack
-
-import numpy as np
-
 from common.util.random import SimpleRandom
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
 

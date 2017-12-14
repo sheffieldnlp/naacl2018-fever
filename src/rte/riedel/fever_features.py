@@ -82,7 +82,6 @@ class TermFrequencyFeatureFunction(FeatureFunction):
 
 
     def lookup(self,data):
-        size = len(data)
         return self.process(data)
 
     def process(self,data):
