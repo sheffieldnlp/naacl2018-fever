@@ -1,13 +1,16 @@
+import torch
 
 
 class EarlyStopping():
-    def __init__(self,patience=8):
+    def __init__(self,name,patience=8):
         self.patience = patience
         self.best_model = None
         self.best_score = None
 
         self.best_epoch = 0
         self.epoch = 0
+
+        self.name = name
 
     def __call__(self, model, acc):
         self.epoch += 1
@@ -16,7 +19,7 @@ class EarlyStopping():
             self.best_score = acc
 
         if acc >= self.best_score:
-            self.best_model = model.state_dict()
+            torch.save(model.state_dict(),"models/{0}.best.save".format(self.name))
             self.best_score = acc
             self.best_epoch = self.epoch
             return False
@@ -30,4 +33,4 @@ class EarlyStopping():
 
     def set_best_state(self,model):
         print("Loading weights from round {0}".format(self.best_epoch))
-        model.load_state_dict(self.best_model)
+        model.load_state_dict(torch.load("models/{0}.best.save".format(self.name)))
