@@ -15,6 +15,7 @@ from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
 from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from common.dataset.reader import JSONLineReader
+from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema, FEVERGoldFormatter
 from common.dataset.data_set import DataSet as FEVERDataSet
@@ -43,6 +44,7 @@ class FEVERReader(DatasetReader):
                  wiki_tokenizer: Tokenizer = None,
                  claim_tokenizer: Tokenizer = None,
                  token_indexers: Dict[str, TokenIndexer] = None) -> None:
+        self._sentence_level = sentence_level
         self._wiki_tokenizer = wiki_tokenizer or WordTokenizer()
         self._claim_tokenizer = claim_tokenizer or WordTokenizer()
         self._token_indexers = token_indexers or {'tokens': SingleIdTokenIndexer()}
@@ -52,6 +54,14 @@ class FEVERReader(DatasetReader):
         self.formatter = FEVERGoldFormatter(set(self.db.get_doc_ids()), FEVERLabelSchema())
         self.reader = JSONLineReader()
 
+
+    def get_doc_line(self,doc,line):
+        lines = self.db.get_doc_lines(doc)
+        if line > -1:
+            return lines.split("\n")[line].split("\t")[1]
+        else:
+            non_empty_lines = [line.split("\t")[1] for line in lines.split("\n") if len(line.split("\t"))>1 and len(line.split("\t")[1].strip())]
+            return non_empty_lines[SimpleRandom.get_instance().next_rand(0,len(non_empty_lines)-1)]
 
     @overrides
     def read(self, file_path: str):
@@ -64,8 +74,13 @@ class FEVERReader(DatasetReader):
         for instance in tqdm.tqdm(ds.data):
             if instance is None:
                 continue
-            pages = set(ev[0] for ev in instance["evidence"])
-            premise = " ".join([self.db.get_doc_text(p) for p in pages])
+
+            if not self._sentence_level:
+                pages = set(ev[0] for ev in instance["evidence"])
+                premise = " ".join([self.db.get_doc_text(p) for p in pages])
+            else:
+                lines = set([self.get_doc_line(d[0],d[1]) for d in instance['evidence']])
+                premise = " ".join(lines)
 
             if len(premise.strip()) == 0:
                 print(instance)
@@ -100,7 +115,7 @@ class FEVERReader(DatasetReader):
         wiki_tokenizer = Tokenizer.from_params(params.pop('wiki_tokenizer', {}))
 
         token_indexers = TokenIndexer.dict_from_params(params.pop('token_indexers', {}))
-        sentence_level = TokenIndexer.from_params(params.pop("sentence_level",{}))
+        sentence_level = params.pop("sentence_level",False)
         db = FeverDocDB(params.pop("db_path","data/fever.db"))
         params.assert_empty(cls.__name__)
         return FEVERReader(db=db,

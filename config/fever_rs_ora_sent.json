@@ -1,7 +1,7 @@
 {
   "dataset_reader": {
     "type": "fever",
-    "sentence_level": false,
+    "sentence_level": true,
     "token_indexers": {
       "tokens": {
         "type": "single_id",

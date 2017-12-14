@@ -55,7 +55,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     # Now we begin assembling the required parts for the Trainer.
     ds_params = params.pop('dataset_reader', {})
     dataset_reader = FEVERReader(db,
-                                 sentence_level=Tokenizer.from_params(ds_params.pop("sentence_level",{})),
+                                 sentence_level=ds_params.pop("sentence_level",False),
                                  wiki_tokenizer=Tokenizer.from_params(ds_params.pop('wiki_tokenizer', {})),
                                  claim_tokenizer=Tokenizer.from_params(ds_params.pop('claim_tokenizer', {})),
                                  token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})))
