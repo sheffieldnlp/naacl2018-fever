@@ -39,6 +39,7 @@ class FEVERReader(DatasetReader):
 
     def __init__(self,
                  db: FeverDocDB,
+                 sentence_level = False,
                  wiki_tokenizer: Tokenizer = None,
                  claim_tokenizer: Tokenizer = None,
                  token_indexers: Dict[str, TokenIndexer] = None) -> None:
@@ -99,9 +100,11 @@ class FEVERReader(DatasetReader):
         wiki_tokenizer = Tokenizer.from_params(params.pop('wiki_tokenizer', {}))
 
         token_indexers = TokenIndexer.dict_from_params(params.pop('token_indexers', {}))
+        sentence_level = TokenIndexer.from_params(params.pop("sentence_level",{}))
         db = FeverDocDB(params.pop("db_path","data/fever.db"))
         params.assert_empty(cls.__name__)
         return FEVERReader(db=db,
+                           sentence_level=sentence_level,
                            claim_tokenizer=claim_tokenizer,
                            wiki_tokenizer=wiki_tokenizer,
                            token_indexers=token_indexers)
