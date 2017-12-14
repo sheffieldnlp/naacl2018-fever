@@ -111,7 +111,7 @@ class TermFrequencyFeatureFunction(FeatureFunction):
 
 
     def body_ids(self,data):
-        return [datum[self.ename] for datum in data]
+        return [[d[0] for d in datum[self.ename] ] for datum in data]
 
 
 

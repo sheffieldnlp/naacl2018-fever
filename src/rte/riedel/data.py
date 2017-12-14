@@ -22,7 +22,7 @@ class FEVERGoldFormatter(FeverFormatter):
         pages = []
 
         for evidence_group in line["evidence"]:
-            pages.extend([ev[2] for ev in evidence_group])
+            pages.extend([(ev[2],ev[3]) for ev in evidence_group])
 
         return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
