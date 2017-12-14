@@ -77,4 +77,6 @@ if __name__ == "__main__":
 
 
     print_evaluation(final_model, dev_feats, FEVERLabelSchema())
-    print_evaluation(final_model, test_feats, FEVERLabelSchema())
+
+    if args.test is not None:
+        print_evaluation(final_model, test_feats, FEVERLabelSchema())
