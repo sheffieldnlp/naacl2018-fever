@@ -16,7 +16,7 @@ from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
 from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from common.dataset.reader import JSONLineReader
 from retrieval.fever_doc_db import FeverDocDB
-from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema
+from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema, FEVERGoldFormatter
 from common.dataset.data_set import DataSet as FEVERDataSet
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -48,7 +48,7 @@ class FEVERReader(DatasetReader):
 
         self.db = db
 
-        self.formatter = FEVERPredictions2Formatter(set(self.db.get_doc_ids()), FEVERLabelSchema())
+        self.formatter = FEVERGoldFormatter(set(self.db.get_doc_ids()), FEVERLabelSchema())
         self.reader = JSONLineReader()
 
 

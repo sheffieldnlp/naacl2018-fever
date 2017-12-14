@@ -44,10 +44,10 @@ class FEVERPredictions2Formatter(FeverFormatter):
             annotation = line["verifiable"]
 
         if 'predicted_pages' in line:
-            pages = [preprocess(ev[0]) for ev in line["predicted_pages"]]
+            pages = [ev[0] for ev in line["predicted_pages"]]
 
         elif 'evidence' in line:
-            pages = [preprocess(ev[1]) for ev in line["evidence"]]
+            pages = [ev[1] for ev in line["evidence"]]
 
         else:
             pages = []
