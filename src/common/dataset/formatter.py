@@ -7,7 +7,11 @@ class Formatter():
         for line in lines:
             fl = self.format_line(line)
             if fl is not None:
-                formatted.append(fl)
+                if isinstance(fl,list):
+                    formatted.extend(fl)
+                else:
+                    formatted.append(fl)
+
         return formatted
 
     def format_line(self,line):
