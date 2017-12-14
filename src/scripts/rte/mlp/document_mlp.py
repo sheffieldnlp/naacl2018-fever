@@ -74,7 +74,6 @@ if __name__ == "__main__":
         torch.save(model.state_dict(), "models/{0}.model".format(mname))
 
 
-
     print_evaluation(model, dev_feats, FEVERLabelSchema())
 
     if args.test is not None:

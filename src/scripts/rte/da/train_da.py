@@ -64,7 +64,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     logger.info("Reading training data from %s", train_data_path)
     train_data = dataset_reader.read(train_data_path)
 
-    all_datasets: List[Dataset] = [train_data]
+    all_datasets = [train_data]
     datasets_in_vocab = ["train"]
 
     validation_data_path = params.pop('validation_data_path', None)
