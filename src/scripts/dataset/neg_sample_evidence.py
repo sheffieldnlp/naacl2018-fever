@@ -13,7 +13,7 @@ def useless(title):
 
 jlr = JSONLineReader()
 
-docdb = FeverDocDB("data/fever/drqa.db")
+docdb = FeverDocDB("data/fever/fever.db")
 
 idx = docdb.get_non_empty_doc_ids()
 idx = list(filter(lambda item: not useless(item),tqdm(idx)))
