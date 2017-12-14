@@ -69,7 +69,7 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
 
     if early_stopping is not None:
         early_stopping.set_best_state(model)
-    return model
+
 
 
 

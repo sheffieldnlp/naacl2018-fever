@@ -70,14 +70,14 @@ if __name__ == "__main__":
 
     if model_exists(mname) and os.getenv("TRAIN","").lower() not in ["y","1","t","yes"]:
         model.load_state_dict(torch.load("models/{0}.model".format(mname)))
-        final_model = model
+
     else:
-        final_model = train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping())
+        train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping())
         torch.save(model.state_dict(), "models/{0}.model".format(mname))
 
 
 
-    print_evaluation(final_model, dev_feats, FEVERLabelSchema())
+    print_evaluation(model, dev_feats, FEVERLabelSchema())
 
     if args.test is not None:
-        print_evaluation(final_model, test_feats, FEVERLabelSchema())
+        print_evaluation(model, test_feats, FEVERLabelSchema())
