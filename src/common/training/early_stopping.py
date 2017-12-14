@@ -29,4 +29,5 @@ class EarlyStopping():
         return False
 
     def set_best_state(self,model):
+        print("Loading weights from round {0}".format(self.best_epoch))
         return model.load_state_dict(self.best_model)
