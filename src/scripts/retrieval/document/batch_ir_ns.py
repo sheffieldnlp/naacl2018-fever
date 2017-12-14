@@ -32,13 +32,11 @@ if __name__ == "__main__":
                     pages = process(ranker, line['claim'], k=k)
                     pp = list(pages)
 
-                    ev = []
-                    for idx,e in enumerate(line['evidence']):
-                        if idx < len(pp):
-                            e[0][2] = pp[idx]
-                            e[0][3] = -1
-                            ev.append(e)
-                    line['evidence'] = ev
+                    for idx,evidence_group in enumerate(line['evidence']):
+                        for evidence in evidence_group:
+                            if idx<len(pp):
+                                evidence[2] = pp[idx]
+                                evidence[3] = -1
 
                     ev = []
                     for idx, e in enumerate(line['all_evidence']):
