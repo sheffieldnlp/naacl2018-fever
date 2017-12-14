@@ -90,7 +90,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
 
     trainer_params = params.pop("trainer")
     if cuda_device is not None:
-        args.trainer_params["cuda_device"] = cuda_device
+        trainer_params["cuda_device"] = cuda_device
     trainer = Trainer.from_params(model,
                                   serialization_dir,
                                   iterator,
