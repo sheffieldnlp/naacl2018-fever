@@ -16,7 +16,7 @@ class EarlyStopping():
             self.best_score = acc
 
         if acc >= self.best_score:
-            self.best_model = model
+            self.best_model = model.state_dict()
             self.best_score = acc
             self.best_epoch = self.epoch
             return False
@@ -28,6 +28,5 @@ class EarlyStopping():
         print("Early stopping: Worse Round")
         return False
 
-    def get_model(self):
-        return self.best_model
-
+    def set_best_state(self,model):
+        return model.load_state_dict(self.best_model)
