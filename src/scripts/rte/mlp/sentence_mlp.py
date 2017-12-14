@@ -12,8 +12,9 @@ from common.training.run import train, print_evaluation
 from common.util.log_helper import LogHelper
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
-from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
+from rte.riedel.sent_features import SentenceLevelTermFrequencyFeatureFunction
+
 
 def model_exists(mname):
     return os.path.exists(os.path.join("models","{0}.model".format(mname)))
@@ -77,4 +78,6 @@ if __name__ == "__main__":
 
 
     print_evaluation(final_model, dev_feats, FEVERLabelSchema())
-    print_evaluation(final_model, test_feats, FEVERLabelSchema())
+
+    if args.test is not None:
+        print_evaluation(final_model, test_feats, FEVERLabelSchema())
