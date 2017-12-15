@@ -59,7 +59,7 @@ if __name__ == "__main__":
     formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
 
     test_ds = DataSet(file=args.test, reader=jlr, formatter=formatter)
-
+    test_ds.read()
     feats = f.lookup(test_ds)
 
     input_shape = feats[0].shape[1]
