@@ -67,3 +67,7 @@ if __name__ == "__main__":
 
                 line["predicted_sentences"] = [(s[1],s[2]) for s in sentences_l[:i]]
                 files[i - 1].write(json.dumps(line)+"\n")
+
+    
+    for file in files:
+        file.close()
