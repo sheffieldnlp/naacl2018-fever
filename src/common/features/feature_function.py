@@ -78,6 +78,19 @@ class Features():
                                     dev.data if dev is not None else None,
                                     test.data if test is not None else None)
 
+    def save_vocab(self, mname):
+        with open("features/vocab-{0}".format(mname),"wb+") as f:
+            for ff in self.feature_functions:
+                del ff.doc_db
+            pickle.dump(self.feature_functions,f)
+
+    def load_functions(self,mname,db):
+        with open("features/vocab-{0}".format(mname), "rb") as f:
+            self.feature_functions = pickle.load(f)
+
+        for ff in self.feature_functions:
+            ff.doc_db = db
+
 class FeatureFunction():
 
     def __init__(self):

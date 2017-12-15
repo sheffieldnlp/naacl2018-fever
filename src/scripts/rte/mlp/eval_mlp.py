@@ -27,9 +27,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('db', type=str, help='db file path')
-    parser.add_argument('train', type=str, help='train file path')
-    parser.add_argument('dev', type=str, help='dev file path')
-    parser.add_argument('--test', required=False ,type=str, default=None ,help="test file path")
+    parser.add_argument('test', type=str, help='test file path')
     parser.add_argument("--model", type=str, help="model name")
     parser.add_argument("--sentence",type=bool, required=True, default=False)
     args = parser.parse_args()
@@ -43,48 +41,21 @@ if __name__ == "__main__":
     mname = args.model
     logger.info("Model name is {0}".format(mname))
 
-    ffns = []
+    f = Features([])
+    f.load_functions(mname,db)
 
-    if args.sentence:
-        ffns.append(SentenceLevelTermFrequencyFeatureFunction(db, naming=mname))
-    else:
-        ffns.append(TermFrequencyFeatureFunction(db,naming=mname))
-
-    f = Features(ffns)
     jlr = JSONLineReader()
-
     formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
 
-    train_ds = DataSet(file=args.train, reader=jlr, formatter=formatter)
-    dev_ds = DataSet(file=args.dev, reader=jlr, formatter=formatter)
+    test_ds = DataSet(file=args.test, reader=jlr, formatter=formatter)
 
-    train_ds.read()
-    dev_ds.read()
+    feats = f._load(test_ds)
 
-    test_ds = None
-    if args.test is not None:
-        test_ds = DataSet(file=args.test, reader=jlr, formatter=formatter)
-        test_ds.read()
-
-    train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, test_ds)
-    f.save_vocab(mname)
-
-    input_shape = train_feats[0].shape[1]
-
+    input_shape = feats[0].shape[1]
     model = SimpleMLP(input_shape,100,3)
 
     if gpu():
         model.cuda()
 
-
-    if model_exists(mname) and os.getenv("TRAIN").lower() not in ["y","1","t","yes"]:
-        model.load_state_dict(torch.load("models/{0}.model".format(mname)))
-    else:
-        train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping(mname))
-        torch.save(model.state_dict(), "models/{0}.model".format(mname))
-
-
-    print_evaluation(model, dev_feats, FEVERLabelSchema())
-
-    if args.test is not None:
-        print_evaluation(model, test_feats, FEVERLabelSchema())
+    model.load_state_dict(torch.load("models/{0}.model".format(mname)))
+    print_evaluation(model, feats, FEVERLabelSchema())
