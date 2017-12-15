@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     jlr = JSONLineReader()
     with open(args.in_file,"r") as f:
-        lines = jlr.process(f)[:10]
+        lines = jlr.process(f)
 
     db = FeverDocDB(args.db)
 
