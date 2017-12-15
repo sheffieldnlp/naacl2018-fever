@@ -47,8 +47,6 @@ if __name__ == "__main__":
                 sorted_p = list(sorted(line['predicted_pages'],reverse=True, key=lambda elem:elem[1]))
 
                 pages = [p[0] for p in sorted_p[:args.max_page]]
-                print(pages)
-
                 p_lines = []
                 for page in pages:
                     lines = db.get_doc_lines(page)
