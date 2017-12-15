@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('dev', type=str, help='dev file path')
     parser.add_argument('--test', required=False ,type=str, default=None ,help="test file path")
     parser.add_argument("--model", type=str, help="model name")
-    parser.add_argument("--sentence",type=bool, required=True, default=False)
+    parser.add_argument("--sentence",type=bool, default=False)
     args = parser.parse_args()
 
 
@@ -48,8 +48,10 @@ if __name__ == "__main__":
     ffns = []
 
     if args.sentence:
+        print("Sentence level")
         ffns.append(SentenceLevelTermFrequencyFeatureFunction(db, naming=mname))
     else:
+        print("Document level")
         ffns.append(TermFrequencyFeatureFunction(db,naming=mname))
 
     f = Features(ffns)
