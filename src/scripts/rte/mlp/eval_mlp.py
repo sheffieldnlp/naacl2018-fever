@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     test_ds = DataSet(file=args.test, reader=jlr, formatter=formatter)
 
-    feats = f.lookup(test_ds)
+    feats = f.lookup(test_ds.data)
 
     input_shape = feats[0].shape[1]
     model = SimpleMLP(input_shape,100,3)
