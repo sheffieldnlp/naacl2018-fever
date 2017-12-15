@@ -8,17 +8,39 @@ from common.util.log_helper import LogHelper
 from retrieval.fever_doc_db import FeverDocDB
 
 from tqdm import tqdm
+from rte.riedel.fever_features import TermFrequencyFeatureFunction
+from retrieval.fever_doc_db import FeverDocDB
+from common.dataset.data_set import DataSet
+from retrieval.sentence import FEVERSentenceFormatter
+from common.dataset.reader import JSONLineReader
+from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
-nlp = spacy.load("en", create_pipeline=wmd.WMD.create_spacy_pipeline)
-
-
-def wmd_sim(claim,lines):
-    cl = nlp(claim)
-    scores = []
+def tf_idf_sim(claim, lines):
+    test = []
     for line in lines:
-        scores.append(cl.similarity(nlp(line)))
-    return scores
+        test.append({"claim": claim, "text": line})
 
+    return tf.lookup(test).reshape(-1).tolist()
+
+class XTermFrequencyFeatureFunction(TermFrequencyFeatureFunction):
+    def texts(self, data):
+        return [item["text"] for item in data]
+
+    def process(self, data):
+        claim_bow = self.bow_vectorizer.transform(self.claims(data))
+        claim_tfs = self.tfreq_vectorizer.transform(claim_bow)
+        claim_tfidf = self.tfidf_vectorizer.transform(self.claims(data))
+
+        body_texts = self.texts(data)
+        body_bow = self.bow_vectorizer.transform(body_texts)
+        body_tfs = self.tfreq_vectorizer.transform(body_bow)
+        body_tfidf = self.tfidf_vectorizer.transform(body_texts)
+
+        cosines = np.array([cosine_similarity(c, b)[0] for c, b in zip(claim_tfidf, body_tfidf)])
+
+        return cosines
 
 if __name__ == "__main__":
     LogHelper.setup()
@@ -35,11 +57,24 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    db = FeverDocDB("data/fever/fever.db")
+    jlr = JSONLineReader()
+    formatter = FEVERGoldFormatter(set(), FEVERLabelSchema())
+
+    train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
+    dev_ds = DataSet(file="data/fever/dev.ns.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
+
+    train_ds.read()
+    dev_ds.read()
+
+    tf = XTermFrequencyFeatureFunction(db)
+    tf.inform(train_ds.data, dev_ds.data)
+
+
     jlr = JSONLineReader()
     with open(args.in_file,"r") as f:
         lines = jlr.process(f)
 
-    db = FeverDocDB(args.db)
 
     files = []
     for i in range(1,args.max_sent):
@@ -58,7 +93,7 @@ if __name__ == "__main__":
 
                 p_lines.extend(zip(lines,[page]*len(lines),range(len(lines))))
 
-            scores = wmd_sim(line["claim"],[pl[0] for pl in p_lines])
+            scores = tf_idf_sim(line["claim"],[pl[0] for pl in p_lines])
             scores = list(zip(scores,[pl[1] for pl in p_lines],[pl[2] for pl in p_lines],[pl[0] for pl in p_lines]))
             scores = list(filter(lambda score:len(score[3].strip()),scores))
             sentences_l = list(sorted(scores,reverse=True,key=lambda elem:elem[0]))
