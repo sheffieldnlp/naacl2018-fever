@@ -3,6 +3,8 @@ import os
 from copy import deepcopy
 from typing import List, Union, Dict, Any
 
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
 from allennlp.common import Params
 from allennlp.common.tee_logger import TeeLogger
 from allennlp.common.util import prepare_environment
@@ -18,6 +20,7 @@ import argparse
 import logging
 import sys
 import json
+import numpy as np
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -37,12 +40,22 @@ def eval_model(db: FeverDocDB, args) -> Model:
                                  token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})))
 
     logger.info("Reading training data from %s", args.in_file)
-    data = reader.read(args.in_file)
+    data = reader.read(args.in_file).instances
 
+    actual = []
+    predicted = []
 
     for item in data:
-        print(model.forward_on_instance(item, args.cuda_device))
-        
+        prediction = model.forward_on_instance(item, args.cuda_device)
+        cls = model.vocab._index_to_token["labels"][np.argmax(prediction["label_probs"])]
+
+        actual.append(item.fields["label"].label)
+        predicted.append(cls)
+
+
+    print(accuracy_score(actual, predicted))
+    print(classification_report(actual, predicted))
+    print(confusion_matrix(actual, predicted))
 
     return model
 
@@ -55,8 +68,10 @@ if __name__ == "__main__":
 
 
     parser = argparse.ArgumentParser()
+
     parser.add_argument('db', type=str, help='/path/to/saved/db.db')
-    parser.add_argument('in_file', type=argparse.FileType('r'), help='/path/to/saved/db.db')
+    parser.add_argument('archive_file', type=str, help='/path/to/saved/db.db')
+    parser.add_argument('in_file', type=str, help='/path/to/saved/db.db')
 
 
     parser.add_argument("--cuda-device", type=int, default=-1, help='id of GPU to use (if any)')
@@ -68,8 +83,5 @@ if __name__ == "__main__":
 
 
     args = parser.parse_args()
-
     db = FeverDocDB(args.db)
-
-    params = Params.from_file(args.param_path)
-    eval_model(db,params,args.cuda_device,args.logdir)
+    eval_model(db,args)

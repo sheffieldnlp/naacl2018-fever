@@ -21,8 +21,13 @@ class FEVERGoldFormatter(FeverFormatter):
             annotation = line["verifiable"]
         pages = []
 
-        for evidence_group in line["evidence"]:
-            pages.extend([(ev[2],ev[3]) for ev in evidence_group])
+        if 'predicted_sentences' in line:
+            pages.extend([(ev[0], ev[1]) for ev in line["predicted_sentences"]])
+        elif 'predicted_pages' in line:
+            pages.extend([(ev[0],-1) for ev in line["predicted_pages"]])
+        else:
+            for evidence_group in line["evidence"]:
+                pages.extend([(ev[2],ev[3]) for ev in evidence_group])
 
         return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
