@@ -12,6 +12,7 @@ from common.training.run import train, print_evaluation
 from common.util.log_helper import LogHelper
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
+from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from rte.riedel.model import SimpleMLP
 from rte.riedel.sent_features import SentenceLevelTermFrequencyFeatureFunction
 
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('dev', type=str, help='dev file path')
     parser.add_argument('--test', required=False ,type=str, default=None ,help="test file path")
     parser.add_argument("--model", type=str, help="model name")
-
+    parser.add_argument("--sentence",type=bool, required=True, default=False)
     args = parser.parse_args()
 
 
@@ -42,7 +43,14 @@ if __name__ == "__main__":
     mname = args.model
     logger.info("Model name is {0}".format(mname))
 
-    f = Features([SentenceLevelTermFrequencyFeatureFunction(db,naming=mname)])
+    ffns = []
+
+    if args.sentence:
+        ffns.append(SentenceLevelTermFrequencyFeatureFunction(db, naming=mname))
+    else:
+        ffns.append(TermFrequencyFeatureFunction(db,naming=mname))
+
+    f = Features(ffns)
     jlr = JSONLineReader()
 
     formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
@@ -68,13 +76,11 @@ if __name__ == "__main__":
         model.cuda()
 
 
-    if model_exists(mname) and os.getenv("TRAIN","").lower() not in ["y","1","t","yes"]:
+    if model_exists(mname) and os.getenv("TRAIN").lower() not in ["y","1","t","yes"]:
         model.load_state_dict(torch.load("models/{0}.model".format(mname)))
-
     else:
         train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping(mname))
         torch.save(model.state_dict(), "models/{0}.model".format(mname))
-
 
 
     print_evaluation(model, dev_feats, FEVERLabelSchema())
