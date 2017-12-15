@@ -41,15 +41,24 @@ if __name__ == "__main__":
     mname = args.model
     logger.info("Model name is {0}".format(mname))
 
-    f = Features([])
-    f.load_functions(mname,db)
+
+    ffns = []
+
+    if args.sentence:
+        ffns.append(SentenceLevelTermFrequencyFeatureFunction(db, naming=mname))
+    else:
+        ffns.append(TermFrequencyFeatureFunction(db,naming=mname))
+
+
+    f = Features(ffns)
+    f.load_vocab(mname)
 
     jlr = JSONLineReader()
     formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
 
     test_ds = DataSet(file=args.test, reader=jlr, formatter=formatter)
 
-    feats = f._load(test_ds)
+    feats = f.lookup(test_ds)
 
     input_shape = feats[0].shape[1]
     model = SimpleMLP(input_shape,100,3)

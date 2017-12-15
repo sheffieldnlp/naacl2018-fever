@@ -10,6 +10,7 @@ from common.training.early_stopping import EarlyStopping
 from common.training.options import gpu
 from common.training.run import train, print_evaluation
 from common.util.log_helper import LogHelper
+from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
@@ -21,6 +22,7 @@ def model_exists(mname):
     return os.path.exists(os.path.join("models","{0}.model".format(mname)))
 
 if __name__ == "__main__":
+    SimpleRandom.set_seeds()
 
     LogHelper.setup()
     logger = LogHelper.get_logger(__name__)

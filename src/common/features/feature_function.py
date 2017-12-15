@@ -60,11 +60,11 @@ class Features():
 
         return None
 
-    def _load(self,dataset):
+    def lookup(self,dataset):
         fs = []
         for feature_function in self.feature_functions:
             print("Load {0}".format(feature_function))
-            fs.append(feature_function(dataset))
+            fs.append(feature_function.lookup(dataset))
         return np.hstack(fs) if len(fs) > 1 else fs, self.labels(dataset)
 
     def labels(self,data):
@@ -79,17 +79,13 @@ class Features():
                                     test.data if test is not None else None)
 
     def save_vocab(self, mname):
-        with open("features/vocab-{0}".format(mname),"wb+") as f:
-            for ff in self.feature_functions:
-                del ff.doc_db
-            pickle.dump(self.feature_functions,f)
-
-    def load_functions(self,mname,db):
-        with open("features/vocab-{0}".format(mname), "rb") as f:
-            self.feature_functions = pickle.load(f)
-
         for ff in self.feature_functions:
-            ff.doc_db = db
+            ff.save(mname)
+
+
+    def load_vocab(self,mname):
+        for ff in self.feature_functions:
+            ff.load(mname)
 
 class FeatureFunction():
 

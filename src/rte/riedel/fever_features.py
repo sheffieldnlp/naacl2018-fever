@@ -7,6 +7,7 @@ from common.features.feature_function import FeatureFunction
 from common.util.array import flatten
 
 import numpy as np
+import pickle
 
 class TermFrequencyFeatureFunction(FeatureFunction):
 
@@ -80,6 +81,30 @@ class TermFrequencyFeatureFunction(FeatureFunction):
                                            stop_words=TermFrequencyFeatureFunction.stop_words). \
             fit(claims + bodies + dev_claims + dev_bodies + test_claims + test_bodies)
 
+    def save(self,mname):
+        print("Features save")
+
+        with open("features/{0}-bowv".format(mname), "wb+") as f:
+            pickle.dump(self.bow_vectorizer, f)
+        with open("features/{0}-bow".format(mname), "wb+") as f:
+            pickle.dump(self.bow, f)
+        with open("features/{0}-tfidf".format(mname), "wb+") as f:
+            pickle.dump(self.tfidf_vectorizer, f)
+        with open("features/{0}-tfreq".format(mname), "wb+") as f:
+            pickle.dump(self.tfreq_vectorizer, f)
+
+
+    def load(self,mname):
+        print("Features load")
+
+        with open("features/{0}-bowv".format(mname), "rb") as f:
+            self.bow_vectorizer = pickle.load(f)
+        with open("features/{0}-bow".format(mname), "rb") as f:
+            self.bow = pickle.load(f)
+        with open("features/{0}-tfidf".format(mname), "rb") as f:
+            self.tfidf_vectorizer = pickle.load(f)
+        with open("features/{0}-tfreq".format(mname), "rb") as f:
+            self.tfreq_vectorizer = pickle.load(f)
 
     def lookup(self,data):
         return self.process(data)
