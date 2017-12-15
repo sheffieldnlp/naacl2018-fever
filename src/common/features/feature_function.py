@@ -65,7 +65,7 @@ class Features():
         for feature_function in self.feature_functions:
             print("Load {0}".format(feature_function))
             fs.append(feature_function.lookup(dataset.data))
-        return np.hstack(fs) if len(fs) > 1 else fs, self.labels(dataset)
+        return self.out(fs,dataset)
 
     def labels(self,data):
         return [datum[self.label_name] for datum in data]
