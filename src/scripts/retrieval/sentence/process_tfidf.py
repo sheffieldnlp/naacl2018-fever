@@ -1,17 +1,11 @@
 import argparse
 import json
-import spacy
-import wmd
 
-from common.dataset.reader import JSONLineReader
 from common.util.log_helper import LogHelper
-from retrieval.fever_doc_db import FeverDocDB
-
 from tqdm import tqdm
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
 from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.data_set import DataSet
-from retrieval.sentence import FEVERSentenceFormatter
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 import numpy as np
