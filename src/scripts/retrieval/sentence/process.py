@@ -37,27 +37,33 @@ if __name__ == "__main__":
 
     jlr = JSONLineReader()
     with open(args.in_file,"r") as f:
-        lines = jlr.process(f)
+        lines = jlr.process(f)[:10]
 
     db = FeverDocDB(args.db)
 
-    with open(args.out_file,"w+") as f:
-        for line in tqdm(lines):
-            if 'predicted_pages' in line:
-                sorted_p = list(sorted(line['predicted_pages'],reverse=True, key=lambda elem:elem[1]))
+    files = []
+    for i in range(1,args.max_sent):
+        files.append(open("{0}.{1}.final.jsonl".format(args.out_file,i),"w+"))
 
-                pages = [p[0] for p in sorted_p[:args.max_page]]
-                p_lines = []
-                for page in pages:
-                    lines = db.get_doc_lines(page)
-                    lines = [line.split("\t")[1] if len(line.split("\t")[1])>1 else "" for line in lines.split("\n")]
 
-                    p_lines.extend(zip(lines,[page]*len(lines),range(len(lines))))
+    for line in tqdm(lines):
+        if 'predicted_pages' in line:
+            sorted_p = list(sorted(line['predicted_pages'],reverse=True, key=lambda elem:elem[1]))
 
-                scores = wmd_sim(line["claim"],[pl[0] for pl in p_lines])
-                scores = list(zip(scores,[pl[1] for pl in p_lines],[pl[2] for pl in p_lines],[pl[0] for pl in p_lines]))
-                scores = list(filter(lambda score:len(score[3].strip()),scores))
-                sentences_l = list(sorted(scores,reverse=True,key=lambda elem:elem[0]))
+            pages = [p[0] for p in sorted_p[:args.max_page]]
+            p_lines = []
+            for page in pages:
+                lines = db.get_doc_lines(page)
+                lines = [line.split("\t")[1] if len(line.split("\t")[1])>1 else "" for line in lines.split("\n")]
 
-                line["predicted_sentences"] = [(s[1],s[2]) for s in sentences_l[:args.max_sent]]
-                f.write(json.dumps(line)+"\n")
+                p_lines.extend(zip(lines,[page]*len(lines),range(len(lines))))
+
+            scores = wmd_sim(line["claim"],[pl[0] for pl in p_lines])
+            scores = list(zip(scores,[pl[1] for pl in p_lines],[pl[2] for pl in p_lines],[pl[0] for pl in p_lines]))
+            scores = list(filter(lambda score:len(score[3].strip()),scores))
+            sentences_l = list(sorted(scores,reverse=True,key=lambda elem:elem[0]))
+
+            for i in range(1,args.max_sent):
+
+                line["predicted_sentences"] = [(s[1],s[2]) for s in sentences_l[:i]]
+                files[i - 1].write(json.dumps(line)+"\n")
