@@ -1,3 +1,5 @@
+import json
+
 import torch
 import torch.nn.functional as F
 from sklearn.utils import shuffle
@@ -73,7 +75,7 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
 
 
 
-def print_evaluation(model,data,ls):
+def print_evaluation(model,data,ls,log=None):
     features,actual = data
     predictions = predict(model, features, 500).data.numpy().reshape(-1).tolist()
 
@@ -85,3 +87,10 @@ def print_evaluation(model,data,ls):
     print(accuracy_score(actual, predictions))
     print(classification_report(actual, predictions))
     print(confusion_matrix(actual, predictions))
+
+    data = zip(actual,predictions)
+    if log is not None:
+        f = open(log, "w+")
+        for a,p in data:
+            f.write(json.dumps({"actual": a, "predicted": p}) + "\n")
+        f.close()

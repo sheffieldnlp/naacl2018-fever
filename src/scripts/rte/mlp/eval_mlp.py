@@ -30,6 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('test', type=str, help='test file path')
     parser.add_argument("--model", type=str, help="model name")
     parser.add_argument("--sentence",type=bool, default=False)
+    parser.add_argument("--log",type=str,default=None)
     args = parser.parse_args()
 
 
@@ -69,4 +70,4 @@ if __name__ == "__main__":
         model.cuda()
 
     model.load_state_dict(torch.load("models/{0}.model".format(mname)))
-    print_evaluation(model, feats, FEVERLabelSchema())
+    print_evaluation(model, feats, FEVERLabelSchema(),args.log)
