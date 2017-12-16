@@ -45,6 +45,9 @@ def eval_model(db: FeverDocDB, args) -> Model:
     actual = []
     predicted = []
 
+    if args.log is not None:
+        f = open(args.log,"w+")
+
     for item in data:
         prediction = model.forward_on_instance(item, args.cuda_device)
         cls = model.vocab._index_to_token["labels"][np.argmax(prediction["label_probs"])]
@@ -52,6 +55,11 @@ def eval_model(db: FeverDocDB, args) -> Model:
         actual.append(item.fields["label"].label)
         predicted.append(cls)
 
+        if args.log is not None:
+            f.write(json.dumps({"actual":item.fields["label"].label,"predicted":cls})+"\n")
+
+    if args.log is not None:
+        f.close()
 
     print(accuracy_score(actual, predicted))
     print(classification_report(actual, predicted))
@@ -72,7 +80,7 @@ if __name__ == "__main__":
     parser.add_argument('db', type=str, help='/path/to/saved/db.db')
     parser.add_argument('archive_file', type=str, help='/path/to/saved/db.db')
     parser.add_argument('in_file', type=str, help='/path/to/saved/db.db')
-
+    parser.add_argument('--log', required=False, default=None,  type=str, help='/path/to/saved/db.db')
 
     parser.add_argument("--cuda-device", type=int, default=-1, help='id of GPU to use (if any)')
     parser.add_argument('-o', '--overrides',
