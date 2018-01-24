@@ -42,9 +42,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('split', type=str)
     parser.add_argument('db', type=str, help='/path/to/saved/db.db')
     parser.add_argument('in_file', type=str, help='/path/to/saved/db.db')
+    parser.add_argument('out_file', type=str, help='/path/to/saved/db.db')
+
     parser.add_argument('max_page',type=int)
     parser.add_argument('max_sent',type=int)
 
@@ -54,8 +55,8 @@ if __name__ == "__main__":
     jlr = JSONLineReader()
     formatter = FEVERGoldFormatter(set(), FEVERLabelSchema())
 
-    train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(args.max_page), reader=jlr, formatter=formatter)
-    dev_ds = DataSet(file="data/fever/dev.pages.p{0}.jsonl".format(args.max_page), reader=jlr, formatter=formatter)
+    train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
+    dev_ds = DataSet(file="data/fever/dev.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
 
     train_ds.read()
     dev_ds.read()
@@ -69,7 +70,10 @@ if __name__ == "__main__":
         lines = jlr.process(f)
 
 
-    out_file = open("{0}.sentences.{1}.{2}.jsonl".format(args.split,args.max_page,args.max_sent),"w+")
+    files = []
+    for i in range(1,args.max_sent):
+        files.append(open("{0}.{1}.final.jsonl".format(args.out_file,i),"w+"))
+
 
     for line in tqdm(lines):
         if 'predicted_pages' in line:
@@ -88,8 +92,11 @@ if __name__ == "__main__":
             scores = list(filter(lambda score:len(score[3].strip()),scores))
             sentences_l = list(sorted(scores,reverse=True,key=lambda elem:elem[0]))
 
+            for i in range(1,args.max_sent):
 
-            line["predicted_sentences"] = [(s[1],s[2]) for s in sentences_l[:args.max_sent]]
-            out_file.write(json.dumps(line)+"\n")
+                line["predicted_sentences"] = [(s[1],s[2]) for s in sentences_l[:i]]
+                files[i - 1].write(json.dumps(line)+"\n")
 
-    out_file.close()
+
+    for file in files:
+        file.close()
