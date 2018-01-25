@@ -1,13 +1,9 @@
 numpy
 scipy
 scikit-learn
-pyhocon==0.3.35
 typing
 overrides
-termcolor
-regex
 tqdm
-prettytable
-pexpect
 nltk
 allennlp
+git+git://github.com/facebookresearch/DrQA@master
