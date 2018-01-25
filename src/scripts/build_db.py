@@ -12,29 +12,20 @@ import argparse
 import sqlite3
 import json
 import os
-import logging
 import importlib.util
 
 from multiprocessing import Pool as ProcessPool
 from tqdm import tqdm
 from drqa.retriever import utils
+from common.util.log_helper import LogHelper
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-console = logging.StreamHandler()
-console.setFormatter(fmt)
-logger.addHandler(console)
-
+logger = LogHelper.get_logger("DrQA BuildDB")
 
 # ------------------------------------------------------------------------------
-# Import helper
+# Preprocessing Function.
 # ------------------------------------------------------------------------------
-
 
 PREPROCESS_FN = None
-
-
 def init(filename):
     global PREPROCESS_FN
     if filename:
@@ -134,8 +125,11 @@ if __name__ == '__main__':
                         help='Number of CPU processes (for tokenizing, etc)')
     args = parser.parse_args()
 
-    print(args.data_path)
-    print(args.save_path)
+    save_dir = os.path.dirname(args.save_path)
+    if not os.path.exists(save_dir):
+        logger.info("Save directory doesn't exist. Making {0}".format(save_dir))
+        os.makedirs(save_dir)
+
     store_contents(
         args.data_path, args.save_path, args.preprocess, args.num_workers
     )
