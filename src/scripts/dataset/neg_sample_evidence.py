@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 from scripts.filter_uninformative import uninformative
 parser = argparse.ArgumentParser()
-parser.add_argument('db_path', type=str, help='/path/to/data')
+parser.add_argument('db_path', type=str, help='/path/to/fever.db')
 
 args = parser.parse_args()
 
