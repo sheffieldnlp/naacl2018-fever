@@ -1,9 +1,3 @@
-[submodule "lib/DrQA"]
-	path = lib/DrQA
-	url = git@github.com:facebookresearch/DrQA
-[submodule "lib/allennlp"]
-	path = lib/allennlp
-	url = git@github.com:allenai/allennlp.git
 [submodule "data/fever-data"]
 	path = data/fever-data
 	url = https://github.com/sheffieldnlp/fever-data.git
