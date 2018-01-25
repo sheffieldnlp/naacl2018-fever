@@ -1,22 +1,26 @@
 import re
 
+import argparse
+
 from common.dataset.reader import JSONLineReader
 from common.util import random
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 import json
 from tqdm import tqdm
+from scripts.filter_uninformative import uninformative
+parser = argparse.ArgumentParser()
+parser.add_argument('db_path', type=str, help='/path/to/data')
 
+args = parser.parse_args()
 
-def useless(title):
-    return  '-LRB-disambiguation-RRB-' in title.lower() or '-LRB-disambiguation_page-RRB-' in title.lower() or re.match(r'(List_of_.+)|(Index_of_.+)|(Outline_of_.+)',  title)
 
 jlr = JSONLineReader()
 
-docdb = FeverDocDB("data/fever/fever.db")
+docdb = FeverDocDB(args.db_path)
 
 idx = docdb.get_non_empty_doc_ids()
-idx = list(filter(lambda item: not useless(item),tqdm(idx)))
+idx = list(filter(lambda item: not uninformative(item),tqdm(idx)))
 
 
 r = SimpleRandom.get_instance()
@@ -42,7 +46,6 @@ with open("data/fever/dev.ns.rand.jsonl", "w+") as f:
                     evidence[3] = -1
 
         f.write(json.dumps(line)+"\n")
-
 
 
 
