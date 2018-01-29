@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     logger.info("Read datasets")
     train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
-    dev_ds = DataSet(file="data/fever/dev.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
+    dev_ds = DataSet(file="data/fever/dev.ns.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
 
     train_ds.read()
     dev_ds.read()
