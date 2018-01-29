@@ -42,12 +42,12 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('split', type=str)
+
     parser.add_argument('db', type=str, help='/path/to/saved/db.db')
     parser.add_argument('in_file', type=str, help='/path/to/saved/db.db')
-    parser.add_argument('max_page',type=int)
-    parser.add_argument('max_sent',type=int)
-
+    parser.add_argument('--max_page',type=int)
+    parser.add_argument('--max_sent',type=int)
+    parser.add_argument('--split', type=str)
     args = parser.parse_args()
 
     db = FeverDocDB("data/fever/fever.db")
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         lines = jlr.process(f)
 
 
-    out_file = open("{0}.sentences.{1}.{2}.jsonl".format(args.split,args.max_page,args.max_sent),"w+")
+    out_file = open("data/fever/{0}.sentences.p{1}.s{2}.jsonl".format(args.split,args.max_page,args.max_sent),"w+")
 
     for line in tqdm(lines):
         if 'predicted_pages' in line:
