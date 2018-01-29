@@ -5,5 +5,5 @@ typing
 overrides
 tqdm
 nltk
-allennlp
+allennlp==0.2.1
 git+git://github.com/facebookresearch/DrQA@master

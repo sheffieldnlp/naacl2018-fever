@@ -68,10 +68,10 @@ Model 1: Multilayer Perceptron
     export CUDA_DEVICE=0 #(or any CUDA device id. default is 0)
 
     # Using nearest neighbor sampling method for NotEnoughInfo class (better)
-    PYTHONPATH=src src/scripts/rte/mlp/train_mlp.py data/fever/fever.db data/fever/train.ns.pages.p1.jsonl data/fever/dev.ns.pages.p1.jsonl --model ns_nn_sent --sentence true
+    PYTHONPATH=src python src/scripts/rte/mlp/train_mlp.py data/fever/fever.db data/fever/train.ns.pages.p1.jsonl data/fever/dev.ns.pages.p1.jsonl --model ns_nn_sent --sentence true
 
     #Or, using random sampled data for NotEnoughInfo (worse)
-    PYTHONPATH=src src/scripts/rte/mlp/train_mlp.py data/fever/fever.db data/fever/train.ns.rand.jsonl data/fever/dev.ns.rand.jsonl --model ns_rand_sent --sentence true
+    PYTHONPATH=src python src/scripts/rte/mlp/train_mlp.py data/fever/fever.db data/fever/train.ns.rand.jsonl data/fever/dev.ns.rand.jsonl --model ns_rand_sent --sentence true
 
 
 Model 2: LSTM with Decomposable Attention
@@ -83,10 +83,10 @@ Model 2: LSTM with Decomposable Attention
     export CUDA_DEVICE=0 #or cuda device id
 
     # Using nearest neighbor sampling method for NotEnoughInfo class (better)
-    PYTHONPATH=src src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE
+    PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE
 
     #Or, using random sampled data for NotEnoughInfo (worse)
-    PYTHONPATH=src src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_rs_ora_sent.json logs/da_rs_sent --cuda-device $CUDA_DEVICE
+    PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_rs_ora_sent.json logs/da_rs_sent --cuda-device $CUDA_DEVICE
 
 
 ## Evaluation
@@ -95,11 +95,11 @@ Model 2: LSTM with Decomposable Attention
     
 Model 1: Multi-layer perceptron
 
-    PYTHONPATH=src src/scripts/rte/mlp/eval_mlp.py data/fever/fever.db --model ns_nn_sent --sentence true --log logs/mlp_nn_sent
+    PYTHONPATH=src python src/scripts/rte/mlp/eval_mlp.py data/fever/fever.db --model ns_nn_sent --sentence true --log logs/mlp_nn_sent
     
 Model 2: LSTM with decomposable attention 
     
-    PYTHONPATH=src:lib/allennlp src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.ns.pages.p1.jsonl
+    PYTHONPATH=src:lib/allennlp python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.ns.pages.p1.jsonl
     
  
 ### Evidence Retrieval Evaluation:
