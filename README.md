@@ -13,7 +13,11 @@ Demo
 
 This was tested and evaluated using the Python 3.6 verison of Anaconda 5.0.1 which can be downloaded from [anaconda.com](https://www.anaconda.com/download/)
 
+To train the LSTM-based models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be downloaded [from Google Drive](https://drive.google.com/file/d/1aoiC5lJl_X8Oo_IFdowCJG3zF7W1X3X8/view) 
+
 ## Installation
+
+Mac OSX users may have to install xcode before running git or installing packages (gcc may fail). See this post: [https://apple.stackexchange.com/questions/254380/macos-sierra-invalid-active-developer-path]
 
 Create a virtual environment for FEVER with Python 3.6 and activate it
 
@@ -44,13 +48,13 @@ Download Wikipedia data: https://drive.google.com/file/d/1BMnxxIcoC8VRL5p3E6kamg
 
     unzip wiki.zip -d data
 
-Copy Wikipedia pages into SQLite DB and build TF-IDF index
+Copy Wikipedia pages into SQLite DB and build TF-IDF index (go grab a coffee while this runs)
 
     PYTHONPATH=src python src/scripts/build_db.py data/wiki data/fever/fever.db
     mkdir data/index
     PYTHONPATH=lib/DrQA/scripts/retriever python lib/DrQA/scripts/retriever/build_tfidf.py data/fever/fever.db data/index/
 
-Sample training data for the NotEnoughInfo class
+Sample training data for the NotEnoughInfo class (may also take a while)
 
     #Using nearest neighbor method
     PYTHONPATH=src python src/scripts/retrieval/document/batch_ir_ns.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split train
