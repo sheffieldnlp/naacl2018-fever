@@ -62,8 +62,8 @@ Sample training data for the NotEnoughInfo class
 Download pretrained GloVe Vectors
 
     wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
-    unzip glove.6B.zip -d data
-    
+    unzip glove.6B.zip -d data/glove
+    gzip data/glove/*.txt
     
 ## Training
 
