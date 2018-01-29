@@ -29,7 +29,7 @@ Clone the repository
     git clone https://github.com/sheffieldnlp/fever-baselines
     cd fever-baselines
 
-Install requirements
+Install requirements (run export LANG=C.UTF-8 if installation of DrQA fails)
 
     pip install -r requirements.txt
 
@@ -47,13 +47,14 @@ Download Wikipedia data: https://drive.google.com/file/d/1BMnxxIcoC8VRL5p3E6kamg
 Copy Wikipedia pages into SQLite DB and build TF-IDF index
 
     PYTHONPATH=src python src/scripts/build_db.py data/wiki data/fever/fever.db
+    mkdir data/index
     PYTHONPATH=lib/DrQA/scripts/retriever python lib/DrQA/scripts/retriever/build_tfidf.py data/fever/fever.db data/index/
 
 Sample training data for the NotEnoughInfo class
 
     #Using nearest neighbor method
-    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir_ns.py --model data/index/drqa-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split train
-    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir_ns.py --model data/index/drqa-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split dev
+    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir_ns.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split train
+    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir_ns.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split dev
 
     #Using random sampling method
     PYTHONPATH=src python src/scripts/dataset/neg_sample_evidence.py data/fever/fever.db
@@ -106,8 +107,8 @@ Model 2: LSTM with decomposable attention
 
 Preprocessing (for both models):
 
-    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/drqa-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split dev
-    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/drqa-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split test
+    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split dev
+    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split test
     
     PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf.py data/fever/fever.db data/fever/dev.pages.p5.jsonl --max_page 5 --max_sent 5 --split dev
     PYTHONPATH=src ptyhon src/scripts/retrieval/sentence/process_tfidf.py data/fever/fever.db data/fever/test.pages.p5.jsonl --max_page 5 --max_sent 5 --split test
@@ -126,5 +127,5 @@ Model 2: LSTM with decomposable attention
 ## Interactive Demo (LSTM with decomposable attention)
 
     PYTHONPATH=src python src/scripts/rte/dta/interactive.py data/fever/fever.db logs/da_nn_sent/model.tar.gz --model data/fever/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz
-
+    
     
