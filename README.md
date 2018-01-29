@@ -3,21 +3,23 @@
 This is the PyTorch imp0lementation of the FEVER baselines described in th NAACL2018 paper.
 
 ## Links
-Installation
-Data preparation
-Training
-Evaluation
-Demo
+
+ * Installation
+ * Data preparation
+ * Training
+ * Evaluation
+ * Demo
 
 ## Pre-requisites
 
 This was tested and evaluated using the Python 3.6 verison of Anaconda 5.0.1 which can be downloaded from [anaconda.com](https://www.anaconda.com/download/)
 
+Mac OSX users may have to install xcode before running git or installing packages (gcc may fail). 
+See this post: (https://apple.stackexchange.com/questions/254380/macos-sierra-invalid-active-developer-path)
+
 To train the LSTM-based models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be downloaded [from Google Drive](https://drive.google.com/file/d/1aoiC5lJl_X8Oo_IFdowCJG3zF7W1X3X8/view) 
 
 ## Installation
-
-Mac OSX users may have to install xcode before running git or installing packages (gcc may fail). See this post: [https://apple.stackexchange.com/questions/254380/macos-sierra-invalid-active-developer-path]
 
 Create a virtual environment for FEVER with Python 3.6 and activate it
 
