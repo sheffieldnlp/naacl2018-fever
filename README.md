@@ -59,6 +59,12 @@ Sample training data for the NotEnoughInfo class
     #Using random sampling method
     PYTHONPATH=src python src/scripts/dataset/neg_sample_evidence.py data/fever/fever.db
 
+Download pretrained GloVe Vectors
+
+    wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
+    unzip glove.6B.zip -d data
+    
+    
 ## Training
 
 Model 1: Multilayer Perceptron
