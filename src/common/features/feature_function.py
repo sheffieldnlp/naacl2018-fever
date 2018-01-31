@@ -109,8 +109,8 @@ class FeatureFunction():
     def process(self,data):
         pass
 
-    def load_vocab(self):
+    def load_vocab(self,mname):
         pass
 
-    def save_vocab(self):
+    def save_vocab(self,mname):
         pass
