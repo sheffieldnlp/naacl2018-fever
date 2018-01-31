@@ -1,5 +1,7 @@
 import torch
 
+from common.util.log_helper import LogHelper
+
 
 class EarlyStopping():
     def __init__(self,name,patience=8):
@@ -11,6 +13,7 @@ class EarlyStopping():
         self.epoch = 0
 
         self.name = name
+        self.logger = LogHelper.get_logger(EarlyStopping.__name__)
 
     def __call__(self, model, acc):
         self.epoch += 1
@@ -22,15 +25,16 @@ class EarlyStopping():
             torch.save(model.state_dict(),"models/{0}.best.save".format(self.name))
             self.best_score = acc
             self.best_epoch = self.epoch
+            self.logger.info("Saving best weights from round {0}".format(self.epoch))
             return False
 
         elif self.epoch > self.best_epoch+self.patience:
-            print("Early stopping: Terminate")
+            self.logger.info("Early stopping: Terminate")
             return True
 
-        print("Early stopping: Worse Round")
+        self.logger.info("Early stopping: Worse Round")
         return False
 
     def set_best_state(self,model):
-        print("Loading weights from round {0}".format(self.best_epoch))
+        self.logger.info("Loading weights from round {0}".format(self.best_epoch))
         model.load_state_dict(torch.load("models/{0}.best.save".format(self.name)))
