@@ -1,13 +1,17 @@
 import numpy as np
 import os
 import pickle
+
+from common.util.log_helper import LogHelper
+
+
 class Features():
     def __init__(self,features=list(),label_name="label",base_path="features"):
         self.feature_functions = features
         self.vocabs = dict()
         self.label_name = label_name
         self.base_path = base_path
-
+        self.logger = LogHelper.get_logger(Features.__name__)
 
     def load(self,train,dev=None,test=None):
         train_fs = []
@@ -45,12 +49,12 @@ class Features():
 
         if dataset is not None:
             if os.path.exists(os.path.join(ffpath,name)) and os.getenv("DEBUG","").lower() not in ["y","1","t","yes"]:
-                print("Loading Features for {0}.{1}".format(feature, name))
+                self.logger.info("Loading Features for {0}.{1}".format(feature, name))
                 with open(os.path.join(ffpath, name), "rb") as f:
                     features = pickle.load(f)
 
             else:
-                print("Generating Features for {0}.{1}".format(feature,name))
+                self.logger.info("Generating Features for {0}.{1}".format(feature,name))
                 features = feature.lookup(dataset.data)
 
                 with open(os.path.join(ffpath, name), "wb+") as f:
@@ -72,7 +76,7 @@ class Features():
 
     def inform(self,train,dev=None,test=None):
         for feature_function in self.feature_functions:
-            print("Inform {0} with {1} data".format(feature_function,len(train.data)))
+            self.logger.info("Inform {0} with {1} data".format(feature_function,len(train.data)))
 
             feature_function.inform(train.data,
                                     dev.data if dev is not None else None,

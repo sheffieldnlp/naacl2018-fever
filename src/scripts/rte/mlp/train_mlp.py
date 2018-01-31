@@ -46,10 +46,10 @@ if __name__ == "__main__":
     ffns = []
 
     if args.sentence:
-        print("Sentence level")
+        logger.info("Model is Sentence level")
         ffns.append(SentenceLevelTermFrequencyFeatureFunction(db, naming=mname))
     else:
-        print("Document level")
+        logger.info("Model is Document level")
         ffns.append(TermFrequencyFeatureFunction(db,naming=mname))
 
     f = Features(ffns)

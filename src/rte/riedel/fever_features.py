@@ -9,6 +9,9 @@ from common.util.array import flatten
 import numpy as np
 import pickle
 
+from common.util.log_helper import LogHelper
+
+
 class TermFrequencyFeatureFunction(FeatureFunction):
 
     stop_words = [
@@ -45,6 +48,8 @@ class TermFrequencyFeatureFunction(FeatureFunction):
         self.doc_db = doc_db
         self.lim_unigram = lim_unigram
         self.naming = naming
+        self.logger = LogHelper.get_logger(self.get_name())
+        self.logger.info("Term Frequency Feature Function with top {0} unigrams".format(lim_unigram))
         if gold:
             self.ename = "evidence"
         else:
@@ -71,18 +76,21 @@ class TermFrequencyFeatureFunction(FeatureFunction):
             test_claims = []
             test_bodies = []
 
+        self.logger.info("Count word frequencies")
         self.bow_vectorizer = CountVectorizer(max_features=self.lim_unigram,
                                          stop_words=TermFrequencyFeatureFunction.stop_words)
         self.bow = self.bow_vectorizer.fit_transform(claims + bodies)
 
+        self.logger.info("Generate TF Vectors")
         self.tfreq_vectorizer = TfidfTransformer(use_idf=False).fit(self.bow)
 
+        self.logger.info("Generate TF-IDF Vectors")
         self.tfidf_vectorizer = TfidfVectorizer(max_features=self.lim_unigram,
                                            stop_words=TermFrequencyFeatureFunction.stop_words). \
             fit(claims + bodies + dev_claims + dev_bodies + test_claims + test_bodies)
 
     def save(self,mname):
-        print("Features save")
+        self.logger.info("Saving TFIDF features to disk")
 
         with open("features/{0}-bowv".format(mname), "wb+") as f:
             pickle.dump(self.bow_vectorizer, f)
@@ -95,7 +103,7 @@ class TermFrequencyFeatureFunction(FeatureFunction):
 
 
     def load(self,mname):
-        print("Features load")
+        self.logger.info("Loading TFIDF features from disk")
 
         with open("features/{0}-bowv".format(mname), "rb") as f:
             self.bow_vectorizer = pickle.load(f)
