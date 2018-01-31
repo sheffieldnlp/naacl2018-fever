@@ -66,12 +66,10 @@ def train(model, fs, batch_size, lr, epochs,dev=None, clip=None, early_stopping=
             print("Epoch Dev Accuracy {0}".format(acc))
 
             if early_stopping is not None and early_stopping(model,acc):
-                early_stopping.set_best_state(model)
                 break
 
-    if early_stopping is not None:
+    if dev is not None and early_stopping is not None:
         early_stopping.set_best_state(model)
-
 
 
 
