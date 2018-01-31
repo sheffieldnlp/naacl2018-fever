@@ -6,9 +6,8 @@ import os
 from common.dataset.data_set import DataSet
 from common.dataset.reader import JSONLineReader
 from common.features.feature_function import Features
-from common.training.early_stopping import EarlyStopping
 from common.training.options import gpu
-from common.training.run import train, print_evaluation
+from common.training.run import  print_evaluation
 from common.util.log_helper import LogHelper
 from retrieval.fever_doc_db import FeverDocDB
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema

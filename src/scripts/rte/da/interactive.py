@@ -1,35 +1,21 @@
-import os
-
-from copy import deepcopy
-from typing import List, Union, Dict, Any
-
 from common.dataset.data_set import DataSet
 from common.dataset.reader import JSONLineReader
 from drqa import retriever
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-
-from allennlp.common import Params
-from allennlp.common.tee_logger import TeeLogger
-from allennlp.common.util import prepare_environment
-from allennlp.data import Vocabulary, Dataset, DataIterator, DatasetReader, Tokenizer, TokenIndexer
-from allennlp.models import Model, archive_model, load_archive
-from allennlp.service.predictors import Predictor
-from allennlp.training import Trainer
+from allennlp.data import Tokenizer, TokenIndexer
+from allennlp.models import Model, load_archive
 from common.util.log_helper import LogHelper
 from retrieval.fever_doc_db import FeverDocDB
 from rte.parikh.reader import FEVERReader
 
 import argparse
-import logging
-import sys
-import json
 import numpy as np
 
 
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 from scripts.retrieval.sentence.process_tfidf import XTermFrequencyFeatureFunction
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+LogHelper.setup()
+logger = LogHelper.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 def tf_idf_sim(claim, lines):
