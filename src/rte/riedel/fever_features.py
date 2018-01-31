@@ -93,6 +93,7 @@ class TermFrequencyFeatureFunction(FeatureFunction):
         self.logger.info("Saving TFIDF features to disk")
 
         with open("features/{0}-bowv".format(mname), "wb+") as f:
+            print("BOWB")
             pickle.dump(self.bow_vectorizer, f)
         with open("features/{0}-bow".format(mname), "wb+") as f:
             pickle.dump(self.bow, f)
