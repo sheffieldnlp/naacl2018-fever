@@ -54,6 +54,8 @@ class Features():
                 with open(os.path.join(ffpath, name), "rb") as f:
                     features = pickle.load(f)
 
+                f.load_vocab(self.mname)
+
             else:
                 self.logger.info("Generating Features for {0}.{1}".format(feature,name))
                 features = feature.lookup(dataset.data)
