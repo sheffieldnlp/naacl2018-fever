@@ -39,8 +39,6 @@ if __name__ == "__main__":
 
     logger.info("Loading DB {0}".format(args.db))
     db = FeverDocDB(args.db)
-    idx = set(db.get_doc_ids())
-    logger.info("{0} documents loaded".format(len(idx)))
 
     mname = args.model
     logger.info("Model name is {0}".format(mname))
@@ -57,7 +55,7 @@ if __name__ == "__main__":
     f = Features(ffns)
     jlr = JSONLineReader()
 
-    formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
+    formatter = FEVERGoldFormatter(None, FEVERLabelSchema())
 
     train_ds = DataSet(file=args.train, reader=jlr, formatter=formatter)
     dev_ds = DataSet(file=args.dev, reader=jlr, formatter=formatter)

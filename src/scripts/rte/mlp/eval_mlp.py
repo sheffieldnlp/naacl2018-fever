@@ -36,8 +36,6 @@ if __name__ == "__main__":
 
     logger.info("Loading DB {0}".format(args.db))
     db = FeverDocDB(args.db)
-    idx = set(db.get_doc_ids())
-    logger.info("{0} documents loaded".format(len(idx)))
 
     mname = args.model
     logger.info("Model name is {0}".format(mname))
@@ -57,7 +55,7 @@ if __name__ == "__main__":
     f.load_vocab(mname)
 
     jlr = JSONLineReader()
-    formatter = FEVERGoldFormatter(idx, FEVERLabelSchema())
+    formatter = FEVERGoldFormatter(None, FEVERLabelSchema())
 
     test_ds = DataSet(file=args.test, reader=jlr, formatter=formatter)
     test_ds.read()
