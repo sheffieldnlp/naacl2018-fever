@@ -21,7 +21,7 @@ This was tested and evaluated using the Python 3.6 verison of Anaconda 5.0.1 whi
 Mac OSX users may have to install xcode before running git or installing packages (gcc may fail). 
 See this post on [StackExchange](https://apple.stackexchange.com/questions/254380/macos-sierra-invalid-active-developer-path)
 
-To train the LSTM-based models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be downloaded [from Google Drive](https://drive.google.com/file/d/1aoiC5lJl_X8Oo_IFdowCJG3zF7W1X3X8/view) 
+To train the LSTM-based models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be downloaded [from Google Drive](https://drive.google.com/file/d/1aoiC5lJl_X8Oo_IFdowCJG3zF7W1X3X8/view). To use the pretrained model, simply replace any path to a model.tar.gz file with the path to the file you downloaded. (e.g. `logs/da_nn_sent/model.tar.gz` could become `~/Downloads/model.tar.gz`) 
 
 ## Installation
 
@@ -151,6 +151,6 @@ Model 2: LSTM with decomposable attention
  
 ## Interactive Demo
 
-    PYTHONPATH=src python src/scripts/rte/dta/interactive.py data/fever/fever.db logs/da_nn_sent/model.tar.gz --model data/fever/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz
+    PYTHONPATH=src python src/scripts/rte/da/interactive.py data/fever/fever.db logs/da_nn_sent/model.tar.gz --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz
     
     
