@@ -54,7 +54,7 @@ class Features():
                 with open(os.path.join(ffpath, name), "rb") as f:
                     features = pickle.load(f)
 
-                f.load_vocab(self.mname)
+                feature.load_vocab(self.mname)
 
             else:
                 self.logger.info("Generating Features for {0}.{1}".format(feature,name))
@@ -63,7 +63,7 @@ class Features():
                 with open(os.path.join(ffpath, name), "wb+") as f:
                     pickle.dump(features, f)
 
-                f.save_vocab(self.mname)
+                feature.save_vocab(self.mname)
             return features
 
         return None
@@ -107,4 +107,10 @@ class FeatureFunction():
         return self.process(data)
 
     def process(self,data):
+        pass
+
+    def load_vocab(self):
+        pass
+
+    def save_vocab(self):
         pass
