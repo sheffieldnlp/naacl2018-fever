@@ -15,7 +15,7 @@ from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 from scripts.retrieval.sentence.process_tfidf import XTermFrequencyFeatureFunction
 
 LogHelper.setup()
-logger = LogHelper.getLogger(__name__)  # pylint: disable=invalid-name
+logger = LogHelper.get_logger(__name__)  # pylint: disable=invalid-name
 
 
 def tf_idf_sim(claim, lines):
