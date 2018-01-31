@@ -86,7 +86,7 @@ And random sampling
     
 ## Training
 
-Model 1: Multilayer Perceptron
+Model 1: Multilayer Perceptron (expected oracle dev set performance: 62.27%)
 
     #If using a GPU, set
     export GPU=1
@@ -100,7 +100,7 @@ Model 1: Multilayer Perceptron
     PYTHONPATH=src python src/scripts/rte/mlp/train_mlp.py data/fever/fever.db data/fever/train.ns.rand.jsonl data/fever/dev.ns.rand.jsonl --model ns_rand_sent --sentence true
 
 
-Model 2: LSTM with Decomposable Attention
+Model 2: LSTM with Decomposable Attention (expected dev set performance: 77.97%)
 
     #if using a CPU, set
     export CUDA_DEVICE=-1
