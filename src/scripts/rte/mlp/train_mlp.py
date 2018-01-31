@@ -52,7 +52,7 @@ if __name__ == "__main__":
         logger.info("Model is Document level")
         ffns.append(TermFrequencyFeatureFunction(db,naming=mname))
 
-    f = Features(ffns)
+    f = Features(mname,ffns)
     jlr = JSONLineReader()
 
     formatter = FEVERGoldFormatter(None, FEVERLabelSchema())
@@ -69,7 +69,6 @@ if __name__ == "__main__":
         test_ds.read()
 
     train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, test_ds)
-    f.save_vocab(mname)
 
     input_shape = train_feats[0].shape[1]
 

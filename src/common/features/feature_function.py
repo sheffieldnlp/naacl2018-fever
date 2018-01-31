@@ -6,12 +6,13 @@ from common.util.log_helper import LogHelper
 
 
 class Features():
-    def __init__(self,features=list(),label_name="label",base_path="features"):
+    def __init__(self,model_name, features=list(), label_name="label",base_path="features"):
         self.feature_functions = features
         self.vocabs = dict()
         self.label_name = label_name
         self.base_path = base_path
         self.logger = LogHelper.get_logger(Features.__name__)
+        self.mname = model_name
 
     def load(self,train,dev=None,test=None):
         train_fs = []
@@ -60,6 +61,7 @@ class Features():
                 with open(os.path.join(ffpath, name), "wb+") as f:
                     pickle.dump(features, f)
 
+                f.save_vocab(self.mname)
             return features
 
         return None
