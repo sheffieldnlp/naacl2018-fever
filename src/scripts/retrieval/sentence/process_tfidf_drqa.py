@@ -70,6 +70,7 @@ if __name__ == "__main__":
     parser.add_argument('--in_file', type=str, help='/path/to/saved/db.db')
     parser.add_argument('--max_page',type=int)
     parser.add_argument('--max_sent',type=int)
+    parser.add_argument('--use_precomputed', type=bool, default=True)
     parser.add_argument('--split', type=str)
     parser.add_argument('--ngram', type=int, default=2,
                         help=('Use up to N-size n-grams '
@@ -79,12 +80,14 @@ if __name__ == "__main__":
     parser.add_argument('--tokenizer', type=str, default='simple',
                         help=("String option specifying tokenizer type to use "
                               "(e.g. 'corenlp')"))
+
     parser.add_argument('--num-workers', type=int, default=None,
                         help='Number of CPU processes (for tokenizing, etc)')
     args = parser.parse_args()
 
-    _, metadata = utils.load_sparse_csr(args.model)
-    doc_freqs = metadata['doc_freqs'].squeeze()
+    if args.use_precomputed:
+        _, metadata = utils.load_sparse_csr(args.model)
+        doc_freqs = metadata['doc_freqs'].squeeze()
 
     db = FeverDocDB("data/fever/fever.db")
     jlr = JSONLineReader()
@@ -92,10 +95,10 @@ if __name__ == "__main__":
 
     jlr = JSONLineReader()
 
-    with open(args.in_file,"r") as f, open("data/fever/{0}.sentences.new1.p{1}.s{2}.jsonl".format(args.split, args.max_page, args.max_sent), "w+") as out_file:
+    with open(args.in_file,"r") as f, open("data/fever/{0}.sentences.{3}.p{1}.s{2}.jsonl".format(args.split, args.max_page, args.max_sent,"precomputed" if args.use_precomputed else "not_precomputed"), "w+") as out_file:
         lines = jlr.process(f)
-        lines = tf_idf_claims_batch(lines)
+        #lines = tf_idf_claims_batch(lines)
 
         for line in tqdm(lines):
-        #    line = tf_idf_claim(line)
+            line = tf_idf_claim(line)
             out_file.write(json.dumps(line) + "\n")
