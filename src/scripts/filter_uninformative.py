@@ -1,5 +1,3 @@
-import re
-
 def uninformative(title):
     return  '-LRB-disambiguation-RRB-' in title.lower() \
             or '-LRB-disambiguation_page-RRB-' in title.lower() \
@@ -8,4 +6,4 @@ def uninformative(title):
             or title.lower().startswith('outline_of_')
 
 def preprocess(doc):
-    return doc if not uninformative(doc['id']) else None
+    return None if uninformative(doc['id']) else doc
