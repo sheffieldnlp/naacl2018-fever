@@ -67,7 +67,7 @@ Download the pre-processed Wikipedia articles from [Google Drive](https://drive.
 ### 2. Indexing 
 Construct an SQLite Database and build TF-IDF index (go grab a coffee while this runs)
 
-    PYTHONPATH=src python src/scripts/build_db.py data/wiki data/fever/fever.db
+    PYTHONPATH=src python src/scripts/build_db.py data/wiki data/fever/fever.db  --preprocess src/scripts/filter_uninformative.py
     mkdir data/index
     PYTHONPATH=lib/DrQA/scripts/retriever python lib/DrQA/scripts/retriever/build_tfidf.py data/fever/fever.db data/index/
 
