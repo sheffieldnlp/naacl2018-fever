@@ -91,7 +91,7 @@ if __name__ == "__main__":
     parser.add_argument('--num-workers', type=int, default=None,
                         help='Number of CPU processes (for tokenizing, etc)')
     args = parser.parse_args()
-
+    doc_freqs=None
     if args.use_precomputed:
         _, metadata = utils.load_sparse_csr(args.model)
         doc_freqs = metadata['doc_freqs'].squeeze()
