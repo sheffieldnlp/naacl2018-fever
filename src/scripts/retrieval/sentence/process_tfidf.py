@@ -54,7 +54,7 @@ if __name__ == "__main__":
     jlr = JSONLineReader()
     formatter = FEVERGoldFormatter(set(), FEVERLabelSchema())
 
-    train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(args.max_page), reader=jlr, formatter=formatter)
+    train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
     dev_ds = DataSet(file="data/fever/dev.pages.p{0}.jsonl".format(args.max_page), reader=jlr, formatter=formatter)
 
     train_ds.read()

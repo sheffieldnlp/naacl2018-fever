@@ -57,6 +57,13 @@ def tf_idf_claims_batch(lines):
         results = threads.map(tf_idf_claim, lines)
     return results
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__ == "__main__":
     LogHelper.setup()
@@ -70,7 +77,7 @@ if __name__ == "__main__":
     parser.add_argument('--in_file', type=str, help='/path/to/saved/db.db')
     parser.add_argument('--max_page',type=int)
     parser.add_argument('--max_sent',type=int)
-    parser.add_argument('--use_precomputed', type=bool, default=True)
+    parser.add_argument('--use_precomputed', type=str2bool, default=True)
     parser.add_argument('--split', type=str)
     parser.add_argument('--ngram', type=int, default=2,
                         help=('Use up to N-size n-grams '
