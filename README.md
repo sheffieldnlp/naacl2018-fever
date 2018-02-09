@@ -39,7 +39,7 @@ Clone the repository
     git clone https://github.com/sheffieldnlp/fever-baselines
     cd fever-baselines
 
-Install requirements (run export LANG=C.UTF-8 if installation of DrQA fails)
+Install requirements (run `export LANG=C.UTF-8` if installation of DrQA fails)
 
     pip install -r requirements.txt
 
@@ -136,7 +136,7 @@ Preprocessing (for both models):
     PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split test
     
     PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf.py data/fever/fever.db data/fever/dev.pages.p5.jsonl --max_page 5 --max_sent 5 --split dev
-    PYTHONPATH=src ptyhon src/scripts/retrieval/sentence/process_tfidf.py data/fever/fever.db data/fever/test.pages.p5.jsonl --max_page 5 --max_sent 5 --split test
+    PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf.py data/fever/fever.db data/fever/test.pages.p5.jsonl --max_page 5 --max_sent 5 --split test
 
 Model 1: Multi-layer perceptron
 
@@ -145,8 +145,8 @@ Model 1: Multi-layer perceptron
     
 Model 2: LSTM with decomposable attention 
     
-    PYTHONPATH=src:lib/allennlp src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.sentences.p5.s5.jsonl  --log logs/da_nn_sent_dev
-    PYTHONPATH=src:lib/allennlp src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/test.sentences.p5.s5.jsonl  --log logs/da_nn_sent_test
+    PYTHONPATH=src:lib/allennlp python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.sentences.p5.s5.jsonl  --log logs/da_nn_sent_dev
+    PYTHONPATH=src:lib/allennlp python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/test.sentences.p5.s5.jsonl  --log logs/da_nn_sent_test
     
  
 ## Interactive Demo
