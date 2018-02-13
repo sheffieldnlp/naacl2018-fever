@@ -1,6 +1,6 @@
 from common.util.random import SimpleRandom
 from rte.riedel.fever_features import TermFrequencyFeatureFunction
-
+import os
 
 class SentenceLevelTermFrequencyFeatureFunction(TermFrequencyFeatureFunction):
 
@@ -16,6 +16,11 @@ class SentenceLevelTermFrequencyFeatureFunction(TermFrequencyFeatureFunction):
 
     def get_doc_line(self,doc,line):
         lines = self.doc_db.get_doc_lines(doc)
+
+        if os.getenv("PERMISSIVE_EVIDENCE","n").lower() in ["y","yes","true","t","1"]:
+            if lines is None:
+                return ""
+
         if line > -1:
             return lines.split("\n")[line].split("\t")[1]
         else:
