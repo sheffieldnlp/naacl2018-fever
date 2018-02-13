@@ -34,7 +34,7 @@ class FEVERGoldFormatter(FeverFormatter):
                 pages.extend([(ev[2],ev[3]) for ev in evidence_group])
 
         if os.getenv("FILTER_UNINFORMATIVE","n").lower() in ["t","y","1","true","yes"]:
-            for page,line in pages:
+            for page,_ in pages:
                 if uninformative(page):
                     return None
 
