@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 
 from allennlp.common import Params
 from allennlp.common.tee_logger import TeeLogger
-from allennlp.common.util import prepare_environment
+#from allennlp.common.util import prepare_environment
 from allennlp.data import Vocabulary, Dataset, DataIterator, DatasetReader, Tokenizer, TokenIndexer
 from allennlp.models import Model, archive_model, load_archive
 from allennlp.service.predictors import Predictor
@@ -25,7 +25,7 @@ import numpy as np
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 def eval_model(db: FeverDocDB, args) -> Model:
-    archive = load_archive(args.archive_file, cuda_device=args.cuda_device, overrides=args.overrides)
+    archive = load_archive(args.archive_file, cuda_device=args.cuda_device)
 
     config = archive.config
     ds_params = config["dataset_reader"]

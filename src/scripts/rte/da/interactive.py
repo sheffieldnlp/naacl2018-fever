@@ -71,7 +71,7 @@ def eval_model(db: FeverDocDB, args) -> Model:
 
         print("Evidence:")
         for idx,sentence in enumerate(sentences_l[:5]):
-            print("{0}\t{1}\t\t{2}".format(idx+1,sentence[1],sentence[3]) )
+            print("{0}\t{1}\t\t{2}\t{3}".format(idx+1, sentence[0], sentence[1],sentence[3]) )
 
         item = reader.text_to_instance(evidence, claim)
 
