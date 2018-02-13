@@ -1,6 +1,10 @@
 from common.dataset.formatter import Formatter
 from common.dataset.label_schema import LabelSchema
 from nltk import word_tokenize
+import os
+
+from scripts.filter_uninformative import uninformative
+
 
 def preprocess(p):
     return p.replace(" ","_").replace("(","-LRB-").replace(")","-RRB-").replace(":","-COLON-").split("#")[0]
@@ -28,6 +32,11 @@ class FEVERGoldFormatter(FeverFormatter):
         else:
             for evidence_group in line["evidence"]:
                 pages.extend([(ev[2],ev[3]) for ev in evidence_group])
+
+        if os.getenv("FILTER_UNINFORMATIVE","n").lower() in ["t","y","1","true","yes"]:
+            for page,line in pages:
+                if uninformative(page):
+                    return None
 
         return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
 
