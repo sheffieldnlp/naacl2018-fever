@@ -4,6 +4,3 @@
 [submodule "lib/DrQA"]
 	path = lib/DrQA
 	url = https://github.com/facebookresearch/DrQA.git
-[submodule "lib/allennlp"]
-	path = lib/allennlp
-	url = https://github.com/allenai/allennlp/
