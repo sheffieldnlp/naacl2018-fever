@@ -1,6 +1,8 @@
 import os
 
 from copy import deepcopy
+
+from allennlp.commands.train import prepare_environment
 from typing import List, Union, Dict, Any
 
 from allennlp.common import Params
@@ -9,6 +11,7 @@ from allennlp.data import Vocabulary, Dataset, DataIterator, DatasetReader, Toke
 from allennlp.models import Model, archive_model
 from allennlp.training import Trainer
 from common.util.log_helper import LogHelper
+from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 from rte.parikh.reader import FEVERReader
 
@@ -37,7 +40,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     serialization_dir: str, required
         The directory in which to save results and logs.
     """
-    prepare_environment(params)
+    SimpleRandom.set_seeds()
 
     os.makedirs(serialization_dir, exist_ok=True)
     sys.stdout = TeeLogger(os.path.join(serialization_dir, "stdout.log"), sys.stdout)  # type: ignore
