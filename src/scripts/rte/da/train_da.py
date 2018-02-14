@@ -61,7 +61,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
                                  wiki_tokenizer=Tokenizer.from_params(ds_params.pop('wiki_tokenizer', {})),
                                  claim_tokenizer=Tokenizer.from_params(ds_params.pop('claim_tokenizer', {})),
                                  token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})),
-                                 filtter=args.filter)
+                                 filter=args.filter)
 
     train_data_path = params.pop('train_data_path')
     logger.info("Reading training data from %s", train_data_path)
