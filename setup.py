@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 reqs = reqs.strip().split('\n')
 
 install = [req for req in reqs if not req.startswith("git://")]
-depends = [req for req in reqs if not req.startswith("git://")]
+depends = [req.replace("git+git://","git://") for req in reqs if req.startswith("git+git://")]
 
 setup(
     name='fever',
@@ -16,7 +16,7 @@ setup(
     description='Fact Extraction and VERification baselines',
     long_description="readme",
     license=license,
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     packages=find_packages(exclude=('data')),
     install_requires=install,
     dependency_links=depends,
