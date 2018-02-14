@@ -1,14 +1,13 @@
-import re
-
 import argparse
+import json
+
+from tqdm import tqdm
 
 from common.dataset.reader import JSONLineReader
-from common.util import random
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
-import json
-from tqdm import tqdm
-from scripts.filter_uninformative import uninformative
+from retrieval.filter_uninformative import uninformative
+
 parser = argparse.ArgumentParser()
 parser.add_argument('db_path', type=str, help='/path/to/fever.db')
 

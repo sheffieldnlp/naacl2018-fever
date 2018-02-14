@@ -1,19 +1,22 @@
-from common.dataset.formatter import Formatter
-from common.dataset.label_schema import LabelSchema
-from nltk import word_tokenize
 import os
 
-from scripts.filter_uninformative import uninformative
+from nltk import word_tokenize
+
+from common.dataset.formatter import Formatter
+from common.dataset.label_schema import LabelSchema
+from retrieval.filter_uninformative import uninformative
 
 
 def preprocess(p):
     return p.replace(" ","_").replace("(","-LRB-").replace(")","-RRB-").replace(":","-COLON-").split("#")[0]
 
 class FeverFormatter(Formatter):
-    def __init__(self, index, label_schema, tokenizer=None):
+    def __init__(self, index, label_schema, tokenizer=None,filter=None):
         super().__init__(label_schema)
         self.index=index
         self.tokenize = tokenizer if tokenizer is not None else self.nltk_tokenizer
+        self.filter_uninformative = filter if filter is not None else os.getenv("FILTER_UNINFORMATIVE","n").lower() in ["t","y","1","true","yes"]
+
 
     def nltk_tokenizer(self,text):
         return " ".join(word_tokenize(text))
@@ -33,7 +36,7 @@ class FEVERGoldFormatter(FeverFormatter):
             for evidence_group in line["evidence"]:
                 pages.extend([(ev[2],ev[3]) for ev in evidence_group])
 
-        if os.getenv("FILTER_UNINFORMATIVE","n").lower() in ["t","y","1","true","yes"]:
+        if self.filter_uninformative:
             for page,_ in pages:
                 if uninformative(page):
                     return None
