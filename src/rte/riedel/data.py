@@ -48,7 +48,7 @@ class FEVERGoldFormatter(FeverFormatter):
 
         if self.filtering is not None:
             for page,_ in pages:
-                if self.filtering(page) is None:
+                if self.filtering({"id":page}) is None:
                     return None
 
         return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
