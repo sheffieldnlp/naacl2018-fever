@@ -1,7 +1,7 @@
 language: python
 git:
-	submodules: false
+    submodules: false
 before_install:
-	- echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_PASS" >> ~/.netrc
-	- echo "Written git user to config file wq$GIT_USER"
-	- git submodule update --init --recursive
+- echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_PASS" >> ~/.netrc
+- echo "Written git user to config file wq$GIT_USER"
+- git submodule update --init --recursive
