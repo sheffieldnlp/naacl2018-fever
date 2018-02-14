@@ -6,4 +6,4 @@ overrides
 tqdm
 nltk
 allennlp==0.2.1
-git+git://github.com/j6mes/DrQA@master
+git://github.com/j6mes/DrQA@master#egg=DrQA
