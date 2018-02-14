@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 reqs = reqs.strip().split('\n')
 
 install = [req for req in reqs if not req.startswith("git://")]
-depends = [req.replace("git+git://","git://") for req in reqs if req.startswith("git+git://")]
+depends = [req.replace("git+git://","git+http://") for req in reqs if req.startswith("git+git://")]
 
 setup(
     name='fever',
