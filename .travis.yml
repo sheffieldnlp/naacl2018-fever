@@ -6,7 +6,7 @@ git:
   submodules: false
 before_install:
   - echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_PASS" >> ~/.netrc
-  - echo "Written git user to config file wq$GIT_USER"
+  - echo "Written git user to config file"
   - git submodule update --init --recursive
 install:
   - sudo apt-get update
@@ -19,6 +19,6 @@ install:
   - conda info -a
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  - pip install -r requires.txt 
+  - pip install -r requirements.txt
   - python setup.py install
 
