@@ -5,6 +5,11 @@ import sys
 with open('requirements.txt') as f:
     reqs = f.read()
 
+reqs = reqs.strip().split('\n')
+
+install = [req for req in reqs if not req.startswith("git://")]
+depends = [req for req in reqs if not req.startswith("git://")]
+
 setup(
     name='fever',
     version='0.0.1',
@@ -13,5 +18,6 @@ setup(
     license=license,
     python_requires='>=3.5',
     packages=find_packages(exclude=('data')),
-    install_requires=reqs.strip().split('\n'),
+    install_requires=install,
+    dependency_links=depends,
 )
