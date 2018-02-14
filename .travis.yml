@@ -3,5 +3,5 @@ git:
 	submodules: false
 before_install:
 	- echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_PASS" >> ~/.netrc
-	- echo "$GIT_USER"
+	- echo "Written git user to config file wq$GIT_USER"
 	- git submodule update --init --recursive
