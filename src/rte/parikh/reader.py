@@ -52,7 +52,7 @@ class FEVERReader(DatasetReader):
 
         self.db = db
 
-        self.formatter = FEVERGoldFormatter(set(self.db.get_doc_ids()), FEVERLabelSchema(),filter=filter)
+        self.formatter = FEVERGoldFormatter(set(self.db.get_doc_ids()), FEVERLabelSchema(),filtering=filtering)
         self.reader = JSONLineReader()
 
 
