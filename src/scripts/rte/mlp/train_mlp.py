@@ -34,6 +34,7 @@ if __name__ == "__main__":
     parser.add_argument('--test', required=False ,type=str, default=None ,help="test file path")
     parser.add_argument("--model", type=str, help="model name")
     parser.add_argument("--sentence",type=bool, default=False)
+    parser.add_argument("--filter",type=str, default=None)
     args = parser.parse_args()
 
 
@@ -55,7 +56,7 @@ if __name__ == "__main__":
     f = Features(mname,ffns)
     jlr = JSONLineReader()
 
-    formatter = FEVERGoldFormatter(None, FEVERLabelSchema())
+    formatter = FEVERGoldFormatter(None, FEVERLabelSchema(),filter=args.filter)
 
     train_ds = DataSet(file=args.train, reader=jlr, formatter=formatter)
     dev_ds = DataSet(file=args.dev, reader=jlr, formatter=formatter)

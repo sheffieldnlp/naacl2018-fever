@@ -48,11 +48,12 @@ if __name__ == "__main__":
     parser.add_argument('--max_page',type=int)
     parser.add_argument('--max_sent',type=int)
     parser.add_argument('--split', type=str)
+    parser.add_argument("--filter",type=str,default=None)
     args = parser.parse_args()
 
     db = FeverDocDB("data/fever/fever.db")
     jlr = JSONLineReader()
-    formatter = FEVERGoldFormatter(set(), FEVERLabelSchema())
+    formatter = FEVERGoldFormatter(set(), FEVERLabelSchema(),filter=args.filter)
 
     train_ds = DataSet(file="data/fever/train.ns.pages.p{0}.jsonl".format(1), reader=jlr, formatter=formatter)
     dev_ds = DataSet(file="data/fever/dev.pages.p{0}.jsonl".format(args.max_page), reader=jlr, formatter=formatter)

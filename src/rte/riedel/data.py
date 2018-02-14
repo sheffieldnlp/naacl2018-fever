@@ -1,3 +1,4 @@
+import importlib.util
 import os
 
 from nltk import word_tokenize
@@ -15,8 +16,17 @@ class FeverFormatter(Formatter):
         super().__init__(label_schema)
         self.index=index
         self.tokenize = tokenizer if tokenizer is not None else self.nltk_tokenizer
-        self.filter_uninformative = filter if filter is not None else os.getenv("FILTER_UNINFORMATIVE","n").lower() in ["t","y","1","true","yes"]
+        self.filter_uninformative = None
 
+        def import_module(filename):
+            spec = importlib.util.spec_from_file_location('filter_doc', filename)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            return module
+
+        if filter is not None:
+            if filter:
+                self.filter = import_module(filter).preprocess
 
     def nltk_tokenizer(self,text):
         return " ".join(word_tokenize(text))
@@ -36,9 +46,9 @@ class FEVERGoldFormatter(FeverFormatter):
             for evidence_group in line["evidence"]:
                 pages.extend([(ev[2],ev[3]) for ev in evidence_group])
 
-        if self.filter_uninformative:
+        if self.filter_uninformative is not None:
             for page,_ in pages:
-                if uninformative(page):
+                if self.filter_uninformative(page) is None:
                     return None
 
         return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}

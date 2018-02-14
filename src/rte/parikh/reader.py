@@ -43,7 +43,8 @@ class FEVERReader(DatasetReader):
                  sentence_level = False,
                  wiki_tokenizer: Tokenizer = None,
                  claim_tokenizer: Tokenizer = None,
-                 token_indexers: Dict[str, TokenIndexer] = None) -> None:
+                 token_indexers: Dict[str, TokenIndexer] = None,
+                 filter: str = None) -> None:
         self._sentence_level = sentence_level
         self._wiki_tokenizer = wiki_tokenizer or WordTokenizer()
         self._claim_tokenizer = claim_tokenizer or WordTokenizer()
@@ -51,7 +52,7 @@ class FEVERReader(DatasetReader):
 
         self.db = db
 
-        self.formatter = FEVERGoldFormatter(set(self.db.get_doc_ids()), FEVERLabelSchema())
+        self.formatter = FEVERGoldFormatter(set(self.db.get_doc_ids()), FEVERLabelSchema(),filter=filter)
         self.reader = JSONLineReader()
 
 
