@@ -4,7 +4,6 @@ from copy import deepcopy
 
 from allennlp.commands.train import prepare_environment
 from typing import List, Union, Dict, Any
-
 from allennlp.common import Params
 from allennlp.common.tee_logger import TeeLogger
 from allennlp.data import Vocabulary, Dataset, DataIterator, DatasetReader, Tokenizer, TokenIndexer
@@ -22,7 +21,7 @@ import json
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int, serialization_dir: str, filter: str = None) -> Model:
+def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int, serialization_dir: str, filtering: str) -> Model:
     """
     This function can be used as an entry point to running models in AllenNLP
     directly from a JSON specification using a :class:`Driver`. Note that if
@@ -40,7 +39,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     serialization_dir: str, required
         The directory in which to save results and logs.
     """
-    SimpleRandom.set_seeds()
+    prepare_environment(params)
+
 
     os.makedirs(serialization_dir, exist_ok=True)
     sys.stdout = TeeLogger(os.path.join(serialization_dir, "stdout.log"), sys.stdout)  # type: ignore
@@ -61,7 +61,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
                                  wiki_tokenizer=Tokenizer.from_params(ds_params.pop('wiki_tokenizer', {})),
                                  claim_tokenizer=Tokenizer.from_params(ds_params.pop('claim_tokenizer', {})),
                                  token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})),
-                                 filter=args.filter)
+                                 filtering=filtering)
 
     train_data_path = params.pop('train_data_path')
     logger.info("Reading training data from %s", train_data_path)
@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
     parser.add_argument("logdir",type=str)
 
-    parser.add_argument("--filter", type=str, default=None)
+    parser.add_argument("--filtering", type=str, default=None)
     parser.add_argument("--cuda-device", type=int, default=None, help='id of GPU to use (if any)')
     parser.add_argument('-o', '--overrides',
                            type=str,
@@ -139,4 +139,4 @@ if __name__ == "__main__":
     db = FeverDocDB(args.db)
 
     params = Params.from_file(args.param_path)
-    train_model(db,params,args.cuda_device,args.logdir,args.filter)
+    train_model(db,params,args.cuda_device,args.logdir,args.filtering)

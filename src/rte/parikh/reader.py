@@ -44,7 +44,7 @@ class FEVERReader(DatasetReader):
                  wiki_tokenizer: Tokenizer = None,
                  claim_tokenizer: Tokenizer = None,
                  token_indexers: Dict[str, TokenIndexer] = None,
-                 filter: str = None) -> None:
+                 filtering: str = None) -> None:
         self._sentence_level = sentence_level
         self._wiki_tokenizer = wiki_tokenizer or WordTokenizer()
         self._claim_tokenizer = claim_tokenizer or WordTokenizer()
