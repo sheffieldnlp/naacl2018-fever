@@ -52,7 +52,7 @@ def get_wiki_entry(name):
 
 
 if __name__ == "__main__":
-    db = FeverDocDB("data/fever/drqa.db")
+    db = FeverDocDB("data/fever/fever.db")
     idx = set(db.get_doc_ids())
     redirects = get_redirects()
 

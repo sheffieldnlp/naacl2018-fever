@@ -39,7 +39,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     serialization_dir: str, required
         The directory in which to save results and logs.
     """
-    prepare_environment(params)
+
+    SimpleRandom.set_seeds()
 
 
     os.makedirs(serialization_dir, exist_ok=True)
