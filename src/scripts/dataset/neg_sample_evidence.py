@@ -26,7 +26,7 @@ r = SimpleRandom.get_instance()
 
 with open("data/fever/test.ns.rand.jsonl", "w+") as f:
     for line in jlr.read("data/fever-data/test.jsonl"):
-        if line["verifiable"] == "NOT ENOUGH INFO":
+        if line["label"] == "NOT ENOUGH INFO":
 
             for evidence_group in line['evidence']:
                 for evidence in evidence_group:
@@ -38,7 +38,7 @@ with open("data/fever/test.ns.rand.jsonl", "w+") as f:
 
 with open("data/fever/dev.ns.rand.jsonl", "w+") as f:
     for line in jlr.read("data/fever-data/dev.jsonl"):
-        if line["verifiable"]=="NOT ENOUGH INFO":
+        if line["label"]=="NOT ENOUGH INFO":
             for evidence_group in line['evidence']:
                 for evidence in evidence_group:
                     evidence[2] = idx[r.next_rand(0, len(idx))]
@@ -50,7 +50,7 @@ with open("data/fever/dev.ns.rand.jsonl", "w+") as f:
 
 with open("data/fever/train.ns.rand.jsonl", "w+") as f:
     for line in jlr.read("data/fever-data/train.jsonl"):
-        if line["verifiable"] == "NOT ENOUGH INFO":
+        if line["label"] == "NOT ENOUGH INFO":
             for evidence_group in line['evidence']:
                 for evidence in evidence_group:
                     evidence[2] = idx[r.next_rand(0, len(idx))]
