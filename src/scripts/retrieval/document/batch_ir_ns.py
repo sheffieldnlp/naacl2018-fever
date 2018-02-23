@@ -28,7 +28,7 @@ if __name__ == "__main__":
             for line in tqdm(f.readlines()):
                 line = json.loads(line)
 
-                if line["verifiable"] == "NOT ENOUGH INFO":
+                if line["label"] == "NOT ENOUGH INFO":
                     pages = process(ranker, line['claim'], k=k)
                     pp = list(pages)
 
