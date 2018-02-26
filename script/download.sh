@@ -7,4 +7,4 @@ module load apps/python/anaconda3-4.2.0
 source activate fever
 
 block=$SGE_TASK_ID
-PYTHONPATH=src S3_BUCKET=$bucket python src/jobs/download_dataset.py $block
+PYTHONPATH=src S3_BUCKET=$bucket python src/scripts.dataset/download_dataset.py $block

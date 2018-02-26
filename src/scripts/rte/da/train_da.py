@@ -139,5 +139,6 @@ if __name__ == "__main__":
 
     db = FeverDocDB(args.db)
 
-    params = Params.from_file(args.param_path)
+    params = Params.from_file(args.param_path,args.overrides)
+
     train_model(db,params,args.cuda_device,args.logdir,args.filtering)
