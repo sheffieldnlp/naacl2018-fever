@@ -25,4 +25,14 @@ python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --o
 python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/003 --split 0.003
 python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/002 --split 0.002
 python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/001 --split 0.001
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0009 --split 0.0009
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0008 --split 0.0008
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0007 --split 0.0007
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0006 --split 0.0006
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0005 --split 0.0005
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0004 --split 0.0004
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0003 --split 0.0003
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0002 --split 0.0002
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/0001 --split 0.0001
+
 
