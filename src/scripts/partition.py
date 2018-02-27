@@ -1,6 +1,7 @@
 import argparse
 import math
 import json
+import random
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--in_file', type=str)
@@ -38,7 +39,8 @@ for id,line in enumerate(lines):
 
 keep = found_s+found_n+found_r
 
-sorted(keep)
+rand = random.Random(1236789)
+rand.shuffle(keep)
 
 with open(args.out_file,"w+") as out_file:
     out_file.writelines([lines[i] for i in keep])
