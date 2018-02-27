@@ -32,9 +32,9 @@ for id,line in enumerate(lines):
     if json.loads(line)["label"] == "SUPPORTS" and len(found_s) < keep_s:
         found_s.append(id)
     elif json.loads(line)["label"] == "REFUTES" and len(found_r) < keep_r:
-        found_s.append(id)
+        found_r.append(id)
     elif json.loads(line)["label"] == "NOT ENOUGH INFO" and len(found_n) < keep_n:
-        found_s.append(id)
+        found_n.append(id)
 
 keep = found_s+found_n+found_r
 
