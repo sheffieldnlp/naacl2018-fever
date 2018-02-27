@@ -1,3 +1,4 @@
+python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/10 --split 1
 python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/9 --split 0.9
 python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/8 --split 0.8
 python src/scripts/partition.py --in_file data/fever/train.ns.pages.p1.jsonl --out_file data/ablation/7 --split 0.7

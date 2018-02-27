@@ -4,5 +4,5 @@ do
     echo "Eval $f";
     export GPU=1
     export CUDA_DEVICE=0
-    PYTHONPATH=src python src/scripts/rte/mlp/eval_mlp.py data/fever/fever.db data/fever/dev.ns.pages.p1.jsonl --model ablation$f --sentence true
+    PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/ablation/$f/model.tar.gz data/fever/dev.ns.pages.p1.jsonl
 done
