@@ -72,7 +72,6 @@ if __name__ == "__main__":
     train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, test_ds)
     f.save_vocab(mname)
 
-
     input_shape = train_feats[0].shape[1]
 
     model = SimpleMLP(input_shape,100,3)
