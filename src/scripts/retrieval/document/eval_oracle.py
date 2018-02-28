@@ -20,25 +20,21 @@ with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
 
     for idx,line in enumerate(f):
 
-        q = 0
+        q = 1
         hits = 0
 
 
         js = json.loads(line)
-        evidence = set([t[1] for t in js["evidence"] if isinstance(t,list) and len(t)>1])
         predicted = [t[0] for t in js['predicted_pages']]
 
-        print(js)
         if js["verifiable"] == "NOT ENOUGH INFO":
-            q += 1
             hits += 1
         else:
-            for p in evidence:
-                q += 1
-                if preprocess(p) in predicted:
-                    hits+= 1
-                break
-        print(q)
+            for ev in js['evidence']:
+                pages = [annotation[2] for annotation in ev]
+                if all(page in predicted for page in pages):
+                    hits+=1
+                    break
 
         recalls.append(hits/q)
 
