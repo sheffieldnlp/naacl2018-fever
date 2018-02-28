@@ -18,7 +18,7 @@ with open("data/fever/{0}.pages.p{1}.jsonl".format(split,k),"r") as f:
         js = json.loads(line)
         predicted = [t[0] for t in js['predicted_pages']]
 
-        if js["verifiable"] == "VERIFIABLE":
+        if js["label"] != "NOT ENOUGH INFO":
             q+=1
             for ev in js['evidence']:
                 pages = [annotation[2] for annotation in ev]
