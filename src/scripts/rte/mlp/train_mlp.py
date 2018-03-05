@@ -21,6 +21,14 @@ from rte.riedel.sent_features import SentenceLevelTermFrequencyFeatureFunction
 def model_exists(mname):
     return os.path.exists(os.path.join("models","{0}.model".format(mname)))
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 if __name__ == "__main__":
     SimpleRandom.set_seeds()
 
@@ -33,7 +41,7 @@ if __name__ == "__main__":
     parser.add_argument('dev', type=str, help='dev file path')
     parser.add_argument('--test', required=False ,type=str, default=None ,help="test file path")
     parser.add_argument("--model", type=str, help="model name")
-    parser.add_argument("--sentence",type=bool, default=False)
+    parser.add_argument("--sentence",type=str2bool, default=False)
     parser.add_argument("--filtering",type=str, default=None)
     args = parser.parse_args()
 
