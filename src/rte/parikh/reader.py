@@ -84,7 +84,7 @@ class FEVERReader(DatasetReader):
                 premise = " ".join(lines)
 
             if len(premise.strip()) == 0:
-                premise = None
+                premise = ""
 
             hypothesis = instance["claim"]
             label = instance["label_text"]

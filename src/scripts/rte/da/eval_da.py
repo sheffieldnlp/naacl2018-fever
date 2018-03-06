@@ -49,7 +49,7 @@ def eval_model(db: FeverDocDB, args) -> Model:
         f = open(args.log,"w+")
 
     for item in data:
-        if item.fields["premise"] is None:
+        if item.fields["premise"] is None or item.fields["premise"].strip()=="":
             cls = "NOT ENOUGH INFO"
         else:
             prediction = model.forward_on_instance(item, args.cuda_device)
