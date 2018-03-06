@@ -84,8 +84,7 @@ class FEVERReader(DatasetReader):
                 premise = " ".join(lines)
 
             if len(premise.strip()) == 0:
-                print(instance)
-                print("UNABLE TO LOAD")
+                premise = None
 
             hypothesis = instance["claim"]
             label = instance["label_text"]
@@ -102,9 +101,9 @@ class FEVERReader(DatasetReader):
                          label: str = None) -> Instance:
         # pylint: disable=arguments-differ
         fields: Dict[str, Field] = {}
-        premise_tokens = self._wiki_tokenizer.tokenize(premise)
+        premise_tokens = self._wiki_tokenizer.tokenize(premise) if premise is not None else None
         hypothesis_tokens = self._claim_tokenizer.tokenize(hypothesis)
-        fields['premise'] = TextField(premise_tokens, self._token_indexers)
+        fields['premise'] = TextField(premise_tokens, self._token_indexers) if premise is not None else None
         fields['hypothesis'] = TextField(hypothesis_tokens, self._token_indexers)
         if label is not None:
             fields['label'] = LabelField(label)

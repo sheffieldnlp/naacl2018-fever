@@ -49,8 +49,11 @@ def eval_model(db: FeverDocDB, args) -> Model:
         f = open(args.log,"w+")
 
     for item in data:
-        prediction = model.forward_on_instance(item, args.cuda_device)
-        cls = model.vocab._index_to_token["labels"][np.argmax(prediction["label_probs"])]
+        if item.fields["premise"] is None:
+            cls = "NOT ENOUGH INFO"
+        else:
+            prediction = model.forward_on_instance(item, args.cuda_device)
+            cls = model.vocab._index_to_token["labels"][np.argmax(prediction["label_probs"])]
 
         actual.append(item.fields["label"].label)
         predicted.append(cls)
