@@ -17,10 +17,13 @@ def _run(predictor: Predictor,
          cuda_device: int) -> None:
     correct = 0
     total = 0
-    
+
     def _run_predictor(item):
         results = predictor.predict_batch_json(item, cuda_device)
         model_input = item[0]
+
+        global correct
+        global total
 
         vers = ["SUPPORTS","REFUTES", "NOT ENOUGH INFO"]
         a = vers[np.argmax(results[0]['label_logits'])]
