@@ -34,7 +34,7 @@ class TextualEntailmentPredictor(Predictor):
     def _json_to_instances(self,json):
         hypothesis_text = json["claim"]
         instances = []
-        for _,_, page,sentence in json["evidence"]:
+        for _,_, page,sentence in json["all_evidence"]:
             premise_text = self.get_doc_line(page,sentence)
             instances.append(self._dataset_reader.text_to_instance(premise_text, hypothesis_text))
         return instances
