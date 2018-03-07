@@ -1,0 +1,4 @@
+PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/decomposable-attention-2017.09.04.tar.gz data/fever/fever.db data/fever/dev.ns.pages.p5.jsonl --overrides={'dataset_reader':'sentence_level':true,'tokenizer':{'type':'word','word_splitter':{\'type\':\'indexed_spaces\'}}}}
+
+
+PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db decomposable-attention-2017.09.04.tar.gz data/fever/dev.pages.p5.jsonl --overrides={'dataset_reader':'sentence_level':false,'tokenizer':{'type':'word','word_splitter':{\'type\':\'indexed_spaces\'}}}}
