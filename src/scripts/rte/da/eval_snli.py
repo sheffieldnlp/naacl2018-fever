@@ -22,7 +22,7 @@ def _run(predictor: Predictor,
 
         vers = ["SUPPORTED","REFUTED", "NOT ENOUGH INFO"]
         a = vers[np.argmax(results[0]['label_logits'])]
-        model_input.append(a)
+        model_input["predicted"] = a
         output_file.write(json.dumps(model_input) + "\n")
 
     batch_json_data = []
