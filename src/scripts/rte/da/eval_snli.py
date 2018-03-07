@@ -15,7 +15,9 @@ def _run(predictor: Predictor,
          input_file: IO,
          output_file: Optional[IO],
          cuda_device: int) -> None:
-
+    correct = 0
+    total = 0
+    
     def _run_predictor(item):
         results = predictor.predict_batch_json(item, cuda_device)
         model_input = item[0]
@@ -25,6 +27,11 @@ def _run(predictor: Predictor,
         model_input["predicted"] = a
         output_file.write(json.dumps(model_input) + "\n")
 
+        if a == model_input["label"]:
+            correct += 1
+        total +=1
+
+
     batch_json_data = []
     for line in tqdm(input_file):
         if not line.isspace():
@@ -32,6 +39,7 @@ def _run(predictor: Predictor,
             json_data = json.loads(line)
             _run_predictor([json_data])
 
+    print (correct/total)
 
 def predict(args: argparse.Namespace,docdb) -> None:
     print(args.archive_file)
