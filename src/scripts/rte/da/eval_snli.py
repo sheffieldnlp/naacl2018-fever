@@ -20,7 +20,7 @@ def _run(predictor: Predictor,
         results = predictor.predict_batch_json(item, cuda_device)
         model_input = item[0]
 
-        vers = ["SUPPORTED","REFUTED", "NOT ENOUGH INFO"]
+        vers = ["SUPPORTS","REFUTES", "NOT ENOUGH INFO"]
         a = vers[np.argmax(results[0]['label_logits'])]
         model_input["predicted"] = a
         output_file.write(json.dumps(model_input) + "\n")
