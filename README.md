@@ -43,12 +43,13 @@ Install requirements (run `export LANG=C.UTF-8` if installation of DrQA fails)
 
     pip install -r requirements.txt
 
-Download the DrQA document retrieval code and the fever dataset (as a git submodule)
+Download the FEVER dataset from (our website)[https://sheffieldnlp.github.io/fever/data.html] into the data directory
 
-    git submodule init
-    git submodule update
-
-
+    mkdir data/fever-data
+    cd data/fever-data
+    wget https://s3-eu-west-1.amazonaws.com/fever.public/train.jsonl
+    wget https://s3-eu-west-1.amazonaws.com/fever.public/dev.jsonl
+  
 Download pretrained GloVe Vectors
 
     wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
@@ -60,7 +61,7 @@ The data preparation consists of three steps: downloading the articles from Wiki
 
 ### 1. Download Wikipedia data:
 
-Download the pre-processed Wikipedia articles from [Google Drive](https://drive.google.com/file/d/1BMnxxIcoC8VRL5p3E6kamgpVmAyALH2x/view) and unzip it into the data folder.
+Download the pre-processed Wikipedia articles from [our website](https://sheffieldnlp.github.io/fever/data.html) and unzip it into the data folder.
 
     unzip wiki.zip -d data
 
