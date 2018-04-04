@@ -43,7 +43,7 @@ Install requirements (run `export LANG=C.UTF-8` if installation of DrQA fails)
 
     pip install -r requirements.txt
 
-Download the FEVER dataset from (our website)[https://sheffieldnlp.github.io/fever/data.html] into the data directory
+Download the FEVER dataset from [our website](https://sheffieldnlp.github.io/fever/data.html) into the data directory
 
     mkdir data/fever-data
     cd data/fever-data
