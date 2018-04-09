@@ -8,7 +8,7 @@ from statsmodels.stats.inter_rater import fleiss_kappa
 connection = pymysql.connect(host=os.getenv("DB_HOST", "localhost"),
                              user=os.getenv("DB_USER", "root"),
                              password=os.getenv("DB_PASS", ""),
-                             db=os.getenv("DB_SCHEMA", "fever_december"),
+                             db=os.getenv("DB_SCHEMA", "fever_final"),
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 
@@ -54,7 +54,7 @@ as a group by id, user
             claims_dict[claim['id']].append(1 if claim["verdict"]=="SUPPORTS" else 2)
 
 
-    fkt1 = [row_ct(claims_dict[key]) for key in claims_dict if len(claims_dict[key]) == 4]
+    fkt1 = [row_ct(claims_dict[key]) for key in claims_dict if len(claims_dict[key]) == 5]
     print(fkt1)
     print(len(fkt1))
     print(fleiss_kappa(fkt1))
