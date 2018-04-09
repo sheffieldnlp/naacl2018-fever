@@ -1,6 +1,3 @@
-[submodule "data/fever-data"]
-	path = data/fever-data
-	url = https://github.com/sheffieldnlp/fever-data.git
 [submodule "lib/DrQA"]
 	path = lib/DrQA
 	url = https://github.com/facebookresearch/DrQA.git
