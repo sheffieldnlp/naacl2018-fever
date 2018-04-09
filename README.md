@@ -115,6 +115,10 @@ Model 2: LSTM with Decomposable Attention (expected dev set performance: 77.97%)
     #Or, using random sampled data for NotEnoughInfo (worse)
     PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_rs_ora_sent.json logs/da_rs_sent --cuda-device $CUDA_DEVICE
 
+Score:
+
+    PYTHONPATH=src python src/scripts/score.py --predicted logs/da_nn_sent_test --actual data/fever-data/test.jsonl
+
 
 ## Evaluation
 
@@ -149,6 +153,9 @@ Model 2: LSTM with decomposable attention
     PYTHONPATH=src:lib/allennlp python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.sentences.p5.s5.jsonl  --log logs/da_nn_sent_dev
     PYTHONPATH=src:lib/allennlp python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/test.sentences.p5.s5.jsonl  --log logs/da_nn_sent_test
     
+Score:
+
+    PYTHONPATH=src python src/scripts/score.py --predicted_labels logs/da_nn_sent_test --predicted_evidence data/fever/test.sentences.p5.s5.jsonl --actual data/fever-data/test.jsonl
  
 ## Interactive Demo
 

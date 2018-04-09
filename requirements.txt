@@ -7,4 +7,4 @@ tqdm
 nltk
 allennlp==0.2.1
 git+git://github.com/j6mes/DrQA@master#egg=DrQA-0.1.0
-git+git://github.com/sheffieldnlp/fever-scorer@master#egg=fever-scorer-1.0
+git+git://github.com/sheffieldnlp/fever-scorer@master#egg=fever-scorer-1.0.3
