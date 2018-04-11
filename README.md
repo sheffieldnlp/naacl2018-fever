@@ -53,6 +53,9 @@ Download the FEVER dataset from [our website](https://sheffieldnlp.github.io/fev
     wget -O data/fever-data/dev.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/paper_dev.jsonl
     wget -O data/fever-data/test.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/paper_test.jsonl
     
+    #To train the model for the shared task (the test set will be released in July 2018)
+    wget -O data/fever-data/dev.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/shared_task_dev.jsonl
+    wget -O data/fever-data/test.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/shared_task_test.jsonl
     
 Download pretrained GloVe Vectors
 
