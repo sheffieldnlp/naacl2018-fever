@@ -11,7 +11,7 @@ from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 import numpy as np
 
-from scripts.retriever.build_tfidf_lines import OnlineTfidfDocRanker
+from drqascripts.retriever.build_tfidf_lines import OnlineTfidfDocRanker
 
 
 def tf_idf_sim(claim, lines,freqs=None):
