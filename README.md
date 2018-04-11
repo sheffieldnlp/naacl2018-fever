@@ -67,13 +67,14 @@ The data preparation consists of three steps: downloading the articles from Wiki
 
 Download the pre-processed Wikipedia articles from [our website](https://sheffieldnlp.github.io/fever/data.html) and unzip it into the data folder.
     
-    wget -O wiki.zip https://s3-eu-west-1.amazonaws.com/fever.public/wiki-pages.zip
-    unzip wiki.zip -d data
+    wget https://s3-eu-west-1.amazonaws.com/fever.public/wiki-pages.zip
+    unzip wiki-pages.zip -d data
+ 
 
 ### 2. Indexing 
 Construct an SQLite Database and build TF-IDF index (go grab a coffee while this runs)
 
-    PYTHONPATH=src python src/scripts/build_db.py data/wiki data/fever/fever.db
+    PYTHONPATH=src python src/scripts/build_db.py data/wiki-pages data/fever/fever.db
     PYTHONPATH=src python src/scripts/build_tfidf.py data/fever/fever.db data/index/
 
 ### 3. Sampling
