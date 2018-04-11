@@ -45,11 +45,15 @@ Install requirements (run `export LANG=C.UTF-8` if installation of DrQA fails)
 
 Download the FEVER dataset from [our website](https://sheffieldnlp.github.io/fever/data.html) into the data directory
 
+    mkdir data
     mkdir data/fever-data
-    cd data/fever-data
-    wget https://s3-eu-west-1.amazonaws.com/fever.public/train.jsonl
-    wget https://s3-eu-west-1.amazonaws.com/fever.public/dev.jsonl
-  
+    
+    #To replicate the paper, download paper_dev and paper_test files. These are concatenated for the shared task
+    wget -O data/fever-data/train.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/train.jsonl
+    wget -O data/fever-data/dev.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/paper_dev.jsonl
+    wget -O data/fever-data/test.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/paper_test.jsonl
+    
+    
 Download pretrained GloVe Vectors
 
     wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
@@ -62,15 +66,15 @@ The data preparation consists of three steps: downloading the articles from Wiki
 ### 1. Download Wikipedia data:
 
 Download the pre-processed Wikipedia articles from [our website](https://sheffieldnlp.github.io/fever/data.html) and unzip it into the data folder.
-
+    
+    wget -O wiki.zip https://s3-eu-west-1.amazonaws.com/fever.public/wiki-pages.zip
     unzip wiki.zip -d data
 
 ### 2. Indexing 
 Construct an SQLite Database and build TF-IDF index (go grab a coffee while this runs)
 
-    PYTHONPATH=src python src/scripts/build_db.py data/wiki data/fever/fever.db  --preprocess src/scripts/filter_uninformative.py
-    mkdir data/index
-    PYTHONPATH=lib/DrQA/scripts/retriever python lib/DrQA/scripts/retriever/build_tfidf.py data/fever/fever.db data/index/
+    PYTHONPATH=src python src/scripts/build_db.py data/wiki data/fever/fever.db
+    PYTHONPATH=src python src/scripts/build_tfidf.py data/fever/fever.db data/index/
 
 ### 3. Sampling
 Sample training data for the NotEnoughInfo class. There are two sampling methods evaluated in the paper: using the nearest neighbour (similarity between TF-IDF vectors) and random sampling.
