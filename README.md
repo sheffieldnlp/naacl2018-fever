@@ -143,8 +143,7 @@ Model 2: Decomposable Attention
  
 ### Evidence Retrieval Evaluation:
 
-Preprocessing (for both models):
-
+#### Step 1: Retrive Evidence
     PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split dev
     PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split test
 
@@ -157,7 +156,11 @@ DrQA Sentence Selection (better)
 
     PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf_drqa.py --db data/fever/fever.db --in_file data/fever/dev.pages.p5.jsonl --max_page 5 --max_sent 5 --split dev --use_precomputed false
     PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf_drqa.py --db data/fever/fever.db --in_file data/fever/test.pages.p5.jsonl --max_page 5 --max_sent 5 --split test --use_precomputed false
+    
+(note that this produces data with a different name to DrQA, you can run `mv data/fever/dev.sentences.not_precomputed.p5.s5.jsonl data/fever/dev.sentences.p5.s5.jsonl` and `mv data/fever/test.sentences.not_precomputed.p5.s5.jsonl data/fever/test.sentences.p5.s5.jsonl` to evaluate on this data)
 
+
+#### Step 2: Run Model
 Model 1: Multi-layer perceptron
 
     PYTHONPATH=src python src/scripts/rte/mlp/eval_mlp.py data/fever/fever.db data/fever/dev.sentences.p5.s5.jsonl --model ns_nn_sent --sentence true --log logs/mlp_nn_sent_dev
@@ -167,12 +170,14 @@ Model 2: Decomposable Attention
     
     PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.sentences.p5.s5.jsonl  --log logs/da_nn_sent_dev
     PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/test.sentences.p5.s5.jsonl  --log logs/da_nn_sent_test
-  
+
+
+#### Step 3a: Score locally  
 Score:
 
     PYTHONPATH=src python src/scripts/score.py --predicted_labels logs/da_nn_sent_test --predicted_evidence data/fever/test.sentences.p5.s5.jsonl --actual data/fever-data/test.jsonl
 
-## Submit to Codalab
+#### Step 3b: Or score on Codalab
 
 Prepare Submission for Codalab:
 
