@@ -167,9 +167,16 @@ Model 2: Decomposable Attention
     
     PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.sentences.p5.s5.jsonl  --log logs/da_nn_sent_dev
     PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/test.sentences.p5.s5.jsonl  --log logs/da_nn_sent_test
-    
+  
 Score:
 
     PYTHONPATH=src python src/scripts/score.py --predicted_labels logs/da_nn_sent_test --predicted_evidence data/fever/test.sentences.p5.s5.jsonl --actual data/fever-data/test.jsonl
 
-    
+## Submit to Codalab
+
+Prepare Submission for Codalab:
+
+    PYTHONPATH=src python src/scripts/prepare_submission.py --predicted_labels logs/da_nn_sent_test --predicted_evidence data/fever/test.sentences.p5.s5.jsonl --out_file predictions.jsonl
+    zip submission.zip predictions.jsonl
+
+          
