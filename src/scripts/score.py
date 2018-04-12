@@ -2,6 +2,7 @@ import argparse
 import json
 import sys
 from fever.scorer import fever_score
+from prettytable import PrettyTable
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--predicted_labels",type=str)
@@ -33,4 +34,9 @@ for ev,label in zip(predicted_evidence,predicted_labels):
     predictions.append({"predicted_evidence":ev,"predicted_label":label})
 
 score,acc,precision,recall,f1 = fever_score(predictions,actual)
-print("Score:\t{0}\t\t\tAccuracy:\t{1}".format(round(score,4),round(acc,4),round(precision,4),round(recall,4),round(f1,4)))
+
+tab = PrettyTable()
+tab.field_names = ["FEVER Score", "Label Accuracy", "Evidence Precision", "Evidence Recall", "Evidence F1"]
+tab.add_row((round(score,4),round(acc,4),round(precision,4),round(recall,4),round(f1,4)))
+
+print(tab)
