@@ -6,6 +6,10 @@ This is the PyTorch implementation of the FEVER pipeline baseline described in t
 
 The baseline model constists of two components: Evidence Retrieval (DrQA) + Textual Entailment (Decomposable Attention).
 
+## Find Out More
+
+ * Visit [http://fever.ai](http://fever.ai) to find out more about the shared task and download the data.
+
 ## Quick Links
 
  * [Installation](#installation)
