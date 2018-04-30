@@ -92,11 +92,11 @@ def process(ids):
             s_nei[e['vid']].append((e['aid'],e['vid'],e['page'],e['line_number']))
 
         if len(support_evidence):
-            data.append({"id":id, "verifiable":"VERIFIABLE", "label":"SUPPORTS","claim":cl0['text'],"evidence":list(s_s.values()),"all_evidence":[(ev['aid'],ev['vid'],ev['page'],ev['line_number']) for ev in support_evidence]})
+            data.append({"id":id, "verifiable":"VERIFIABLE", "label":"SUPPORTS","claim":cl0['text'],"evidence":list(s_s.values())})
         if len(refute_evidence):
-            data.append({"id": id, "verifiable":"VERIFIABLE", "label": "REFUTES", "claim": cl0['text'], "evidence":list(s_r.values()), "all_evidence": [(ev['aid'],ev['vid'],ev['page'],ev['line_number']) for ev in refute_evidence]})
+            data.append({"id": id, "verifiable":"VERIFIABLE", "label": "REFUTES", "claim": cl0['text'], "evidence":list(s_r.values())})
         if len(not_enough_info_evidence):
-            data.append({"id": id, "verifiable":"NOT ENOUGH INFO", "label": None, "claim": cl0['text'], "evidence":list(s_nei.values()), "all_evidence": [(ev['aid'],ev['vid'],ev['page'],ev['line_number']) for ev in not_enough_info_evidence]})
+            data.append({"id": id, "verifiable":"NOT ENOUGH INFO", "label": None, "claim": cl0['text'], "evidence":list(s_nei.values())})
     return data
 
 

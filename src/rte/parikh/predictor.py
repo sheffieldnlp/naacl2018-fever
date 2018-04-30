@@ -37,7 +37,9 @@ class TextualEntailmentPredictor(Predictor):
 
 
         premise_texts = []
-        for _,_, page,sentence in json["all_evidence"]:
+
+        flattened_evidence = [evidence for evidence_group in json["evidence"] for evidence in evidence_group]
+        for _,_, page,sentence in flattened_evidence:
             premise_texts = self.get_doc_line(page,sentence)
 
         instances.append(self._dataset_reader.text_to_instance(" ".join(premise_texts), hypothesis_text))

@@ -66,16 +66,6 @@ if __name__ == "__main__":
             for line in f:
                 js = json.loads(line)
 
-                evidence = js["all_evidence"]
-
-                for i,ev in enumerate(evidence):
-                    if ev[2] is not None:
-                        ev[2] = ev[2].split("#")[0]
-                        m = clean(normalize(ev[2]))
-                        n = get_wiki_entry(ev[2])
-
-                        evidence[i][2] = n
-
                 evidence = js["evidence"]
 
                 for i, annotation in enumerate(evidence):
