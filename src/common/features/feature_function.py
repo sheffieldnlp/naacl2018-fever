@@ -14,11 +14,8 @@ class Features():
         self.logger = LogHelper.get_logger(Features.__name__)
         self.mname = model_name
 
-    def load(self,train,dev=None,test=None):
-        train_fs = []
-        dev_fs = []
-        test_fs = []
 
+    def check_needs_generate(self,train,dev,test):
         for ff in self.feature_functions:
             ffpath = os.path.join(self.base_path, ff.get_name())
 
@@ -31,12 +28,31 @@ class Features():
                 or (test is not None and not os.path.exists(os.path.join(ffpath, "test"))) or \
                 os.getenv("GENERATE","").lower() in ["y", "1", "t", "yes"]:
 
+                return True
+
+        return False
+
+    def load(self,train,dev=None,test=None):
+        train_fs = []
+        dev_fs = []
+        test_fs = []
+
+        if self.check_needs_generate(train,dev,test):
+            self.inform(train,dev,test)
+        else:
+            try:
+                self.load_vocab(self.mname)
+            except:
+                self.logger.info("Could not load vocab. Regenerating")
                 self.inform(train,dev,test)
 
+
+        for ff in self.feature_functions:
             train_fs.append(self.generate_or_load(ff, train, "train"))
             dev_fs.append(self.generate_or_load(ff, dev, "dev"))
             test_fs.append(self.generate_or_load(ff, test, "test"))
 
+        self.save_vocab(self.mname)
 
         return self.out(train_fs,train), self.out(dev_fs,dev), self.out(test_fs,test)
 
@@ -53,17 +69,12 @@ class Features():
                 self.logger.info("Loading Features for {0}.{1}".format(feature, name))
                 with open(os.path.join(ffpath, name), "rb") as f:
                     features = pickle.load(f)
-
-                feature.load_vocab(self.mname)
-
             else:
                 self.logger.info("Generating Features for {0}.{1}".format(feature,name))
                 features = feature.lookup(dataset.data)
-
                 with open(os.path.join(ffpath, name), "wb+") as f:
                     pickle.dump(features, f)
 
-                feature.save_vocab(self.mname)
             return features
 
         return None

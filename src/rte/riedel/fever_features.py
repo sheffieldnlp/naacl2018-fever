@@ -105,14 +105,28 @@ class TermFrequencyFeatureFunction(FeatureFunction):
     def load(self,mname):
         self.logger.info("Loading TFIDF features from disk")
 
-        with open("features/{0}-bowv".format(mname), "rb") as f:
-            self.bow_vectorizer = pickle.load(f)
-        with open("features/{0}-bow".format(mname), "rb") as f:
-            self.bow = pickle.load(f)
-        with open("features/{0}-tfidf".format(mname), "rb") as f:
-            self.tfidf_vectorizer = pickle.load(f)
-        with open("features/{0}-tfreq".format(mname), "rb") as f:
-            self.tfreq_vectorizer = pickle.load(f)
+        try:
+            with open("features/{0}-bowv".format(mname), "rb") as f:
+                bow_vectorizer = pickle.load(f)
+            with open("features/{0}-bow".format(mname), "rb") as f:
+                bow = pickle.load(f)
+            with open("features/{0}-tfidf".format(mname), "rb") as f:
+                tfidf_vectorizer = pickle.load(f)
+            with open("features/{0}-tfreq".format(mname), "rb") as f:
+                tfreq_vectorizer = pickle.load(f)
+
+            self.bow = bow
+            self.bow_vectorizer = bow_vectorizer
+            self.tfidf_vectorizer = tfidf_vectorizer
+            self.tfreq_vectorizer = tfreq_vectorizer
+
+
+        except Exception as e:
+            raise e
+
+
+
+
 
     def lookup(self,data):
         return self.process(data)

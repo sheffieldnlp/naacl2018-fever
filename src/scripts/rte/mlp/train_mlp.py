@@ -45,7 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("--filtering",type=str, default=None)
     args = parser.parse_args()
 
-    if os.path.exists("models"):
+    if not os.path.exists("models"):
         os.mkdir("models")
 
     logger.info("Loading DB {0}".format(args.db))
@@ -80,17 +80,14 @@ if __name__ == "__main__":
         test_ds.read()
 
     train_feats, dev_feats, test_feats = f.load(train_ds, dev_ds, test_ds)
-    f.save_vocab(mname)
 
     input_shape = train_feats[0].shape[1]
-
     model = SimpleMLP(input_shape,100,3)
 
     if gpu():
         model.cuda()
 
-
-    if model_exists(mname) and os.getenv("TRAIN").lower() not in ["y","1","t","yes"]:
+    if model_exists(mname) and os.getenv("TRAIN","").lower() not in ["y","1","t","yes"]:
         model.load_state_dict(torch.load("models/{0}.model".format(mname)))
     else:
         train(model, train_feats, 500, 1e-2, 90,dev_feats,early_stopping=EarlyStopping(mname))
