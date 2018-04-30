@@ -45,6 +45,8 @@ if __name__ == "__main__":
     parser.add_argument("--filtering",type=str, default=None)
     args = parser.parse_args()
 
+    if os.path.exists("models"):
+        os.mkdir("models")
 
     logger.info("Loading DB {0}".format(args.db))
     db = FeverDocDB(args.db)
