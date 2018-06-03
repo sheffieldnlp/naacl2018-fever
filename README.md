@@ -25,18 +25,20 @@ This was tested and evaluated using the Python 3.6 verison of Anaconda 5.0.1 whi
 Mac OSX users may have to install xcode before running git or installing packages (gcc may fail). 
 See this post on [StackExchange](https://apple.stackexchange.com/questions/254380/macos-sierra-invalid-active-developer-path)
 
+Support for Windows operating systems is not provided.
+
 To train the Decomposable Attention models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be [downloaded](https://jamesthorne.co/fever/model.tar.gz). To use the pretrained model, simply replace any path to a model.tar.gz file with the path to the file you downloaded. (e.g. `logs/da_nn_sent/model.tar.gz` could become `~/Downloads/model.tar.gz`) 
 
 ## Installation
 
-Create a virtual environment for FEVER with Python 3.6 and activate it
+Create a virtual environment for FEVER with Python 3.6 and activate it. 
 
     conda create -n fever python=3.6
     source activate fever
 
-Manually Install PyTorch (different distributions should follow instructions from [pytorch.org](http://pytorch.org/))
+Manually Install PyTorch (version 3) (different distributions should follow instructions from [pytorch.org](http://pytorch.org/))
 
-    conda install pytorch torchvision -c pytorch
+    conda install pytorch=0.3.1 torchvision -c pytorch
 
 Clone the repository
 
