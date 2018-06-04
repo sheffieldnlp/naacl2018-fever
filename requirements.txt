@@ -8,5 +8,5 @@ nltk
 allennlp==0.2.3
 pytz
 tensorboard-pytorch
-git+git://github.com/j6mes/drqa@parallel#egg=DrQA-0.1.3
+git+git://github.com/j6mes/drqa@parallel#egg=DrQA-0.2.0
 git+git://github.com/sheffieldnlp/fever-scorer@master#egg=fever-scorer-1.1.1
