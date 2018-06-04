@@ -149,22 +149,11 @@ Model 2: Decomposable Attention
  
 ### Evidence Retrieval Evaluation:
 
-#### Step 1: Retrive Evidence
-    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split dev
-    PYTHONPATH=src python src/scripts/retrieval/document/batch_ir.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 5 --split test
-
-NLTK Sentence Selection (worse)
-
-    PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf.py data/fever/fever.db data/fever/dev.pages.p5.jsonl --max_page 5 --max_sent 5 --split dev
-    PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf.py data/fever/fever.db data/fever/test.pages.p5.jsonl --max_page 5 --max_sent 5 --split test
-
-DrQA Sentence Selection (better)
-
-    PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf_drqa.py --db data/fever/fever.db --in_file data/fever/dev.pages.p5.jsonl --max_page 5 --max_sent 5 --split dev --use_precomputed false
-    PYTHONPATH=src python src/scripts/retrieval/sentence/process_tfidf_drqa.py --db data/fever/fever.db --in_file data/fever/test.pages.p5.jsonl --max_page 5 --max_sent 5 --split test --use_precomputed false
+#### New! Easy and Fast Sentence Selection and Document Selection (DrQA)
+    PYTHONPATH=src python src/scripts/retrieval/ir.py --db data/fever/fever.db --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file data/fever-data/dev.jsonl --out-file data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5
+    PYTHONPATH=src python src/scripts/retrieval/ir.py --db data/fever/fever.db --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file data/fever-data/test.jsonl --out-file data/fever/test.sentences.p5.s5.jsonl --max-page 5 --max-sent 5
     
-(note that this produces data with a different name to DrQA, you can run `mv data/fever/dev.sentences.not_precomputed.p5.s5.jsonl data/fever/dev.sentences.p5.s5.jsonl` and `mv data/fever/test.sentences.not_precomputed.p5.s5.jsonl data/fever/test.sentences.p5.s5.jsonl` to evaluate on this data)
-
+For legacy evidence retrieval (including NLTK-based retrieval, see the readme in `naacl2018` tag)
 
 #### Step 2: Run Model
 Model 1: Multi-layer perceptron
