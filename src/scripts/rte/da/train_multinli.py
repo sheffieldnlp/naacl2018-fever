@@ -12,6 +12,7 @@ from allennlp.training import Trainer
 from common.util.log_helper import LogHelper
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
+from rte.parikh.multi_nli_reader import MultiNLIReader
 from rte.parikh.reader import FEVERReader
 
 import argparse
@@ -21,7 +22,7 @@ import json
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int, serialization_dir: str, filtering: str) -> Model:
+def train_model(params: Union[Params, Dict[str, Any]], cuda_device:int, serialization_dir: str, filtering: str) -> Model:
     """
     This function can be used as an entry point to running models in AllenNLP
     directly from a JSON specification using a :class:`Driver`. Note that if
@@ -57,12 +58,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
 
     # Now we begin assembling the required parts for the Trainer.
     ds_params = params.pop('dataset_reader', {})
-    dataset_reader = FEVERReader(db,
-                                 sentence_level=ds_params.pop("sentence_level",False),
-                                 wiki_tokenizer=Tokenizer.from_params(ds_params.pop('wiki_tokenizer', {})),
-                                 claim_tokenizer=Tokenizer.from_params(ds_params.pop('claim_tokenizer', {})),
-                                 token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})),
-                                 filtering=filtering)
+    dataset_reader = MultiNLIReader(tokenizer=Tokenizer.from_params(ds_params.pop('tokenizer', {})),
+                                    token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})))
 
     train_data_path = params.pop('train_data_path')
     logger.info("Reading training data from %s", train_data_path)
@@ -119,7 +116,6 @@ if __name__ == "__main__":
 
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('db', type=str, help='/path/to/saved/db.db')
     parser.add_argument('param_path',
                            type=str,
                            help='path to parameter file describing the model to be trained')
@@ -137,8 +133,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    db = FeverDocDB(args.db)
 
     params = Params.from_file(args.param_path,args.overrides)
 
-    train_model(db,params,args.cuda_device,args.logdir,args.filtering)
+    train_model(params,args.cuda_device,args.logdir,args.filtering)

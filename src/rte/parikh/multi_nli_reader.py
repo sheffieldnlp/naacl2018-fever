@@ -27,8 +27,10 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 class MultiNLIFormatter(Formatter):
     def format_line(self,line):
-        return {}
 
+        if line["gold_label"] in ["entailment","contradiction","neutral"]:
+            return {"premise":line["sentence1"], "hypothesis":line["sentence2"], "label_text":line["gold_label"]}
+        return None
 
 class MultiNLILabelSchema(LabelSchema):
     def __init__(self):
@@ -77,7 +79,7 @@ class MultiNLIReader(DatasetReader):
         if label is not None:
             fields['label'] = LabelField(label)
         return Instance(fields)
-    
+
 
     @classmethod
     def from_params(cls, params: Params) -> 'MultiNLIReader':
