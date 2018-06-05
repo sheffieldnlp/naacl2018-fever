@@ -30,7 +30,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def get_map_function(parallel):
-    return p.imap if parallel else map
+    return p.imap_unordered if parallel else map
 
 if __name__ == "__main__":
     LogHelper.setup()
@@ -52,10 +52,19 @@ if __name__ == "__main__":
 
     method = TopNDocsTopNSents(db, args.max_page, args.max_sent, args.model)
 
+
+    processed = dict()
+
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         lines = jlr.process(f)
-
         logger.info("Processing lines")
+
         with ThreadPool() as p:
             for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line),lines), total=len(lines)):
-                out_file.write(json.dumps(line) + "\n")
+                #out_file.write(json.dumps(line) + "\n")
+                processed[line["id"]] = line
+
+        logger.info("Done, writing to disk")
+
+        for line in lines:
+            out_file.write(json.dumps(processed[line["id"]]) + "\n")
