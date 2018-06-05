@@ -29,6 +29,13 @@ Support for Windows operating systems is not provided.
 
 To train the Decomposable Attention models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be [downloaded](https://jamesthorne.co/fever/model.tar.gz). To use the pretrained model, simply replace any path to a model.tar.gz file with the path to the file you downloaded. (e.g. `logs/da_nn_sent/model.tar.gz` could become `~/Downloads/model.tar.gz`) 
 
+
+## Change Log
+
+* **v0.2** - updated the Information Retrieval component to use a modified version of DrQA that allows multi-threaded document/sentence retrieval. This yields a >10x speed-up the in IR stage of the pipeline as I/O waits are no longer blocking computation of TF*IDF vectors  
+* **v0.1** - original implementation (tagged as naacl2018)
+
+
 ## Installation
 
 Create a virtual environment for FEVER with Python 3.6 and activate it. 
