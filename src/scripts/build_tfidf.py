@@ -8,11 +8,22 @@
 # LICENSE file in the root directory of this source tree.
 
 """A script to build the tf-idf document matrices for retrieval."""
-
-import os
 from drqascripts.retriever.build_tfidf import *
 
+from common.util.log_helper import LogHelper
+
 if __name__ == '__main__':
+    LogHelper.setup()
+    logger = LogHelper.get_logger("DrQA BuildDB")
+
+    logger.setLevel(logging.INFO)
+    fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
+    console = logging.StreamHandler()
+    console.setFormatter(fmt)
+    logger.addHandler(console)
+
+    logger.info("Build TF-IDF matrix")
+
     parser = argparse.ArgumentParser()
     parser.add_argument('db_path', type=str, default=None,
                         help='Path to sqlite db holding document texts')
@@ -30,36 +41,14 @@ if __name__ == '__main__':
                         help='Number of CPU processes (for tokenizing, etc)')
     args = parser.parse_args()
 
+    tfidf = TfIdfBuilder(args,'sqlite', {'db_path': args.db_path})
     logging.info('Counting words...')
-    count_matrix, doc_dict = get_count_matrix(
-        args, 'sqlite', {'db_path': args.db_path}
-    )
+    count_matrix, doc_dict = tfidf.get_count_matrix()
 
     logger.info('Making tfidf vectors...')
-    tfidf = get_tfidf_matrix(count_matrix)
+    tfidf = tfidf.get_tfidf_matrix(count_matrix)
 
     logger.info('Getting word-doc frequencies...')
-    freqs = get_doc_freqs(count_matrix)
+    freqs = tfidf.get_doc_freqs(count_matrix)
 
     basename = os.path.splitext(os.path.basename(args.db_path))[0]
-    basename += ('-tfidf-ngram=%d-hash=%d-tokenizer=%s' %
-                 (args.ngram, args.hash_size, args.tokenizer))
-
-
-    if not os.path.exists(args.out_dir):
-        logger.info("Creating data directory")
-        os.makedirs(args.out_dir)
-
-
-    filename = os.path.join(args.out_dir, basename)
-
-    logger.info('Saving to %s.npz' % filename)
-    metadata = {
-        'doc_freqs': freqs,
-        'tokenizer': args.tokenizer,
-        'hash_size': args.hash_size,
-        'ngram': args.ngram,
-        'doc_dict': doc_dict
-    }
-
-    retriever.utils.save_sparse_csr(filename, tfidf, metadata)
