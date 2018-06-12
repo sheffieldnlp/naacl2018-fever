@@ -36,15 +36,15 @@ if __name__ == '__main__':
                         help='Number of CPU processes (for tokenizing, etc)')
     args = parser.parse_args()
 
-    tfidf = TfIdfBuilder(args,'sqlite', {'db_path': args.db_path})
+    tfidf_builder = TfIdfBuilder(args,'sqlite', {'db_path': args.db_path})
     logging.info('Counting words...')
-    count_matrix, doc_dict = tfidf.get_count_matrix()
+    count_matrix, doc_dict = tfidf_builder.get_count_matrix()
 
     logger.info('Making tfidf vectors...')
-    tfidf_mat = tfidf.get_tfidf_matrix(count_matrix)
+    tfidf_mat = tfidf_builder.get_tfidf_matrix(count_matrix)
 
     logger.info('Getting word-doc frequencies...')
-    freqs = tfidf.get_doc_freqs(count_matrix)
+    freqs = tfidf_builder.get_doc_freqs(count_matrix)
 
     basename = os.path.splitext(os.path.basename(args.db_path))[0]
     basename += ('-tfidf-ngram=%d-hash=%d-tokenizer=%s' %
@@ -59,4 +59,4 @@ if __name__ == '__main__':
         'ngram': args.ngram,
         'doc_dict': doc_dict
     }
-    retriever.utils.save_sparse_csr(filename, tfidf, metadata)
+    retriever.utils.save_sparse_csr(filename, tfidf_mat, metadata)
