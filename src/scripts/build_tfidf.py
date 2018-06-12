@@ -14,13 +14,7 @@ from common.util.log_helper import LogHelper
 
 if __name__ == '__main__':
     LogHelper.setup()
-    logger = LogHelper.get_logger("DrQA BuildDB")
-
-    logger.setLevel(logging.INFO)
-    fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-    console = logging.StreamHandler()
-    console.setFormatter(fmt)
-    logger.addHandler(console)
+    logger = LogHelper.get_logger("DrQA Build TFIDF")
 
     logger.info("Build TF-IDF matrix")
 
