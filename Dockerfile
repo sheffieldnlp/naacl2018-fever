@@ -6,10 +6,8 @@ ENTRYPOINT ["/bin/bash", "-c"]
 RUN mkdir /fever/
 VOLUME /fever/
 ADD requirements.txt /fever/
-ADD setup.py /fever/
 ADD src /fever/
 ADD config /fever/
-ADD requirements.txt /fever/
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
