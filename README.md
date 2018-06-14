@@ -60,6 +60,7 @@ Download the FEVER dataset from [our website](https://sheffieldnlp.github.io/fev
 
     mkdir data
     mkdir data/fever-data
+    mkdir data/index
     
     #To replicate the paper, download paper_dev and paper_test files. These are concatenated for the shared task
     wget -O data/fever-data/train.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/train.jsonl
