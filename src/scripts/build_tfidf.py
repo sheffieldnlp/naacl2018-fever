@@ -9,6 +9,7 @@
 
 """A script to build the tf-idf document matrices for retrieval."""
 import os
+import pathlib
 from drqascripts.retriever.build_tfidf import *
 from common.util.log_helper import LogHelper
 
@@ -59,4 +60,5 @@ if __name__ == '__main__':
         'ngram': args.ngram,
         'doc_dict': doc_dict
     }
+    pathlib.Path(args.out_dir).mkdir(parents=True, exist_ok=True) 
     retriever.utils.save_sparse_csr(filename, tfidf_mat, metadata)
