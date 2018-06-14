@@ -35,5 +35,3 @@ RUN . activate fever
 RUN conda install -y pytorch=0.3.1 torchvision -c pytorch
 
 RUN pip install -r requirements.txt
-RUN python setup.py install
-
