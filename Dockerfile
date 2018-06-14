@@ -10,7 +10,6 @@ ADD setup.py /fever/
 ADD src /fever/
 ADD config /fever/
 ADD requirements.txt /fever/
-ADD setup.py /fever/
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
