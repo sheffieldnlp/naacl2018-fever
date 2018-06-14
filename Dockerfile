@@ -29,7 +29,7 @@ RUN conda update -q conda
 RUN conda info -a
 RUN conda create -q -n fever python=3.6
 
-RUN cd /fever/
+WORKDIR /fever/
 RUN . activate fever
 
 RUN conda install -y pytorch=0.3.1 torchvision -c pytorch
