@@ -23,13 +23,13 @@ before_install:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
 
 install:
-  - docker build -t $DOCKER_USER/fever .
-  - docker tag $DOCKER_USER/fever:build-$TRAVIS_BUILD_NUMBER
+  - docker build -t sheffieldnlp/fever .
+  - docker tag sheffieldnlp/fever:build-$TRAVIS_BUILD_NUMBER
   - docker push
 
 script:
   - echo "Done"
 
 deploy:
-  - $DOCKER_USER/fever:latest
+  - sheffieldnlp/fever:latest
   - docker push
