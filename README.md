@@ -46,7 +46,7 @@ Download and run the latest FEVER.
     docker volume create fever-data
     docker run -it -v fever-data:/fever/data sheffieldnlp/fever-baselines
     
-To enable GPU acceleration (run with `--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all`) once [NVIDIA Docker has been installed](https://github.com/NVIDIA/nvidia-docker)
+To enable GPU acceleration (run with `--runtime=nvidia`) once [NVIDIA Docker has been installed](https://github.com/NVIDIA/nvidia-docker)
  
 ## Manual Install
 
