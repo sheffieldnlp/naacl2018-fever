@@ -146,7 +146,7 @@ These instructions are for the decomposable attention model. The MLP model can b
 
 ### Oracle Evaluation (no evidence retrieval):
     
-Run the oracle evaluation for the Decomposable Attention model on the dev set. 
+Run the oracle evaluation for the Decomposable Attention model on the dev set (requires sampling the NEI class - see [Training Data Preparation](#training-data-preparation))
     
     PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/dev.ns.pages.p1.jsonl
     
