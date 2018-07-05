@@ -22,11 +22,11 @@ before_install:
 install:
   - docker build -t fever .
   - docker tag fever $DOCKER_PUB_ORG/fever-baselines:build-$TRAVIS_BUILD_NUMBER
-  - docker push
+  - docker push $DOCKER_PUB_ORG/fever-baselines:build-$TRAVIS_BUILD_NUMBER
 
 script:
   - echo "Done"
 
 after_success:
   - docker tag fever $DOCKER_PUB_ORG/fever-baselines:latest
-  - docker push
+  - docker push $DOCKER_PUB_ORG/fever-baselines:latest
