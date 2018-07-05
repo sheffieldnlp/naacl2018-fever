@@ -16,6 +16,7 @@ ADD config /fever/config/
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
     zip \
+    gzip \
     make \
     automake \
     gcc \
@@ -25,7 +26,8 @@ RUN apt-get install -y --no-install-recommends \
     libc6-dev \
     man-db \
     autoconf \
-    pkg-config
+    pkg-config \
+    unzip
 
 RUN conda update -q conda
 RUN conda info -a
