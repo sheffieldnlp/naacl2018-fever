@@ -20,13 +20,13 @@ before_install:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
 
 install:
-  - docker build -t $DOCKER_PUB_ORG/fever-baselines .
-  - docker tag $DOCKER_PUB_ORG/fever-baselines:build-$TRAVIS_BUILD_NUMBER
+  - docker build -t fever .
+  - docker tag fever $DOCKER_PUB_ORG/fever-baselines:build-$TRAVIS_BUILD_NUMBER
   - docker push
 
 script:
   - echo "Done"
 
 after_success:
-  - $DOCKER_PUB_ORG/fever:latest
+  - docker tag fever $DOCKER_PUB_ORG/fever-baselines:latest
   - docker push
