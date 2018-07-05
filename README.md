@@ -14,7 +14,11 @@ The baseline model constists of two components: Evidence Retrieval (DrQA) + Text
  * [Docker Install](#docker-install)
  * [Manual Install](#manual-install)
  * [Download Data](#download-data)
- * [Manually Running Scripts](#manually-running-scripts)
+ * [Train](#training)
+ * [Evaluate](#evaluation)
+ * [Score and Upload to Codalab](#scoring)
+ 
+ 
 
  
 ## Pre-requisites
@@ -34,15 +38,6 @@ To train the Decomposable Attention models, it is highly recommended to use a GP
 * **v0.2** - updated the Information Retrieval component to use a modified version of DrQA that allows multi-threaded document/sentence retrieval. This yields a >10x speed-up the in IR stage of the pipeline as I/O waits are no longer blocking computation of TF*IDF vectors  
 * **v0.1** - original implementation (tagged as naacl2018)
 
-
-
-## Manually Running Scripts
- * [Installation](#installation)
- * [Data preparation](#data-preparation)
- * [Training](#training)
- * [Evaluation](#evaluation)
- * [Demo](#interactive-demo)
- 
  
 ## Docker Install
 
@@ -109,7 +104,7 @@ Sample training data for the NotEnoughInfo class. There are two sampling methods
     PYTHONPATH=src python src/scripts/retrieval/document/batch_ir_ns.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split train
     PYTHONPATH=src python src/scripts/retrieval/document/batch_ir_ns.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split dev
 
-And random sampling
+Or random sampling
 
     #Using random sampling method
     PYTHONPATH=src python src/scripts/dataset/neg_sample_evidence.py data/fever/fever.db
