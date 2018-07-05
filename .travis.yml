@@ -13,7 +13,7 @@ git:
 stages:
   - before_install
   - install
-  - name: deploy
+  - name: after_success
     if: branch = master
 
 before_install:
@@ -23,13 +23,13 @@ before_install:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
 
 install:
-  - docker build -t sheffieldnlp/fever .
-  - docker tag sheffieldnlp/fever:build-$TRAVIS_BUILD_NUMBER
+  - docker build -t $DOCKER_PUB_ORG/fever-baselines .
+  - docker tag $DOCKER_PUB_ORG/fever-baselines:build-$TRAVIS_BUILD_NUMBER
   - docker push
 
 script:
   - echo "Done"
 
-deploy:
-  - sheffieldnlp/fever:latest
+after_success:
+  - $DOCKER_PUB_ORG/fever:latest
   - docker push
