@@ -10,10 +10,26 @@ python:
 git:
   submodules: false
 
+stages:
+  - before_install
+  - install
+  - name: deploy
+    if: branch = master
+
 before_install:
   - echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_PASS" >> ~/.netrc
   - echo "Written git user to config file"
   - git submodule update --init --recursive
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
 
 install:
-  - docker build -t fever .
+  - docker build -t $DOCKER_USER/fever .
+  - docker tag $DOCKER_USER/fever:build-$TRAVIS_BUILD_NUMBER
+  - docker push
+
+script:
+  - echo "Done"
+
+deploy:
+  - $DOCKER_USER/fever:latest
+  - docker push
