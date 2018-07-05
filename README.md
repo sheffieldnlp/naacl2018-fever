@@ -11,13 +11,12 @@ The baseline model constists of two components: Evidence Retrieval (DrQA) + Text
  * Visit [http://fever.ai](http://fever.ai) to find out more about the shared task and download the data.
 
 ## Quick Links
+ * [Docker Install](#docker-install)
+ * [Manual Install](#manual-install)
+ * [Download Data](#download-data)
+ * [Manually Running Scripts](#manually-running-scripts)
 
- * [Installation](#installation)
- * [Data preparation](#data-preparation)
- * [Training](#training)
- * [Evaluation](#evaluation)
- * [Demo](#interactive-demo)
-
+ 
 ## Pre-requisites
 
 This was tested and evaluated using the Python 3.6 verison of Anaconda 5.0.1 which can be downloaded from [anaconda.com](https://www.anaconda.com/download/)
@@ -36,64 +35,74 @@ To train the Decomposable Attention models, it is highly recommended to use a GP
 * **v0.1** - original implementation (tagged as naacl2018)
 
 
-## Installation
 
-Create a virtual environment for FEVER with Python 3.6 and activate it. 
+## Manually Running Scripts
+ * [Installation](#installation)
+ * [Data preparation](#data-preparation)
+ * [Training](#training)
+ * [Evaluation](#evaluation)
+ * [Demo](#interactive-demo)
+ 
+ 
+## Docker Install
 
-    conda create -n fever python=3.6
-    source activate fever
+Download and run the latest FEVER. 
 
-Manually Install PyTorch (version 3) (different distributions should follow instructions from [pytorch.org](http://pytorch.org/))
-
-    conda install pytorch=0.3.1 torchvision -c pytorch
-
-Clone the repository
-
-    git clone https://github.com/sheffieldnlp/fever-baselines
-    cd fever-baselines
-
-Install requirements (run `export LANG=C.UTF-8` if installation of DrQA fails)
-
-    pip install -r requirements.txt
-
-Download the FEVER dataset from [our website](https://sheffieldnlp.github.io/fever/data.html) into the data directory
-
-    mkdir data
-    mkdir data/fever-data
+    docker volume create fever-data
+    docker run -it -v fever-data:/fever/data sheffieldnlp/fever-baselines
     
-    #To replicate the paper, download paper_dev and paper_test files. These are concatenated for the shared task
-    wget -O data/fever-data/train.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/train.jsonl
-    wget -O data/fever-data/dev.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/paper_dev.jsonl
-    wget -O data/fever-data/test.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/paper_test.jsonl
-    
-    #To train the model for the shared task (the test set will be released in July 2018)
-    wget -O data/fever-data/dev.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/shared_task_dev.jsonl
-    wget -O data/fever-data/test.jsonl https://s3-eu-west-1.amazonaws.com/fever.public/shared_task_test.jsonl
-    
+To enable GPU acceleration (run with `--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all`) once [NVIDIA Docker has been installed](https://github.com/NVIDIA/nvidia-docker)
+ 
+## Manual Install
+
+Installation using docker is preferred. If you are unable to do this, you can manually create the python environment following instructions here: 
+[Wiki/Manual-Install](https://github.com/sheffieldnlp/fever-baselines/wiki/Manual-Install)
+
+Remember that if you manually installed, you should run `source activate fever` and `cd` to the directory before you run any commands.
+
+## Download Data
+
+### Wikipedia
+
+To download a pre-processed Wikipedia dump ([license](https://s3-eu-west-1.amazonaws.com/fever.public/license.html)):
+
+    bash scripts/download-processed-wiki.sh
+
+Or download the raw data and process yourself
+
+    bash scripts/download-raw-wiki.sh
+    bash scripts/process-wiki.sh
+
+
+### Dataset
+
+Download the FEVER dataset from [our website](https://sheffieldnlp.github.io/fever/data.html) into the data directory:
+
+    bash scripts/download-data.sh
+
+
+(note that if you want to replicate the paper, run `scripts/download-paper.sh` instead of `scripts/download-data`).  
+ 
+ 
+### Word Embeddings 
+  
 Download pretrained GloVe Vectors
 
-    wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
-    unzip glove.6B.zip -d data/glove
-    gzip data/glove/*.txt
+    bash scripts/download-glove.sh
+
     
-## Data Preparation
-The data preparation consists of three steps: downloading the articles from Wikipedia, indexing these for the Evidence Retrieval and performing the negative sampling for training . 
+## Training
 
-### 1. Download Wikipedia data:
+We offer a pretrained model that can be downloaded by running the following command: 
 
-Download the pre-processed Wikipedia articles from [our website](https://sheffieldnlp.github.io/fever/data.html) and unzip it into the data folder.
+    bash scripts/download-model.sh
     
-    wget https://s3-eu-west-1.amazonaws.com/fever.public/wiki-pages.zip
-    unzip wiki-pages.zip -d data
- 
+    
+Skip to [evaluation](#evaluation) if you are using the pretrained model.
 
-### 2. Indexing 
-Construct an SQLite Database and build TF-IDF index (go grab a coffee while this runs)
 
-    PYTHONPATH=src python src/scripts/build_db.py data/wiki-pages data/fever/fever.db
-    PYTHONPATH=src python src/scripts/build_tfidf.py data/fever/fever.db data/index/
+### Training Data Preparation
 
-### 3. Sampling
 Sample training data for the NotEnoughInfo class. There are two sampling methods evaluated in the paper: using the nearest neighbour (similarity between TF-IDF vectors) and random sampling.
 
     #Using nearest neighbor method
@@ -105,24 +114,8 @@ And random sampling
     #Using random sampling method
     PYTHONPATH=src python src/scripts/dataset/neg_sample_evidence.py data/fever/fever.db
 
-    
-## Training
-
-Model 1: Multilayer Perceptron (expected oracle dev set performance: 62.27%)
-
-    #If using a GPU, set
-    export GPU=1
-    #If more than one GPU,
-    export CUDA_DEVICE=0 #(or any CUDA device id. default is 0)
-
-    # Using nearest neighbor sampling method for NotEnoughInfo class (better)
-    PYTHONPATH=src python src/scripts/rte/mlp/train_mlp.py data/fever/fever.db data/fever/train.ns.pages.p1.jsonl data/fever/dev.ns.pages.p1.jsonl --model ns_nn_sent --sentence true
-
-    #Or, using random sampled data for NotEnoughInfo (worse)
-    PYTHONPATH=src python src/scripts/rte/mlp/train_mlp.py data/fever/fever.db data/fever/train.ns.rand.jsonl data/fever/dev.ns.rand.jsonl --model ns_rand_sent --sentence true
-
-
-Model 2: Decomposable Attention (expected dev set performance: 77.97%)
+### Train DA
+Train the Decomposable Attention model
 
     #if using a CPU, set
     export CUDA_DEVICE=-1
@@ -130,60 +123,72 @@ Model 2: Decomposable Attention (expected dev set performance: 77.97%)
     #if using a GPU, set
     export CUDA_DEVICE=0 #or cuda device id
 
+Then either train the model with Nearest-Page Sampling for the NEI class 
+
     # Using nearest neighbor sampling method for NotEnoughInfo class (better)
     PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE
+    cp logs/da_nn_sent/model.tar.gz data/models/decomposable_attention.tar.gz
+    
+Or with Random Sampling for the NEI class
 
-    #Or, using random sampled data for NotEnoughInfo (worse)
+    # Using random sampled data for NotEnoughInfo (worse)
     PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_rs_ora_sent.json logs/da_rs_sent --cuda-device $CUDA_DEVICE
+    cp logs/da_rs_sent/model.tar.gz data/models/decomposable_attention.tar.gz
 
-Score:
 
-    PYTHONPATH=src python src/scripts/score.py --predicted logs/da_nn_sent_test --actual data/fever-data/test.jsonl
+ 
+
+
+### Train MLP
+The MLP model can be trained following instructions from the Wiki: [Wiki/Train-MLP](https://github.com/sheffieldnlp/fever-baselines/wiki/Train-MLP)
 
 
 ## Evaluation
 
+These instructions are for the decomposable attention model. The MLP model can be evaluated following instructions from the Wiki: [Wiki/Evaluate-MLP](https://github.com/sheffieldnlp/fever-baselines/wiki/Evaluate-MLP)
+
 ### Oracle Evaluation (no evidence retrieval):
     
-Model 1: Multi-layer perceptron
+Run the oracle evaluation for the Decomposable Attention model on the dev set. 
+    
+    PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/dev.ns.pages.p1.jsonl
+    
 
-    PYTHONPATH=src python src/scripts/rte/mlp/eval_mlp.py data/fever/fever.db --model ns_nn_sent --sentence true --log logs/mlp_nn_sent
-    
-Model 2: Decomposable Attention 
-    
-    PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.ns.pages.p1.jsonl
-    
- 
 ### Evidence Retrieval Evaluation:
 
-#### New! Easy and Fast Sentence Selection and Document Selection (DrQA)
+First retrieve the evidence for the dev/test sets:
+
+    #Dev
     PYTHONPATH=src python src/scripts/retrieval/ir.py --db data/fever/fever.db --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file data/fever-data/dev.jsonl --out-file data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5
+    
+    #Test
     PYTHONPATH=src python src/scripts/retrieval/ir.py --db data/fever/fever.db --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file data/fever-data/test.jsonl --out-file data/fever/test.sentences.p5.s5.jsonl --max-page 5 --max-sent 5
+
+Then run the model:
     
-For legacy evidence retrieval (including NLTK-based retrieval, see the readme in `naacl2018` tag)
-
-#### Step 2: Run Model
-Model 1: Multi-layer perceptron
-
-    PYTHONPATH=src python src/scripts/rte/mlp/eval_mlp.py data/fever/fever.db data/fever/dev.sentences.p5.s5.jsonl --model ns_nn_sent --sentence true --log logs/mlp_nn_sent_dev
-    PYTHONPATH=src python src/scripts/rte/mlp/eval_mlp.py data/fever/fever.db data/fever/test.sentences.p5.s5.jsonl --model ns_nn_sent --sentence true --log logs/mlp_nn_sent_test
+    #Dev
+    PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/dev.sentences.p5.s5.jsonl  --log data/decomposable_attention.dev.log
     
-Model 2: Decomposable Attention 
-    
-    PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/dev.sentences.p5.s5.jsonl  --log logs/da_nn_sent_dev
-    PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db logs/da_nn_sent/model.tar.gz data/fever/test.sentences.p5.s5.jsonl  --log logs/da_nn_sent_test
+    #Test
+    PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/test.sentences.p5.s5.jsonl  --log logs/decomposable_attention.test.log
 
 
-#### Step 3a: Score locally  
+## Scoring
+### Score locally (for dev set)  
 Score:
 
-    PYTHONPATH=src python src/scripts/score.py --predicted_labels logs/da_nn_sent_test --predicted_evidence data/fever/test.sentences.p5.s5.jsonl --actual data/fever-data/test.jsonl
+    PYTHONPATH=src python src/scripts/score.py --predicted_labels data/decomposable_attention.dev.log --predicted_evidence data/fever/dev.sentences.p5.s5.jsonl --actual data/fever-data/dev.jsonl
 
-#### Step 3b: Or score on Codalab
+### Or score on Codalab (for dev/test)
 
-Prepare Submission for Codalab:
+Prepare Submission for Codalab (dev):
 
-    PYTHONPATH=src python src/scripts/prepare_submission.py --predicted_labels logs/da_nn_sent_test --predicted_evidence data/fever/test.sentences.p5.s5.jsonl --out_file predictions.jsonl
+    PYTHONPATH=src python src/scripts/prepare_submission.py --predicted_labels logs/decomposable_attention.dev.log --predicted_evidence data/fever/dev.sentences.p5.s5.jsonl --out_file predictions.jsonl
+    zip submission.zip predictions.jsonl
+
+Prepare Submission for Codalab (test):
+
+    PYTHONPATH=src python src/scripts/prepare_submission.py --predicted_labels logs/decomposable_attention.test.log --predicted_evidence data/fever/test.sentences.p5.s5.jsonl --out_file predictions.jsonl
     zip submission.zip predictions.jsonl
 
           
