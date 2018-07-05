@@ -122,12 +122,14 @@ Then either train the model with Nearest-Page Sampling for the NEI class
 
     # Using nearest neighbor sampling method for NotEnoughInfo class (better)
     PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE
+    mkdir -p data/models
     cp logs/da_nn_sent/model.tar.gz data/models/decomposable_attention.tar.gz
     
 Or with Random Sampling for the NEI class
 
     # Using random sampled data for NotEnoughInfo (worse)
     PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_rs_ora_sent.json logs/da_rs_sent --cuda-device $CUDA_DEVICE
+    mkdir -p data/models
     cp logs/da_rs_sent/model.tar.gz data/models/decomposable_attention.tar.gz
 
 
