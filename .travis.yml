@@ -17,9 +17,6 @@ stages:
     if: branch = master
 
 before_install:
-  - echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_PASS" >> ~/.netrc
-  - echo "Written git user to config file"
-  - git submodule update --init --recursive
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
 
 install:
