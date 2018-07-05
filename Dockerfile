@@ -6,12 +6,14 @@ ENTRYPOINT ["/bin/bash"]
 RUN mkdir /fever/
 RUN mkdir /fever/src
 RUN mkdir /fever/config
+RUN mkdir /fever/scripts
 
 VOLUME /fever/
 
 ADD requirements.txt /fever/
 ADD src /fever/src/
 ADD config /fever/config/
+ADD scripts /fever/scripts/
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
