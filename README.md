@@ -14,6 +14,7 @@ The baseline model constists of two components: Evidence Retrieval (DrQA) + Text
  * [Docker Install](#docker-install)
  * [Manual Install](#manual-install)
  * [Download Data](#download-data)
+ * [Data Preparation](#data-preparation)
  * [Train](#training)
  * [Evaluate](#evaluation)
  * [Score and Upload to Codalab](#scoring)
@@ -85,18 +86,9 @@ Download pretrained GloVe Vectors
 
     bash scripts/download-glove.sh
 
-    
-## Training
-
-We offer a pretrained model that can be downloaded by running the following command: 
-
-    bash scripts/download-model.sh
-    
-    
-Skip to [evaluation](#evaluation) if you are using the pretrained model.
 
 
-### Training Data Preparation
+## Data Preparation
 
 Sample training data for the NotEnoughInfo class. There are two sampling methods evaluated in the paper: using the nearest neighbour (similarity between TF-IDF vectors) and random sampling.
 
@@ -108,6 +100,16 @@ Or random sampling
 
     #Using random sampling method
     PYTHONPATH=src python src/scripts/dataset/neg_sample_evidence.py data/fever/fever.db
+    
+## Training
+
+We offer a pretrained model that can be downloaded by running the following command: 
+
+    bash scripts/download-model.sh
+    
+    
+Skip to [evaluation](#evaluation) if you are using the pretrained model.
+
 
 ### Train DA
 Train the Decomposable Attention model
