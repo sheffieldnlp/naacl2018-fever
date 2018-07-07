@@ -30,7 +30,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def get_map_function(parallel):
-    return p.imap_unordered if parallel else map
+    return p.imap if parallel else map
 
 if __name__ == "__main__":
     LogHelper.setup()
