@@ -2,7 +2,7 @@ import argparse
 import json
 from multiprocessing.pool import ThreadPool
 
-import os
+import os,sys
 
 from common.util.log_helper import LogHelper
 from tqdm import tqdm
@@ -58,11 +58,15 @@ if __name__ == "__main__":
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         lines = jlr.process(f)
         logger.info("Processing lines")
+        counter=0
 
         with ThreadPool() as p:
             for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line),lines), total=len(lines)):
                 #out_file.write(json.dumps(line) + "\n")
                 processed[line["id"]] = line
+                counter=counter+1
+                if(counter==2):
+                    sys.exit(1)
 
         logger.info("Done, writing to disk")
 
