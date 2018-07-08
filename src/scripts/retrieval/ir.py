@@ -66,7 +66,7 @@ if __name__ == "__main__":
                 processed[line["id"]] = line
                 logger.info("processed line is:"+str(line))
                 counter=counter+1
-                if(counter==2):
+                if(counter==10):
                     sys.exit(1)
 
         logger.info("Done, writing to disk")
