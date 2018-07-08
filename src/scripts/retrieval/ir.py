@@ -16,9 +16,6 @@ from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 def process_line(method,line):
     sents = method.get_sentences_for_claim(line["claim"])
     pages = list(set(map(lambda sent:sent[0],sents)))
-    logger.info(sents[0])
-    logger.info("done printing sentence")
-    sys.exit(1)
     line["predicted_pages"] = pages
     line["predicted_sentences"] = sents
     return line
@@ -67,6 +64,7 @@ if __name__ == "__main__":
             for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line),lines), total=len(lines)):
                 #out_file.write(json.dumps(line) + "\n")
                 processed[line["id"]] = line
+                logger.info("processed line is:"+str(line))
                 counter=counter+1
                 if(counter==2):
                     sys.exit(1)
