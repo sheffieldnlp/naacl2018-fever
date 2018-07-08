@@ -5,7 +5,7 @@ class LogHelper():
     @staticmethod
     def setup():
         logging.basicConfig(level=logging.WARNING,
-                            FORMAT='[%(levelname)s] %(asctime)s - %(name)s - %(message)s'',
+                            FORMAT='[%(levelname)s] %(asctime)s - %(name)s - %(message)s',
                             datefmt='%m-%d %H:%M',
                             filename='log_fever.log',
                             filemode='w')
