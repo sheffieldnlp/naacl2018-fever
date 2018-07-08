@@ -18,7 +18,7 @@ def process_line(method,line):
     pages = list(set(map(lambda sent:sent[0],sents)))
     logger.info(sents[0])
     logger.info("done printing sentence")
-    sys.exit()
+    sys.exit(1)
     line["predicted_pages"] = pages
     line["predicted_sentences"] = sents
     return line

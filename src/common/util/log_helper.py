@@ -1,12 +1,18 @@
 import logging
 class LogHelper():
     handler = None
+    handler2 = None
     @staticmethod
     def setup():
         FORMAT = '[%(levelname)s] %(asctime)s - %(name)s - %(message)s'
         LogHelper.handler = logging.StreamHandler()
         LogHelper.handler.setLevel(logging.DEBUG)
         LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
+
+        FORMAT = '[%(levelname)s] %(asctime)s - %(name)s - %(message)s'
+        LogHelper.handler2 = logging.FileHandler('fever.log')
+        LogHelper.handler2.setLevel(logging.DEBUG)
+        LogHelper.handler2.setFormatter(logging.Formatter(FORMAT))
 
         LogHelper.get_logger(LogHelper.__name__).info("Log Helper set up")
 
@@ -15,4 +21,6 @@ class LogHelper():
         l = logging.getLogger(name)
         l.setLevel(level)
         l.addHandler(LogHelper.handler)
+        l.addHandler(LogHelper.handler2)
+
         return l
