@@ -5,25 +5,15 @@ class LogHelper():
     @staticmethod
     def setup():
 
-        logging.basicConfig(level=logging.WARNING,
-                            format='[%(levelname)s] %(asctime)s - %(name)s - %(message)s',
-                            datefmt='%m-%d %H:%M',
-                            filename='log_fever.log',
-                            filemode='w')
         FORMAT = '[%(levelname)s] %(asctime)s - %(name)s - %(message)s'
         LogHelper.handler = logging.StreamHandler()
         LogHelper.handler.setLevel(logging.DEBUG)
         LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
 
-        LogHelper.get_logger(LogHelper.__name__).info("Log Helper set up")
-
-        # LogHelper.handler = logging.StreamHandler()
-        # LogHelper.handler.setLevel(logging.DEBUG)
-        #
-        LogHelper.handler2 = logging.FileHandler("log_fever.log")
+        LogHelper.handler2 = logging.FileHandler("log_fever.log" ,mode='w')
         LogHelper.handler2.setLevel(logging.DEBUG)
-        #
-        # LogHelper.get_logger(LogHelper.__name__).info("Log Helper set up")
+
+        LogHelper.get_logger(LogHelper.__name__).info("Log Helper set up")
 
 
     @staticmethod
