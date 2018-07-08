@@ -16,6 +16,9 @@ from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 def process_line(method,line):
     sents = method.get_sentences_for_claim(line["claim"])
     pages = list(set(map(lambda sent:sent[0],sents)))
+    logger.info(sents[0])
+    logger.info("done printing sentence")
+    sys.exit()
     line["predicted_pages"] = pages
     line["predicted_sentences"] = sents
     return line
