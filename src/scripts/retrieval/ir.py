@@ -57,7 +57,9 @@ if __name__ == "__main__":
 
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         lines = jlr.process(f)
-        logger.info("Processing lines")
+        logger.info(lines[0])
+        logger.info("done printing lines[0]")
+        sys.exit(1)
         counter=0
 
         with ThreadPool() as p:
