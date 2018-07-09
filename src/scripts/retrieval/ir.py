@@ -63,7 +63,7 @@ if __name__ == "__main__":
         evidences=lines[0]["evidence"]
         logger.info(evidences[0])
         logger.info(evidences[0][0])
-        for evidence in evidences[0][0]:
+        for evidence in evidences[0]:
             t=evidence[2]
             l=evidence[3]
 
