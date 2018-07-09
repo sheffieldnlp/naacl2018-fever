@@ -46,7 +46,7 @@ class TopNDocsTopNSents(RetrievalMethod):
         lines = [line.split("\t")[1] if len(line.split("\t")[1]) > 1 else "" for line in
                  lines.split("\n")]
         logger.info(type(lines))
-        logger.info((lines[line_no-1]))
+        logger.info((lines[line_no]))
 
         sys.exit(1)
 
