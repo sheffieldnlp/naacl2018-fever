@@ -43,7 +43,10 @@ class TopNDocsTopNSents(RetrievalMethod):
 
     def get_sentences_given_claim(self,page,logger,line_no):
         lines = self.db.get_doc_lines(page)
-        logger.info(lines[line_no-1])
+        logger.info(line_no-1)
+        logger.info(lines[6])
+        for lin in lines:
+            print(lin)
         sys.exit(1)
 
     def get_sentences_for_claim(self,claim_text,include_text=False):
