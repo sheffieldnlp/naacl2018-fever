@@ -67,12 +67,13 @@ if __name__ == "__main__":
             t=evidence[2]
             l=evidence[3]
 
-            logger.info("wiki page"+str(t))
-            logger.info("line number" + str(l))
+            logger.info("wiki page:"+str(t))
+            logger.info("line number:" + str(l))
+            method.get_sentences_given_claim(t)
 
             sys.exit(1)
 
-        method.get_sentences_given_claim(lines[0])
+
         sys.exit(1)
         counter=0
 
