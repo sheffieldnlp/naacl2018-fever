@@ -7,8 +7,7 @@ from drqascripts.retriever.build_tfidf_lines import OnlineTfidfDocRanker
 from common.util.log_helper import LogHelper
 
 class TopNDocsTopNSents(RetrievalMethod):
-    LogHelper.setup()
-    logger = LogHelper.get_logger(__name__)
+
 
     class RankArgs:
         def __init__(self):
@@ -39,7 +38,9 @@ class TopNDocsTopNSents(RetrievalMethod):
         return ret_lines
 
 
-    def get_sentences_for_claim(self,claim_text,include_text=False,logger):
+    def get_sentences_for_claim(self,claim_text,include_text=False):
+        LogHelper.setup()
+        logger = LogHelper.get_logger(__name__)
         #given a claim get a bunch of documents that might be relevant for it
         pages = self.get_docs_for_claim(claim_text)
         sorted_p = list(sorted(pages, reverse=True, key=lambda elem: elem[1]))
