@@ -46,9 +46,8 @@ class TopNDocsTopNSents(RetrievalMethod):
         lines = [line.split("\t")[1] if len(line.split("\t")[1]) > 1 else "" for line in
                  lines.split("\n")]
         logger.info(type(lines))
-        logger.info(len(lines))
-        for lin in lines:
-            logger.info(lin)
+        logger.info((lines[line_no-1]))
+
         sys.exit(1)
 
     def get_sentences_for_claim(self,claim_text,include_text=False):
