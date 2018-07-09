@@ -1,4 +1,4 @@
-import math
+import math,sys
 
 from .retrieval_method import RetrievalMethod
 from drqa import retriever
@@ -37,10 +37,18 @@ class TopNDocsTopNSents(RetrievalMethod):
             ret_lines[-1]["score"] = scores[idx]
         return ret_lines
 
+    LogHelper.setup()
+    logger = LogHelper.get_logger(__name__)
+
+
+    def get_sentences_given_claim(claim,self):
+        lines = self.db.get_doc_lines(page)
+        logger.info(lines)
+        sys.exit(1)
 
     def get_sentences_for_claim(self,claim_text,include_text=False):
-        LogHelper.setup()
-        logger = LogHelper.get_logger(__name__)
+
+
         #given a claim get a bunch of documents that might be relevant for it
         pages = self.get_docs_for_claim(claim_text)
         sorted_p = list(sorted(pages, reverse=True, key=lambda elem: elem[1]))

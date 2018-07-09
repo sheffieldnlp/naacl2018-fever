@@ -58,6 +58,13 @@ if __name__ == "__main__":
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         lines = jlr.process(f)
         #lines now contains all list of claims
+        logger.info("first line is:")
+        logger.info(lines[0])
+        evidence=lines[0]["evidence"]
+        logger.info(evidence)
+        sys.exit(1)
+        method.get_sentences_given_claim(lines[0])
+        sys.exit(1)
         counter=0
 
         with ThreadPool() as p:
