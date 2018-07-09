@@ -60,9 +60,18 @@ if __name__ == "__main__":
         #lines now contains all list of claims
         logger.info("first line is:")
         logger.info(lines[0])
-        evidence=lines[0]["evidence"]
-        logger.info(evidence)
-        sys.exit(1)
+        evidences=lines[0]["evidence"]
+        logger.info(evidences[0])
+        logger.info(evidences[0][0])
+        for evidence in evidences[0][0]:
+            t=evidence[2]
+            l=evidence[3]
+
+            logger.info("wiki page"+str(t))
+            logger.info("line number" + str(l))
+
+            sys.exit(1)
+
         method.get_sentences_given_claim(lines[0])
         sys.exit(1)
         counter=0
