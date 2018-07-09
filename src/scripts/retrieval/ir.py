@@ -57,6 +57,7 @@ if __name__ == "__main__":
 
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         lines = jlr.process(f)
+        #lines now contains all list of claims
         logger.info(lines[0])
         logger.info("done printing lines[0]")
         sys.exit(1)
