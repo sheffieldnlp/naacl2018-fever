@@ -41,7 +41,7 @@ class TopNDocsTopNSents(RetrievalMethod):
     logger = LogHelper.get_logger(__name__)
 
 
-    def get_sentences_given_claim(page,logger,self):
+    def get_sentences_given_claim(self,page,logger):
         lines = self.db.get_doc_lines(page)
         logger.info(lines)
         sys.exit(1)
