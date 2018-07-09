@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
             logger.info("wiki page:"+str(t))
             logger.info("line number:" + str(l))
-            method.get_sentences_given_claim(t)
+            method.get_sentences_given_claim(t,logger)
 
             sys.exit(1)
 
