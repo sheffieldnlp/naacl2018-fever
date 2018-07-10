@@ -19,16 +19,19 @@ def read_claims_annotate(args,jlr,logger,method):
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
         ver_count=0
-        for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
-            logger.debug("entire claim is:")
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+            logger.debug("entire claim_full is:")
+            logger.debug(claim_full)
+            claim=claim_full["claim"]
+            logger.debug("just claim alone is:")
             logger.debug(claim)
             x = indiv_headline_body()
-            evidences=claim["evidence"]
-            label=claim["label"]
+            evidences=claim_full["evidence"]
+            label=claim_full["label"]
             if not (label=="NOT ENOUGH INFO"):
                 ver_count=ver_count+1
-                logger.debug("length of evidences for this claim  is:" + str(len(evidences)))
-                logger.debug("length of evidences for this claim  is:" + str(len(evidences[0])))
+                logger.debug("length of evidences for this claim_full  is:" + str(len(evidences)))
+                logger.debug("length of evidences for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
                 for evidence in evidences[0]:
                     t=evidence[2]
@@ -37,8 +40,8 @@ def read_claims_annotate(args,jlr,logger,method):
                     logger.debug(l)
                     sent=method.get_sentences_given_claim(t,logger,l)
                     ev_claim.append(sent)
-                str_ev_claim=' '.join(ev_claim)
-                annotate_and_save_doc(claim, str_ev_claim,index, API, ann_head_tr, ann_body_tr, logger)
+                all_evidences=' '.join(ev_claim)
+                annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
         return obj_all_heads_bodies
 
