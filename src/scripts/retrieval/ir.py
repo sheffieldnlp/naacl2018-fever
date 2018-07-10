@@ -58,11 +58,12 @@ if __name__ == "__main__":
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         #lines now contains all list of claims
-        logger.info("first line is:")
-        logger.info(all_claims[0])
+
 
         obj_all_heads_bodies=[]
         for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+            logger.debug("entire claim is:")
+            logger.debug(claim)
             x = indiv_headline_body()
             evidences=claim["evidence"]
             ev_claim=[]
