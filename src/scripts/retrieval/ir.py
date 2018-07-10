@@ -11,7 +11,7 @@ from retrieval.top_n import TopNDocsTopNSents
 from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
-
+from rte.mithun.ds import indiv_headline_body
 
 def process_line(method,line):
     sents = method.get_sentences_for_claim(line["claim"])
@@ -56,30 +56,35 @@ if __name__ == "__main__":
     processed = dict()
 
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
-        lines = jlr.process(f)
+        all_claims = jlr.process(f)
         #lines now contains all list of claims
         logger.info("first line is:")
-        logger.info(lines[0])
+        logger.info(all_claims[0])
 
-        for claim in lines:
+        obj_all_heads_bodies=[]
+        for claim in all_claims:
+            x = indiv_headline_body()
             evidences=claim["evidence"]
-            evidences_all_sent=[]
+            ev_claim=[]
             for evidence in evidences[0]:
                 t=evidence[2]
                 l=evidence[3]
                 sent=method.get_sentences_given_claim(t,logger,l)
-                evidences_all_sent.append(sent)
-
-            logger.info("evidence sentences for the first claim are:")
-            logger.info(evidences_all_sent)
+                ev_claim.append(sent)
+            str_ev_claim=' '.join(ev_claim)
+            x.headline=claim
+            x.body=str_ev_claim
+            print(x)
             sys.exit(1)
+            obj_all_heads_bodies.append(x)
 
-
+        logger.info("length of claims is:" + str(len(all_claims)))
+        logger.info("length of obj_all_heads_bodies is:" + str(len(obj_all_heads_bodies)))
         sys.exit(1)
         counter=0
 
         with ThreadPool() as p:
-            for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line),lines), total=len(lines)):
+            for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line), all_claims), total=len(all_claims)):
                 #out_file.write(json.dumps(line) + "\n")
                 processed[line["id"]] = line
                 logger.info("processed line is:"+str(line))
@@ -89,5 +94,5 @@ if __name__ == "__main__":
 
         logger.info("Done, writing to disk")
 
-        for line in lines:
+        for line in all_claims:
             out_file.write(json.dumps(processed[line["id"]]) + "\n")
