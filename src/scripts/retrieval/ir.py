@@ -71,8 +71,6 @@ if __name__ == "__main__":
                 l=evidence[3]
                 logger.debug(t)
                 logger.debug(l)
-                if(index==3):
-                    sys.exit(1)
 
                 sent=method.get_sentences_given_claim(t,logger,l)
                 ev_claim.append(sent)
