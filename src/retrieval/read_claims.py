@@ -3,9 +3,10 @@ from rte.mithun.ds import indiv_headline_body
 from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document
+import logging
 
 
-import os
+import os,sys
 
 ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
@@ -46,8 +47,9 @@ def read_claims_annotate(args,jlr):
         return obj_all_heads_bodies
 
 def uofa_training(args,jlr):
-    LogHelper.setup()
-    logger = LogHelper.get_logger(__name__)
+    logging.config.fileConfig('logging.ini')
+    logger = logging.getLogger(__name__)
+    logger.debug("got inside uofa_training")
     tr_data=read_claims_annotate(args,jlr)
     annotate_save_quit(tr_data)
 
