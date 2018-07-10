@@ -71,7 +71,7 @@ if __name__ == "__main__":
             if not (label=="NOT ENOUGH INFO"):
                 ver_count=ver_count+1
                 logger.debug("length of evidences for this claim  is:" + str(len(evidences)))
-                logger.info("length of evidences for this claim  is:" + str(len(evidences[0])))
+                logger.debug("length of evidences for this claim  is:" + str(len(evidences[0])))
                 ev_claim=[]
                 for evidence in evidences[0]:
                     t=evidence[2]
