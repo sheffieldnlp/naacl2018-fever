@@ -62,7 +62,7 @@ if __name__ == "__main__":
         logger.info(lines[0])
 
         for claim in lines:
-            evidences=claim[0]["evidence"]
+            evidences=claim["evidence"]
             evidences_all_sent=[]
             for evidence in evidences[0]:
                 t=evidence[2]
