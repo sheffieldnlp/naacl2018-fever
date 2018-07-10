@@ -38,7 +38,8 @@ def read_claims_annotate(args,jlr,logger,method):
                     sent=method.get_sentences_given_claim(t,logger,l)
                     ev_claim.append(sent)
                 str_ev_claim=' '.join(ev_claim)
-                annotate_and_save_doc(claim, str_ev_claim, API, ann_head_tr, ann_body_tr, logger)
+                annotate_and_save_doc(claim, str_ev_claim,index, API, ann_head_tr, ann_body_tr, logger)
+
         return obj_all_heads_bodies
 
 def uofa_training(args,jlr,method,logger):
