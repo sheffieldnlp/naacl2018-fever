@@ -37,13 +37,7 @@ def read_claims_annotate(args,jlr,logger,method):
                     sent=method.get_sentences_given_claim(t,logger,l)
                     ev_claim.append(sent)
                 str_ev_claim=' '.join(ev_claim)
-                x.headline=claim
-                x.body=str_ev_claim
-                obj_all_heads_bodies.append(x)
-        logger.info("length of claims is:" + str(len(all_claims)))
-        logger.info("length of number of verifiable claims is:" + str((ver_count)))
-        logger.info("length of obj_all_heads_bodies is:" + str(len(obj_all_heads_bodies)))
-
+                annotate_and_save_doc(claim, str_ev_claim, API, ann_head_tr, ann_body_tr, logger)
         return obj_all_heads_bodies
 
 def uofa_training(args,jlr,method):
@@ -72,21 +66,24 @@ def annotate_save_quit(test_data,logger):
 
 
 
-def annotate_and_save_doc(entry, index, API, json_file_tr_annotated_headline,json_file_tr_annotated_body,logger):
-
-  doc1 = API.fastnlp.annotate(entry.headline)
-  doc1.id=index
-  with open(json_file_tr_annotated_headline, "a") as out:
+def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_headline,json_file_tr_annotated_body,
+                          logger):
+    logger.debug("headline:"+headline)
+    logger.debug("body:" + body)
+    doc1 = API.fastnlp.annotate(headline)
+    doc1.id=index
+    with open(json_file_tr_annotated_headline, "a") as out:
       out.write(doc1.to_JSON())
       out.write("\n")
 
-  logger.debug("got inside annotate_and_save_doc")
-  doc2 = API.fastnlp.annotate(entry.body)
-  logger.debug(doc2)
-  doc2.id = index
+    logger.debug("got inside annotate_and_save_doc")
+    doc2 = API.fastnlp.annotate(body)
+    logger.debug(doc2)
+    doc2.id = index
 
-  with open(json_file_tr_annotated_body, "a") as out:
+    with open(json_file_tr_annotated_body, "a") as out:
           out.write(doc2.to_JSON())
           out.write("\n")
 
-  return
+    sys.exit(1)
+    return
