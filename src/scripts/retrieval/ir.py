@@ -62,13 +62,18 @@ if __name__ == "__main__":
         logger.info(all_claims[0])
 
         obj_all_heads_bodies=[]
-        for claim in tqdm(all_claims,total=len(all_claims),desc="get_claim_ev:"):
+        for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
             x = indiv_headline_body()
             evidences=claim["evidence"]
             ev_claim=[]
             for evidence in evidences[0]:
                 t=evidence[2]
                 l=evidence[3]
+                logger.debug(t)
+                logger.debug(l)
+                if(index==3):
+                    sys.exit(1)
+
                 sent=method.get_sentences_given_claim(t,logger,l)
                 ev_claim.append(sent)
             str_ev_claim=' '.join(ev_claim)
