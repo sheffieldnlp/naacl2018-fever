@@ -1,7 +1,7 @@
 import argparse
 import json
 from multiprocessing.pool import ThreadPool
-
+import tqdm
 import os,sys
 
 from common.util.log_helper import LogHelper
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         logger.info(all_claims[0])
 
         obj_all_heads_bodies=[]
-        for claim in all_claims:
+        for claim in tqdm(all_claims,total=len(all_claims),desc="get_claim_ev:"):
             x = indiv_headline_body()
             evidences=claim["evidence"]
             ev_claim=[]
@@ -74,10 +74,7 @@ if __name__ == "__main__":
             str_ev_claim=' '.join(ev_claim)
             x.headline=claim
             x.body=str_ev_claim
-            print(x)
-            sys.exit(1)
             obj_all_heads_bodies.append(x)
-
         logger.info("length of claims is:" + str(len(all_claims)))
         logger.info("length of obj_all_heads_bodies is:" + str(len(obj_all_heads_bodies)))
         sys.exit(1)

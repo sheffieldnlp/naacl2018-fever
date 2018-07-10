@@ -12,6 +12,7 @@ class LogHelper():
 
         LogHelper.handler2 = logging.FileHandler("log_fever.log" ,mode='w')
         LogHelper.handler2.setLevel(logging.DEBUG)
+        LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
 
         LogHelper.get_logger(LogHelper.__name__)
             #.info("Log Helper set up")
