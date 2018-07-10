@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
 
     processed = dict()
-    uofa_training(args,jlr,method)
+    uofa_training(args,jlr,method,logger)
 
 
 

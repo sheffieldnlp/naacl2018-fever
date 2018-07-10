@@ -14,6 +14,7 @@ API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 
 def read_claims_annotate(args,jlr,logger,method):
+    logger.debug()
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
@@ -40,12 +41,10 @@ def read_claims_annotate(args,jlr,logger,method):
                 annotate_and_save_doc(claim, str_ev_claim, API, ann_head_tr, ann_body_tr, logger)
         return obj_all_heads_bodies
 
-def uofa_training(args,jlr,method):
-    LogHelper.setup()
-    logger = LogHelper.get_logger(__name__)
+def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
     tr_data=read_claims_annotate(args,jlr,logger,method)
-    annotate_save_quit(tr_data,logger)
+    #annotate_save_quit(tr_data,logger)
 
 
 def annotate_save_quit(test_data,logger):
@@ -68,6 +67,7 @@ def annotate_save_quit(test_data,logger):
 
 def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_headline,json_file_tr_annotated_body,
                           logger):
+    logger.debug("got inside annotate_and_save_doc")
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
     doc1 = API.fastnlp.annotate(headline)
@@ -76,7 +76,7 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
       out.write(doc1.to_JSON())
       out.write("\n")
 
-    logger.debug("got inside annotate_and_save_doc")
+
     doc2 = API.fastnlp.annotate(body)
     logger.debug(doc2)
     doc2.id = index
