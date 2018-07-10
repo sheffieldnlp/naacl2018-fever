@@ -14,6 +14,13 @@ API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 
 def read_claims_annotate(args,jlr,logger,method):
+    try:
+        os.remove(ann_head_tr)
+        os.remove(ann_body_tr)
+
+    except OSError:
+        logger.error("not able to find file")
+
     logger.debug("inside read_claims_annotate")
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
@@ -48,21 +55,17 @@ def read_claims_annotate(args,jlr,logger,method):
 def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
     tr_data=read_claims_annotate(args,jlr,logger,method)
-    #annotate_save_quit(tr_data,logger)
+    logger.info("Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    sys.exit(1)
 
 
 def annotate_save_quit(test_data,logger):
-    try:
-        os.remove(ann_head_tr)
-        os.remove(ann_body_tr)
 
-    except OSError:
-        logger.error("not able to find file")
 
     for i, d in tqdm(enumerate(test_data), total=len(test_data),desc="annotate_json:"):
         annotate_and_save_doc(d, i, API, ann_head_tr, ann_body_tr,logger)
 
-    logger.info("Finished writing json to disk . going to quit. names of the files are:"+ann_head_tr+";"+ann_body_tr)
+
 
 
     sys.exit(1)
@@ -89,5 +92,4 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
           out.write(doc2.to_JSON())
           out.write("\n")
 
-    sys.exit(1)
     return
