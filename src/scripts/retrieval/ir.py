@@ -61,16 +61,16 @@ if __name__ == "__main__":
 
 
         obj_all_heads_bodies=[]
+        ver_count=0
         for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
-            if(index==20):
-                sys.exit(1)
             logger.debug("entire claim is:")
             logger.debug(claim)
             x = indiv_headline_body()
             evidences=claim["evidence"]
             label=claim["label"]
             if not (label=="NOT ENOUGH INFO"):
-                logger.info("length of evidences for this claim  is:" + str(len(evidences)))
+                ver_count=ver_count+1
+                logger.debug("length of evidences for this claim  is:" + str(len(evidences)))
                 logger.info("length of evidences for this claim  is:" + str(len(evidences[0])))
                 ev_claim=[]
                 for evidence in evidences[0]:
@@ -85,6 +85,7 @@ if __name__ == "__main__":
                 x.body=str_ev_claim
                 obj_all_heads_bodies.append(x)
         logger.info("length of claims is:" + str(len(all_claims)))
+        logger.info("length of number of verifiable claims is:" + str((ver_count)))
         logger.info("length of obj_all_heads_bodies is:" + str(len(obj_all_heads_bodies)))
         sys.exit(1)
         counter=0
