@@ -14,7 +14,7 @@ API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 
 def read_claims_annotate(args,jlr,logger,method):
-    logger.debug()
+    logger.debug("inside read_claims_annotate")
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
