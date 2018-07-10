@@ -62,23 +62,28 @@ if __name__ == "__main__":
 
         obj_all_heads_bodies=[]
         for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+            if(index==3):
+                sys.exit(1)
             logger.debug("entire claim is:")
             logger.debug(claim)
             x = indiv_headline_body()
             evidences=claim["evidence"]
-            ev_claim=[]
-            for evidence in evidences[0]:
-                t=evidence[2]
-                l=evidence[3]
-                logger.debug(t)
-                logger.debug(l)
-
-                sent=method.get_sentences_given_claim(t,logger,l)
-                ev_claim.append(sent)
-            str_ev_claim=' '.join(ev_claim)
-            x.headline=claim
-            x.body=str_ev_claim
-            obj_all_heads_bodies.append(x)
+            label=claim["label"]
+            if not (label=="NOT ENOUGH INFO"):
+                logger.info("length of evidences for this claim  is:" + str(len(evidences)))
+                logger.info("length of evidences for this claim  is:" + str(len(evidences[0])))
+                ev_claim=[]
+                for evidence in evidences[0]:
+                    t=evidence[2]
+                    l=evidence[3]
+                    logger.debug(t)
+                    logger.debug(l)
+                    sent=method.get_sentences_given_claim(t,logger,l)
+                    ev_claim.append(sent)
+                str_ev_claim=' '.join(ev_claim)
+                x.headline=claim
+                x.body=str_ev_claim
+                obj_all_heads_bodies.append(x)
         logger.info("length of claims is:" + str(len(all_claims)))
         logger.info("length of obj_all_heads_bodies is:" + str(len(obj_all_heads_bodies)))
         sys.exit(1)
