@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
         obj_all_heads_bodies=[]
         for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
-            if(index==3):
+            if(index==20):
                 sys.exit(1)
             logger.debug("entire claim is:")
             logger.debug(claim)
