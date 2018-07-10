@@ -45,10 +45,9 @@ class TopNDocsTopNSents(RetrievalMethod):
         lines = self.db.get_doc_lines(page)
         lines = [line.split("\t")[1] if len(line.split("\t")[1]) > 1 else "" for line in
                  lines.split("\n")]
-        logger.info(type(lines))
-        logger.info((lines[line_no]))
+        sent=lines[line_no]
+        return sent
 
-        sys.exit(1)
 
     def get_sentences_for_claim(self,claim_text,include_text=False):
         #given a claim get a bunch of documents that might be relevant for it
