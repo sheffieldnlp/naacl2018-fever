@@ -11,7 +11,8 @@ from retrieval.top_n import TopNDocsTopNSents
 from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
-from rte.mithun.ds import indiv_headline_body
+from retrieval.read_claims import uofa_training
+
 
 def process_line(method,line):
     sents = method.get_sentences_for_claim(line["claim"])
@@ -54,41 +55,43 @@ if __name__ == "__main__":
 
 
     processed = dict()
+    uofa_training(args,jlr)
 
-    with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
-        all_claims = jlr.process(f)
-        #lines now contains all list of claims
-
-
-        obj_all_heads_bodies=[]
-        ver_count=0
-        for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
-            logger.debug("entire claim is:")
-            logger.debug(claim)
-            x = indiv_headline_body()
-            evidences=claim["evidence"]
-            label=claim["label"]
-            if not (label=="NOT ENOUGH INFO"):
-                ver_count=ver_count+1
-                logger.debug("length of evidences for this claim  is:" + str(len(evidences)))
-                logger.debug("length of evidences for this claim  is:" + str(len(evidences[0])))
-                ev_claim=[]
-                for evidence in evidences[0]:
-                    t=evidence[2]
-                    l=evidence[3]
-                    logger.debug(t)
-                    logger.debug(l)
-                    sent=method.get_sentences_given_claim(t,logger,l)
-                    ev_claim.append(sent)
-                str_ev_claim=' '.join(ev_claim)
-                x.headline=claim
-                x.body=str_ev_claim
-                obj_all_heads_bodies.append(x)
-        logger.info("length of claims is:" + str(len(all_claims)))
-        logger.info("length of number of verifiable claims is:" + str((ver_count)))
-        logger.info("length of obj_all_heads_bodies is:" + str(len(obj_all_heads_bodies)))
-        sys.exit(1)
-        counter=0
+    # with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
+    #     all_claims = jlr.process(f)
+    #     #lines now contains all list of claims
+    #
+    #
+    #     obj_all_heads_bodies=[]
+    #     ver_count=0
+    #     for index,claim in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+    #         logger.debug("entire claim is:")
+    #         logger.debug(claim)
+    #         x = indiv_headline_body()
+    #         evidences=claim["evidence"]
+    #         label=claim["label"]
+    #         if not (label=="NOT ENOUGH INFO"):
+    #             ver_count=ver_count+1
+    #             logger.debug("length of evidences for this claim  is:" + str(len(evidences)))
+    #             logger.debug("length of evidences for this claim  is:" + str(len(evidences[0])))
+    #             ev_claim=[]
+    #             for evidence in evidences[0]:
+    #                 t=evidence[2]
+    #                 l=evidence[3]
+    #                 logger.debug(t)
+    #                 logger.debug(l)
+    #                 sent=method.get_sentences_given_claim(t,logger,l)
+    #                 ev_claim.append(sent)
+    #             str_ev_claim=' '.join(ev_claim)
+    #             x.headline=claim
+    #             x.body=str_ev_claim
+    #             obj_all_heads_bodies.append(x)
+    #     logger.info("length of claims is:" + str(len(all_claims)))
+    #     logger.info("length of number of verifiable claims is:" + str((ver_count)))
+    #     logger.info("length of obj_all_heads_bodies is:" + str(len(obj_all_heads_bodies)))
+    #     sys.exit(1)
+    #     counter=0
+    #     annotate_save_quit(testing_data_converted)
 
         with ThreadPool() as p:
             for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line), all_claims), total=len(all_claims)):
