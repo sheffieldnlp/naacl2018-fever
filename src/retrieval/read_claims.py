@@ -13,7 +13,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 
-def read_claims_annotate(args,jlr):
+def read_claims_annotate(args,jlr,logger):
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
@@ -47,14 +47,14 @@ def read_claims_annotate(args,jlr):
         return obj_all_heads_bodies
 
 def uofa_training(args,jlr):
-    logging.config.fileConfig('logging.ini')
-    logger = logging.getLogger(__name__)
+    LogHelper.setup()
+    logger = LogHelper.get_logger(__name__)
     logger.debug("got inside uofa_training")
-    tr_data=read_claims_annotate(args,jlr)
-    annotate_save_quit(tr_data)
+    tr_data=read_claims_annotate(args,jlr,logger)
+    annotate_save_quit(tr_data,logger)
 
 
-def annotate_save_quit(test_data):
+def annotate_save_quit(test_data,logger):
     try:
         os.remove(ann_head_tr)
         os.remove(ann_body_tr)
@@ -63,7 +63,7 @@ def annotate_save_quit(test_data):
         logger.error("not able to find file")
 
     for i, d in tqdm(enumerate(test_data), total=len(test_data),desc="annotate_json:"):
-        annotate_and_save_doc(d, i, API, ann_head_tr, ann_body_tr)
+        annotate_and_save_doc(d, i, API, ann_head_tr, ann_body_tr,logger)
 
     logger.info("Finished writing json to disk . going to quit. names of the files are:"+ann_head_tr+";"+ann_body_tr)
 
@@ -72,7 +72,7 @@ def annotate_save_quit(test_data):
 
 
 
-def annotate_and_save_doc(entry, index, API, json_file_tr_annotated_headline,json_file_tr_annotated_body):
+def annotate_and_save_doc(entry, index, API, json_file_tr_annotated_headline,json_file_tr_annotated_body,logger):
 
   doc1 = API.fastnlp.annotate(entry.headline)
   doc1.id=index
