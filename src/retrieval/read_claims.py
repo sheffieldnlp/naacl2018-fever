@@ -13,7 +13,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 
-def read_claims_annotate(args,jlr,logger):
+def read_claims_annotate(args,jlr,logger,method):
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
@@ -46,11 +46,11 @@ def read_claims_annotate(args,jlr,logger):
 
         return obj_all_heads_bodies
 
-def uofa_training(args,jlr):
+def uofa_training(args,jlr,method):
     LogHelper.setup()
     logger = LogHelper.get_logger(__name__)
     logger.debug("got inside uofa_training")
-    tr_data=read_claims_annotate(args,jlr,logger)
+    tr_data=read_claims_annotate(args,jlr,logger,method)
     annotate_save_quit(tr_data,logger)
 
 
