@@ -21,53 +21,59 @@ annotated_only_tags="ann_tags.json"
 annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
 data_folder="/data/fever-data-ann/"
+model_trained="model_trained.pkl"
+combined_vector_training="combined_vector_testing_phase2.pkl"
+
+def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_vector):
+
+    if not(load_combined_vector):
+        logger.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
+
+        cwd=os.getcwd()
+        bf=cwd+data_folder+annotated_body_split_folder
+        bff=bf+annotated_only_lemmas
+        bft=bf+annotated_only_tags
+
+        hf=cwd+data_folder+annotated_head_split_folder
+        hff=hf+annotated_only_lemmas
+        hft=hf+annotated_only_tags
 
 
-def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger):
+        logger.debug("hff:" + str(hff))
+        logger.debug("bff:" + str(bff))
+        logger.info("going to read heads_lemmas from disk:")
+
+        heads_lemmas = read_json(hff,logger)
+        bodies_lemmas = read_json(bff,logger)
+        heads_tags = read_json(hft,logger)
+        bodies_tags = read_json(bft,logger)
 
 
-    logger.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
-
-    cwd=os.getcwd()
-    bf=cwd+data_folder+annotated_body_split_folder
-    bff=bf+annotated_only_lemmas
-    bft=bf+annotated_only_tags
-
-    hf=cwd+data_folder+annotated_head_split_folder
-    hff=hf+annotated_only_lemmas
-    hft=hf+annotated_only_tags
+        logger.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
+        logger.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
 
 
-    logger.debug("hff:" + str(hff))
-    logger.debug("bff:" + str(bff))
-    logger.info("going to read heads_lemmas from disk:")
-
-    heads_lemmas = read_json(hff,logger)
-    bodies_lemmas = read_json(bff,logger)
-    heads_tags = read_json(hft,logger)
-    bodies_tags = read_json(bft,logger)
+        if not (len(heads_lemmas) == len(bodies_lemmas)):
+            logger.debug("size of heads_lemmas and bodies_lemmas dont match")
+            sys.exit(1)
 
 
-    logger.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
-    logger.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
+        combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
+                                             bodies_tags,logger)
 
+        joblib.dump(combined_vector, combined_vector_training)
 
-    if not (len(heads_lemmas) == len(bodies_lemmas)):
-        logger.debug("size of heads_lemmas and bodies_lemmas dont match")
-        sys.exit(1)
-
-
-    combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                         bodies_tags,logger)
-
-    joblib.dump(combined_vector, 'combined_vector_testing_phase2.pkl')
-
-    logger.debug("done generating feature vectors. Going to call classifier")
+        logger.debug("done generating feature vectors. Going to call classifier")
+    else:
+        logger.debug("going to load combined vector from disk")
+        combined_vector = joblib.load(combined_vector_training)
 
     clf = svm.SVC(kernel='linear', C=1.0)
     clf.fit(combined_vector, gold_labels_tr.ravel())
 
-    joblib.dump(clf, 'model_trained_phase2.pkl')
+    joblib.dump(clf, model_trained)
+
+    logger.debug("done saving model to disk")
 
     return;
 

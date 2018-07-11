@@ -5,7 +5,7 @@ from tqdm import tqdm
 from processors import Document
 import logging
 from rte.mithun.trainer import read_json_feat_vec
-
+import numpy as np
 import os,sys
 
 ann_head_tr = "ann_head_tr.json"
@@ -13,6 +13,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus_tr=True
+load_combined_vector=True
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -63,7 +64,7 @@ def uofa_training(args,jlr,method,logger):
 
     gold_labels_tr = get_gold_labels(args, jlr)
 
-    read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger)
+    read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_vector)
 
 
     sys.exit(1)
@@ -105,12 +106,19 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     return
 
 def get_gold_labels(args,jlr):
-    gold_labels=[]
+    labels = np.array([[]])
 
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
             label=claim_full["label"]
-            gold_labels.append(label)
+            if (label == "SUPPORTS"):
+                labels = np.append(labels, 0)
+            else:
+                if (label == "REFUTES"):
+                    labels = np.append(labels, 1)
+                else:
+                    if (label=="NOT ENOUGH INFO"):
+                        labels = np.append(labels, 2)
 
-    return gold_labels
+    return labels
