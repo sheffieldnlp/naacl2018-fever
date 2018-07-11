@@ -1,5 +1,4 @@
 from __future__ import division
-from rte.mithun.log import setup_custom_logging
 import sys,logging
 from sklearn import svm
 import tqdm
