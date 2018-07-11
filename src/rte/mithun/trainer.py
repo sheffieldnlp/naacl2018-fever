@@ -24,7 +24,7 @@ annotated_head_split_folder="split_head/"
 data_folder="/data/fever-data-ann/"
 
 
-def read_json_feat_vec(load_ann_corpus_tr):
+def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr):
 
 
     logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
@@ -51,10 +51,9 @@ def read_json_feat_vec(load_ann_corpus_tr):
 
     logging.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
     logging.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
-    logging.debug("size of data is: " + str(len(data)))
 
 
-    if not (len(heads_lemmas) == len(bodies_lemmas)==len(data)):
+    if not (len(heads_lemmas) == len(bodies_lemmas)):
         logging.debug("size of heads_lemmas and bodies_lemmas dont match")
         sys.exit(1)
 
@@ -67,7 +66,7 @@ def read_json_feat_vec(load_ann_corpus_tr):
     logging.debug("done generating feature vectors. Going to call classifier")
 
     clf = svm.SVC(kernel='linear', C=1.0)
-    clf.fit(combined_vector, labels.ravel())
+    clf.fit(combined_vector, gold_labels_tr.ravel())
 
     joblib.dump(clf, 'model_trained_phase2.pkl')
 
