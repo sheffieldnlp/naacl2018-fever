@@ -1,6 +1,6 @@
+from __future__ import division
 import logging
 from rte.mithun.log import setup_custom_logger
-from __future__ import division
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tqdm import tqdm
 from nltk import word_tokenize
