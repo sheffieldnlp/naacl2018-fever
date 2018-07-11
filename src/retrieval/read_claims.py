@@ -4,7 +4,7 @@ from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document
 import logging
-
+from rte.mithun.trainer import read_json_feat_vec
 
 import os,sys
 
@@ -12,6 +12,7 @@ ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
+load_ann_corpus_tr=True
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -54,8 +55,16 @@ def read_claims_annotate(args,jlr,logger,method):
 
 def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
-    tr_data=read_claims_annotate(args,jlr,logger,method)
-    logger.info("Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+
+    #this code annotates using pyprocessors. Run it only once in its lifetime.
+    #tr_data=read_claims_annotate(args,jlr,logger,method)
+    # logger.info(
+    #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+
+    gold=get_gold_labels(args,jlr)
+
+    bodies_lemmas_related, heads_tags_related, bodies_tags_related = read_json_feat_vec(load_ann_corpus_tr,gold)
+
     sys.exit(1)
 
 
@@ -93,3 +102,14 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
           out.write("\n")
 
     return
+
+def get_gold_labels(args,jlr):
+    gold_labels=[]
+
+    with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
+        all_claims = jlr.process(f)
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+            label=claim_full["label"]
+            gold_labels.append(label)
+
+    return gold_labels

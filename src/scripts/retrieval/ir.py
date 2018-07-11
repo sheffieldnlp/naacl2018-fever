@@ -14,6 +14,7 @@ from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 from retrieval.read_claims import uofa_training
 
 
+
 def process_line(method,line):
     sents = method.get_sentences_for_claim(line["claim"])
     pages = list(set(map(lambda sent:sent[0],sents)))

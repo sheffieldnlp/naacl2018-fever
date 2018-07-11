@@ -1,5 +1,5 @@
 # UofA-Fact Extraction and VERification
-## Instructions to do AFTER you run the shefiield [instructions](https://github.com/sheffieldnlp/fever-baselines)
+## Instructions to do AFTER you run the shefiield [instructions for manual install](https://github.com/sheffieldnlp/fever-baselines/wiki/Manual-Install)
 
 - source activate fever
 ## To run training alone type:
