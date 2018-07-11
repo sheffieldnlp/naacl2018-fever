@@ -1,6 +1,6 @@
 from __future__ import division
-from rte.mithun.log import setup_custom_logger
-import sys
+from rte.mithun.log import setup_custom_logging
+import sys,logging
 from sklearn import svm
 import tqdm
 import os
@@ -24,10 +24,10 @@ data_folder="/data/fever-data-ann/"
 model_trained="model_trained.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
-def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_vector):
+def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logging,load_combined_vector):
 
     if not(load_combined_vector):
-        logger.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
+        logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
 
         cwd=os.getcwd()
         bf=cwd+data_folder+annotated_body_split_folder
@@ -39,33 +39,33 @@ def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_ve
         hft=hf+annotated_only_tags
 
 
-        logger.debug("hff:" + str(hff))
-        logger.debug("bff:" + str(bff))
-        logger.info("going to read heads_lemmas from disk:")
+        logging.debug("hff:" + str(hff))
+        logging.debug("bff:" + str(bff))
+        logging.info("going to read heads_lemmas from disk:")
 
-        heads_lemmas = read_json(hff,logger)
-        bodies_lemmas = read_json(bff,logger)
-        heads_tags = read_json(hft,logger)
-        bodies_tags = read_json(bft,logger)
+        heads_lemmas = read_json(hff,logging)
+        bodies_lemmas = read_json(bff,logging)
+        heads_tags = read_json(hft,logging)
+        bodies_tags = read_json(bft,logging)
 
 
-        logger.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
-        logger.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
+        logging.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
+        logging.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
 
 
         if not (len(heads_lemmas) == len(bodies_lemmas)):
-            logger.debug("size of heads_lemmas and bodies_lemmas dont match")
+            logging.debug("size of heads_lemmas and bodies_lemmas dont match")
             sys.exit(1)
 
 
         combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,logger)
+                                             bodies_tags,logging)
 
         joblib.dump(combined_vector, combined_vector_training)
 
-        logger.debug("done generating feature vectors. Going to call classifier")
+        logging.debug("done generating feature vectors. Going to call classifier")
     else:
-        logger.debug("going to load combined vector from disk")
+        logging.debug("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
 
     clf = svm.SVC(kernel='linear', C=1.0)
@@ -73,13 +73,13 @@ def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_ve
 
     joblib.dump(clf, model_trained)
 
-    logger.debug("done saving model to disk")
+    logging.debug("done saving model to disk")
 
     return;
 
 
-def read_json(json_file,logger):
-    logger.debug("inside read_json_pyproc_doc")
+def read_json(json_file,logging):
+    logging.debug("inside read_json_pyproc_doc")
     l = []
     counter=0
 
@@ -89,10 +89,10 @@ def read_json(json_file,logger):
             a=d["data"]
             just_lemmas=' '.join(str(r) for v in a for r in v)
             l.append(just_lemmas)
-            logger.debug(counter)
+            logging.debug(counter)
             counter = counter + 1
 
-    logger.debug("counter:"+str(counter))
+    logging.debug("counter:"+str(counter))
     return l
 
 
@@ -100,7 +100,7 @@ def normalize_dummy(text):
     x = text.lower().translate(remove_punctuation_map)
     return x.split(" ")
 
-def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags_related,logger):
+def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags_related,logging):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 16), int)
@@ -114,15 +114,15 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         tagged_headline=head_tags_related
         tagged_body=body_tags_related
 
-        # logger.debug(lemmatized_headline)
-        # logger.debug(lemmatized_body)
-        # logger.debug(tagged_headline)
-        # logger.debug(tagged_body)
+        # logging.debug(lemmatized_headline)
+        # logging.debug(lemmatized_body)
+        # logging.debug(tagged_headline)
+        # logging.debug(tagged_body)
 
 
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array = add_vectors(
-            lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logger)
+            lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
@@ -132,10 +132,10 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
 
 
-    logger.debug("\ndone with all headline body.:")
-    logger.debug("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
-    logger.debug("refuting_value_matrix.dtype=" + str(refuting_value_matrix.dtype))
-    logger.debug("refuting_value_matrix is =" + str(refuting_value_matrix))
+    logging.debug("\ndone with all headline body.:")
+    logging.debug("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
+    logging.debug("refuting_value_matrix.dtype=" + str(refuting_value_matrix.dtype))
+    logging.debug("refuting_value_matrix is =" + str(refuting_value_matrix))
 
     combined_vector = np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_vector])
@@ -143,7 +143,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     return combined_vector
 
 
-def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logger):
+def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logging):
     word_overlap = word_overlap_features_mithun(lemmatized_headline, lemmatized_body)
     word_overlap_array = np.array([word_overlap])
 

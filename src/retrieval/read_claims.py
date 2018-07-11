@@ -63,6 +63,7 @@ def uofa_training(args,jlr,method,logger):
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
     gold_labels_tr = get_gold_labels(args, jlr)
+    logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
 
     read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_vector)
 
@@ -110,15 +111,15 @@ def get_gold_labels(args,jlr):
 
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
-        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels:"):
             label=claim_full["label"]
             if (label == "SUPPORTS"):
                 labels = np.append(labels, 0)
             else:
                 if (label == "REFUTES"):
                     labels = np.append(labels, 1)
-                else:
-                    if (label=="NOT ENOUGH INFO"):
-                        labels = np.append(labels, 2)
+                # else:
+                #     if (label=="NOT ENOUGH INFO"):
+                #         labels = np.append(labels, 2)
 
     return labels
