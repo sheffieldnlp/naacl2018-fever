@@ -1,7 +1,7 @@
 import argparse
 import json
 from multiprocessing.pool import ThreadPool
-
+import tqdm
 import os,sys
 
 from common.util.log_helper import LogHelper
@@ -11,6 +11,7 @@ from retrieval.top_n import TopNDocsTopNSents
 from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
+from retrieval.read_claims import uofa_training
 
 
 def process_line(method,line):
@@ -54,21 +55,19 @@ if __name__ == "__main__":
 
 
     processed = dict()
+    uofa_training(args,jlr,method,logger)
 
-    with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
-        lines = jlr.process(f)
-        logger.info("Processing lines")
-        counter=0
 
-        with ThreadPool() as p:
-            for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line),lines), total=len(lines)):
-                #out_file.write(json.dumps(line) + "\n")
-                processed[line["id"]] = line
-                counter=counter+1
-                if(counter==2):
-                    sys.exit(1)
 
-        logger.info("Done, writing to disk")
+    with ThreadPool() as p:
+        for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line), all_claims), total=len(all_claims)):
+            processed[line["id"]] = line
+            logger.info("processed line is:"+str(line))
+            counter=counter+1
+            if(counter==10):
+                sys.exit(1)
 
-        for line in lines:
-            out_file.write(json.dumps(processed[line["id"]]) + "\n")
+    logger.info("Done, writing to disk")
+
+    for line in all_claims:
+        out_file.write(json.dumps(processed[line["id"]]) + "\n")
