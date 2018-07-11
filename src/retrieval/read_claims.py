@@ -63,7 +63,7 @@ def uofa_training(args,jlr,method,logger):
 
     gold_labels_tr = get_gold_labels(args, jlr)
 
-    read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr)
+    read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger)
 
 
     sys.exit(1)
