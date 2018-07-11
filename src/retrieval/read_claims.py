@@ -61,10 +61,11 @@ def uofa_training(args,jlr,method,logger):
     # logger.info(
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
-    gold=get_gold_labels(args,jlr)
 
-    bodies_lemmas_related, heads_tags_related, bodies_tags_related = read_json_feat_vec(load_ann_corpus_tr,gold)
 
+    read_json_feat_vec(load_ann_corpus_tr)
+
+    #use during testing on dev:gold = get_gold_labels(args, jlr)
     sys.exit(1)
 
 
