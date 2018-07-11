@@ -42,10 +42,10 @@ def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger):
     logger.debug("bff:" + str(bff))
     logger.info("going to read heads_lemmas from disk:")
 
-    heads_lemmas = read_json(hff)
-    bodies_lemmas = read_json(bff)
-    heads_tags = read_json(hft)
-    bodies_tags = read_json(bft)
+    heads_lemmas = read_json(hff,logger)
+    bodies_lemmas = read_json(bff,logger)
+    heads_tags = read_json(hft,logger)
+    bodies_tags = read_json(bft,logger)
 
 
     logger.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
@@ -72,7 +72,7 @@ def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger):
     return;
 
 
-def read_json(json_file):
+def read_json(json_file,logger):
     logger.debug("inside read_json_pyproc_doc")
     l = []
     counter=0
