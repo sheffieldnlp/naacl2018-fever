@@ -57,15 +57,15 @@ def read_claims_annotate(args,jlr,logger,method):
 def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
 
-    #this code annotates using pyprocessors. Run it only once in its lifetime.
-    #tr_data=read_claims_annotate(args,jlr,logger,method)
-    # logger.info(
-    #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
+    tr_data=read_claims_annotate(args,jlr,logger,method)
+    logger.info(
+        "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
-    gold_labels_tr = get_gold_labels(args, jlr)
-    logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-
-    read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_vector)
+    # gold_labels_tr = get_gold_labels(args, jlr)
+    # logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
+    #
+    # read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_vector)
 
 
     sys.exit(1)
