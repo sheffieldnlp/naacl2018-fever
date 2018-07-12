@@ -4,7 +4,7 @@ from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document
 import logging
-from rte.mithun.trainer import read_json_feat_vec,do_training,do_testing,load_model
+from rte.mithun.trainer import create_feature_vec,do_training,do_testing,load_model
 import numpy as np
 import os,sys
 
