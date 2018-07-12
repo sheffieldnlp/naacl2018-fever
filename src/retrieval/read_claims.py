@@ -4,7 +4,7 @@ from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document
 import logging
-from rte.mithun.trainer import read_json_feat_vec
+from rte.mithun.trainer import read_json_feat_vec,do_training,do_testing,load_model
 import numpy as np
 import os,sys
 
@@ -12,8 +12,9 @@ ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
-load_ann_corpus_tr=True
+load_ann_corpus=True
 load_combined_vector=False
+load_model=True
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -58,18 +59,26 @@ def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    tr_data=read_claims_annotate(args,jlr,logger,method)
-    logger.info(
-        "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    # tr_data=read_claims_annotate(args,jlr,logger,method)
+    # logger.info(
+    #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
-    # gold_labels_tr = get_gold_labels(args, jlr)
-    # logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-    #
-    # read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logger,load_combined_vector)
-
+    gold_labels_tr = get_gold_labels(args, jlr)
+    logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
+    combined_vector = read_json_feat_vec(load_ann_corpus, gold_labels_tr, logger, load_combined_vector)
+    do_training(combined_vector, gold_labels_tr)
 
     sys.exit(1)
 
+def uofa_testing(args,jlr,method,logger):
+    logger.debug("got inside uofa_testing")
+    gold_labels_tr = get_gold_labels(args, jlr)
+    logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
+    combined_vector= read_json_feat_vec(load_ann_corpus, gold_labels_tr, logger, load_combined_vector)
+    trained_model=load_model()
+    do_testing(combined_vector,gold_labels_tr,trained_model)
+    logging.info("done testing. going to quit")
+    sys.exit(1)
 
 def annotate_save_quit(test_data,logger):
 

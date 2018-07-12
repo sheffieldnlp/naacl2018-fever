@@ -21,9 +21,10 @@ annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
 data_folder="/data/fever-data-ann/"
 model_trained="model_trained.pkl"
+predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
-def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logging,load_combined_vector):
+def read_json_create_feat_vec(load_ann_corpus_tr, logging, load_combined_vector):
 
     if not(load_combined_vector):
         logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
@@ -67,15 +68,22 @@ def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logging,load_combined_v
         logging.debug("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
 
+    return combined_vector;
+
+def do_training(combined_vector,gold_labels_tr):
     clf = svm.SVC(kernel='linear', C=1.0)
     clf.fit(combined_vector, gold_labels_tr.ravel())
-
     joblib.dump(clf, model_trained)
-
     logging.debug("done saving model to disk")
 
-    return;
+def load_model(model_trained):
+    model=joblib.load(model_trained)
+    return model;
 
+def do_testing(combined_vector,gold_labels_tr,svm):
+    svm.predict(combined_vector, gold_labels_tr.ravel())
+    joblib.dump(svm, model_trained)
+    logging.debug("done saving model to disk")
 
 def read_json(json_file,logging):
     logging.debug("inside read_json_pyproc_doc")
