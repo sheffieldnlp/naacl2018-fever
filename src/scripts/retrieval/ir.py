@@ -3,7 +3,7 @@ import json
 from multiprocessing.pool import ThreadPool
 import tqdm
 import os,sys
-
+import logging
 from common.util.log_helper import LogHelper
 from tqdm import tqdm
 
@@ -12,6 +12,9 @@ from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
 from retrieval.read_claims import uofa_training
+from rte.mithun.log import setup_custom_logger
+
+
 
 
 def process_line(method,line):
@@ -34,8 +37,11 @@ def get_map_function(parallel):
     return p.imap_unordered if parallel else map
 
 if __name__ == "__main__":
-    LogHelper.setup()
-    logger = LogHelper.get_logger(__name__)
+    #setup_custom_logger
+    # LogHelper.setup()
+    # logger = LogHelper.get_logger(__name__)
+    logger = setup_custom_logger('root')
+    logger.debug('main message')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--db', type=str, help='drqa doc db file')
