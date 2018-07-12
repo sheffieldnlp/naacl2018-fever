@@ -14,7 +14,6 @@ API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=True
 load_combined_vector=False
-load_model=True
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
