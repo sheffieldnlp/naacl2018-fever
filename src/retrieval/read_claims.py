@@ -65,7 +65,7 @@ def uofa_training(args,jlr,method,logger):
 
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-    combined_vector = read_json_feat_vec(load_ann_corpus, gold_labels_tr, logger, load_combined_vector)
+    combined_vector = create_feature_vec(load_ann_corpus, gold_labels_tr, logger, load_combined_vector)
     do_training(combined_vector, gold_labels_tr)
 
     sys.exit(1)
@@ -74,7 +74,7 @@ def uofa_testing(args,jlr,method,logger):
     logger.debug("got inside uofa_testing")
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-    combined_vector= read_json_feat_vec(load_ann_corpus, gold_labels_tr, logger, load_combined_vector)
+    combined_vector= create_feature_vec(load_ann_corpus, gold_labels_tr, logger, load_combined_vector)
     trained_model=load_model()
     do_testing(combined_vector,gold_labels_tr,trained_model)
     logging.info("done testing. going to quit")
