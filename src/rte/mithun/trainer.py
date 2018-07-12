@@ -24,7 +24,7 @@ model_trained="model_trained.pkl"
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
-def read_json_create_feat_vec(load_ann_corpus_tr, logging, load_combined_vector):
+def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
 
     if not(load_combined_vector):
         logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
@@ -76,17 +76,19 @@ def do_training(combined_vector,gold_labels_tr):
     joblib.dump(clf, model_trained)
     logging.debug("done saving model to disk")
 
-def load_model(model_trained):
+def load_model():
     model=joblib.load(model_trained)
     return model;
 
 def do_testing(combined_vector,gold_labels_tr,svm):
+    logging.debug("first value of combined_vector is:"+str(combined_vector[0]))
+    logging.debug("first value of gold_labels_tr is:" + str(gold_labels_tr[0]))
     svm.predict(combined_vector, gold_labels_tr.ravel())
     joblib.dump(svm, model_trained)
     logging.debug("done saving model to disk")
 
 def read_json(json_file,logging):
-    logging.debug("inside read_json_pyproc_doc")
+    logging.debug("inside read_json")
     l = []
     counter=0
 
@@ -98,8 +100,6 @@ def read_json(json_file,logging):
             l.append(just_lemmas)
             logging.debug(counter)
             counter = counter + 1
-
-    logging.debug("counter:"+str(counter))
     return l
 
 
