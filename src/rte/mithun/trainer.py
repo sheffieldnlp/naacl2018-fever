@@ -320,7 +320,6 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
         logging.debug(str("noun_count_headline:") + ";" + str((noun_count_headline)))
 
 
-        sys.exit(1)
 
         if (noun_count_body > 0 and noun_count_headline > 0):
             prop_nouns_sent1 = overlap_noun_counter / (noun_count_body)
@@ -332,5 +331,8 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
 
             features = [prop_nouns_sent1, prop_nouns_sent2]
 
+
+        logging.debug(str("features:") + ";" + str((features)))
+        sys.exit(1)
 
         return features
