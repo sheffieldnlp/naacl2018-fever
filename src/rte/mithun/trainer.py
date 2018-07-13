@@ -272,11 +272,12 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
     #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
+    #todo4: make smaller case
 
-        logging.info(str("lemmatized_headline:") + ";" + str((lemmatized_headline)))
-        logging.info(str("headline_pos:") + ";" + str((headline_pos)))
-        logging.info(str("lemmatized_body:") + ";" + str((lemmatized_body)))
-        logging.info(str("body_pos:") + ";" + str((body_pos)))
+        logging.debug(str("lemmatized_headline:") + ";" + str((lemmatized_headline)))
+        logging.debug(str("headline_pos:") + ";" + str((headline_pos)))
+        logging.debug(str("lemmatized_body:") + ";" + str((lemmatized_body)))
+        logging.debug(str("body_pos:") + ";" + str((body_pos)))
 
 
         lemmatized_headline_split= lemmatized_headline.split(" ")
@@ -326,8 +327,8 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
             prop_nouns_sent2 = overlap_noun_counter / (noun_count_headline)
 
             if not (prop_nouns_sent1==0) or (prop_nouns_sent2==0):
-                logging.info("found noun overlap")
-                logging.info(str(prop_nouns_sent1)+";"+str((prop_nouns_sent2)))
+                logging.debug("found noun overlap")
+                logging.debug(str(prop_nouns_sent1)+";"+str((prop_nouns_sent2)))
 
             features = [prop_nouns_sent1, prop_nouns_sent2]
 
