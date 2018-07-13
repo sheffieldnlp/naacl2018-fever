@@ -7,6 +7,7 @@ import logging
 from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,load_model
 import numpy as np
 import os,sys
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
@@ -79,7 +80,10 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
     logging.debug(str(gold_labels))
-    logging.info("done testing. going to quit")
+    logging.info("done testing. and the accuracy is:")
+    logging.info(accuracy_score(gold_labels, pred))
+    logging.debug(classification_report(gold_labels, pred))
+    logging.debug(confusion_matrix(gold_labels, pred))
     sys.exit(1)
 
 def annotate_save_quit(test_data,logger):

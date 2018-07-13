@@ -62,12 +62,12 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
                                              bodies_tags,logging)
 
         joblib.dump(combined_vector, combined_vector_training)
+        logging.info("done generating feature vectors.")
 
-        logging.debug("done generating feature vectors. Going to call classifier")
+
     else:
-        logging.debug("going to load combined vector from disk")
+        logging.info("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
-
     return combined_vector;
 
 def do_training(combined_vector,gold_labels_tr):
@@ -81,7 +81,8 @@ def load_model():
     return model;
 
 def do_testing(combined_vector,svm):
-    logging.debug("first value of combined_vector is:"+str(combined_vector[0]))
+    logging.info("first value of combined_vector is:"+str(combined_vector[0]))
+    logging.info("going to predict...")
     p=svm.predict(combined_vector)
     joblib.dump(p, predicted_results)
     logging.debug("done with predictions")
