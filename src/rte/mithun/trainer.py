@@ -73,6 +73,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
 def do_training(combined_vector,gold_labels_tr):
     clf = svm.SVC(kernel='linear', C=1.0)
     clf.fit(combined_vector, gold_labels_tr.ravel())
+    #todo:print the weights.
     joblib.dump(clf, model_trained)
     logging.debug("done saving model to disk")
 
@@ -163,6 +164,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
+    # todo: try adding word overlap features direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
 
     features = [
         len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))]
@@ -236,6 +238,9 @@ def refuting_features_mithun(clean_headline, clean_body):
         'deny',
         'denies',
         'refute',
+        'no',
+        'neither',
+        'nor',
         'not',
         #todo: make sure nltk doesn't remove not as a stop word
         'despite',
@@ -252,19 +257,18 @@ def refuting_features_mithun(clean_headline, clean_body):
     length_hedge=len(refuting_words)
     refuting_body_vector = [0] * length_hedge
 
-    # clean_headline = doAllWordProcessing(headline)
-    # clean_body = doAllWordProcessing(body)
-
     for word in clean_body:
         if word in refuting_words:
             index=refuting_words.index(word)
-            #logging.debug(index)
             refuting_body_vector[index]=1
 
 
     return refuting_body_vector
 
 def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, body_pos):
+    # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
+    #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
+    #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
 
         h_nouns = []
         b_nouns = []
