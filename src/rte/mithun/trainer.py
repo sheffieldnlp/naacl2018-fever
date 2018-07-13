@@ -121,12 +121,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         tagged_headline=head_tags_related
         tagged_body=body_tags_related
 
-        # logging.debug(lemmatized_headline)
-        # logging.debug(lemmatized_body)
-        # logging.debug(tagged_headline)
-        # logging.debug(tagged_body)
 
-
+        #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
@@ -175,7 +171,7 @@ def word_overlap_features_mithun(clean_headline, clean_body):
 
 def hedging_features_mithun(headline, clean_body):
 
-
+    #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
 
     hedging_words = [
         'allegedly',
@@ -230,6 +226,7 @@ def hedging_features_mithun(headline, clean_body):
     return hedging_body_vector
 
 def refuting_features_mithun(clean_headline, clean_body):
+    # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
 
     refuting_words = [
         'fake',
@@ -240,6 +237,7 @@ def refuting_features_mithun(clean_headline, clean_body):
         'denies',
         'refute',
         'not',
+        #todo: make sure nltk doesn't remove not as a stop word
         'despite',
         'nope',
         'doubt',
@@ -247,7 +245,8 @@ def refuting_features_mithun(clean_headline, clean_body):
         'bogus',
         'debunk',
         'pranks',
-        'retract'
+        'retract',
+        #todo: check the lamm form for 'n't and add it
     ]
 
     length_hedge=len(refuting_words)

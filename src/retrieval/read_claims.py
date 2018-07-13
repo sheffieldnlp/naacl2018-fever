@@ -51,8 +51,6 @@ def read_claims_annotate(args,jlr,logger,method):
                     sent=method.get_sentences_given_claim(t,logger,l)
                     ev_claim.append(sent)
                 all_evidences=' '.join(ev_claim)
-                logger.debug("evidences is:" + str(all_evidences))
-                sys.exit(1)
                 annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
         return obj_all_heads_bodies
@@ -61,7 +59,7 @@ def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    tr_data=read_claims_annotate(args,jlr,logger,method)
+    #tr_data=read_claims_annotate(args,jlr,logger,method)
     # logger.info(
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
