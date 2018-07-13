@@ -273,6 +273,12 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
     #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
 
+        logging.info(str("lemmatized_headline:") + ";" + str((lemmatized_headline)))
+        logging.info(str("headline_pos:") + ";" + str((headline_pos)))
+        logging.info(str("lemmatized_body:") + ";" + str((lemmatized_body)))
+        logging.info(str("body_pos:") + ";" + str((body_pos)))
+
+        sys.exit(1)
         h_nouns = []
         b_nouns = []
 
@@ -300,7 +306,7 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
 
             if not (prop_nouns_sent1==0) or (prop_nouns_sent2==0):
                 logging.info("found noun overlap")
-                logging.info(str(prop_nouns_sent1)+";"+str(logging(prop_nouns_sent2)))
+                logging.info(str(prop_nouns_sent1)+";"+str((prop_nouns_sent2)))
 
             features = [prop_nouns_sent1, prop_nouns_sent2]
 
