@@ -10,7 +10,7 @@ class LogHelper():
         LogHelper.handler.setLevel(logging.INFO)
         LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
 
-        LogHelper.handler2 = logging.FileHandler("log_fever.log" ,mode='w')
+        LogHelper.handler2 = logging.FileHandler("old_log.log" ,mode='w')
         LogHelper.handler2.setLevel(logging.DEBUG)
         LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
 

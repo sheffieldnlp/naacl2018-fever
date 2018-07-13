@@ -83,9 +83,9 @@ def load_model():
 def do_testing(combined_vector,gold_labels_tr,svm):
     logging.debug("first value of combined_vector is:"+str(combined_vector[0]))
     logging.debug("first value of gold_labels_tr is:" + str(gold_labels_tr[0]))
-    svm.predict(combined_vector, gold_labels_tr.ravel())
-    joblib.dump(svm, model_trained)
-    logging.debug("done saving model to disk")
+    p=svm.predict(combined_vector, gold_labels_tr.ravel())
+    joblib.dump(p, predicted_results)
+    logging.debug("done with predictions")
 
 def read_json(json_file,logging):
     logging.debug("inside read_json")
@@ -98,7 +98,6 @@ def read_json(json_file,logging):
             a=d["data"]
             just_lemmas=' '.join(str(r) for v in a for r in v)
             l.append(just_lemmas)
-            logging.debug(counter)
             counter = counter + 1
     return l
 
