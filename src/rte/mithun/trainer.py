@@ -21,9 +21,10 @@ annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
 data_folder="/data/fever-data-ann/"
 model_trained="model_trained.pkl"
+predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
-def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logging,load_combined_vector):
+def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
 
     if not(load_combined_vector):
         logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
@@ -61,24 +62,34 @@ def read_json_feat_vec(load_ann_corpus_tr,gold_labels_tr,logging,load_combined_v
                                              bodies_tags,logging)
 
         joblib.dump(combined_vector, combined_vector_training)
+        logging.info("done generating feature vectors.")
 
-        logging.debug("done generating feature vectors. Going to call classifier")
+
     else:
-        logging.debug("going to load combined vector from disk")
+        logging.info("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
+    return combined_vector;
 
+def do_training(combined_vector,gold_labels_tr):
     clf = svm.SVC(kernel='linear', C=1.0)
     clf.fit(combined_vector, gold_labels_tr.ravel())
-
     joblib.dump(clf, model_trained)
-
     logging.debug("done saving model to disk")
 
-    return;
+def load_model():
+    model=joblib.load(model_trained)
+    return model;
 
+def do_testing(combined_vector,svm):
+    logging.info("first value of combined_vector is:"+str(combined_vector[0]))
+    logging.info("going to predict...")
+    p=svm.predict(combined_vector)
+    joblib.dump(p, predicted_results)
+    logging.debug("done with predictions")
+    return p
 
 def read_json(json_file,logging):
-    logging.debug("inside read_json_pyproc_doc")
+    logging.debug("inside read_json")
     l = []
     counter=0
 
@@ -88,10 +99,7 @@ def read_json(json_file,logging):
             a=d["data"]
             just_lemmas=' '.join(str(r) for v in a for r in v)
             l.append(just_lemmas)
-            logging.debug(counter)
             counter = counter + 1
-
-    logging.debug("counter:"+str(counter))
     return l
 
 

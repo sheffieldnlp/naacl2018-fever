@@ -11,7 +11,7 @@ from retrieval.top_n import TopNDocsTopNSents
 from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
-from retrieval.read_claims import uofa_training
+from retrieval.read_claims import uofa_training,uofa_testing
 from rte.mithun.log import setup_custom_logger
 
 
@@ -51,6 +51,7 @@ if __name__ == "__main__":
     parser.add_argument('--max-page',type=int)
     parser.add_argument('--max-sent',type=int)
     parser.add_argument('--parallel',type=str2bool,default=True)
+    parser.add_argument('--mode', type=str, help='do training or testing' )
     args = parser.parse_args()
 
     db = FeverDocDB(args.db)
@@ -61,7 +62,11 @@ if __name__ == "__main__":
 
 
     processed = dict()
-    uofa_training(args,jlr,method,logger)
+    if(args.mode=="train"):
+        uofa_training(args,jlr,method,logger)
+    else:
+        if(args.mode=="test"):
+            uofa_testing(args,jlr,method,logger)
 
 
 
