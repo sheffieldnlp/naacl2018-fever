@@ -80,12 +80,12 @@ def load_model():
     model=joblib.load(model_trained)
     return model;
 
-def do_testing(combined_vector,gold_labels_tr,svm):
+def do_testing(combined_vector,svm):
     logging.debug("first value of combined_vector is:"+str(combined_vector[0]))
-    logging.debug("first value of gold_labels_tr is:" + str(gold_labels_tr[0]))
-    p=svm.predict(combined_vector, gold_labels_tr.ravel())
+    p=svm.predict(combined_vector)
     joblib.dump(p, predicted_results)
     logging.debug("done with predictions")
+    return p
 
 def read_json(json_file,logging):
     logging.debug("inside read_json")
