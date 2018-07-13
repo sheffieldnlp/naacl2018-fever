@@ -72,6 +72,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
     return combined_vector;
 
 def do_training(combined_vector,gold_labels_tr):
+    logging.debug("going to load the classifier:")
     clf = svm.SVC(kernel='linear', C=1.0)
     clf.fit(combined_vector, gold_labels_tr.ravel())
     #todo:print the weights.
@@ -273,6 +274,7 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
     #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
     #todo4: make smaller case
+    #todo5: split everywhere based on space-i.e for word overlap etc etc..
 
         logging.debug(str("lemmatized_headline:") + ";" + str((lemmatized_headline)))
         logging.debug(str("headline_pos:") + ";" + str((headline_pos)))

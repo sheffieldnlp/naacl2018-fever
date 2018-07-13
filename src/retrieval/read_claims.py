@@ -13,7 +13,7 @@ ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
-load_ann_corpus=True
+load_ann_corpus=False
 load_combined_vector=False
 
 def read_claims_annotate(args,jlr,logger,method):
@@ -67,7 +67,7 @@ def uofa_training(args,jlr,method,logger):
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector)
     do_training(combined_vector, gold_labels_tr)
-    logging.info("done with training")
+    logging.info("done with training. going to exit")
     sys.exit(1)
 
 def uofa_testing(args,jlr,method,logger):
@@ -78,7 +78,6 @@ def uofa_testing(args,jlr,method,logger):
     trained_model=load_model()
     logging.debug("weights:")
     logging.debug(trained_model.coef_ )
-    sys.exit(1)
     pred=do_testing(combined_vector,trained_model)
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
@@ -88,6 +87,7 @@ def uofa_testing(args,jlr,method,logger):
     logging.info(str(acc)+"%")
     logging.debug(classification_report(gold_labels, pred))
     logging.debug(confusion_matrix(gold_labels, pred))
+    logging.info("done with testing. going to exit")
     sys.exit(1)
 
 def annotate_save_quit(test_data,logger):
