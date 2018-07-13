@@ -279,20 +279,26 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
         logging.info(str("body_pos:") + ";" + str((body_pos)))
 
 
+        lemmatized_headline_split= lemmatized_headline.split(" ")
+        headline_pos_split = headline_pos.split(" ")
+        lemmatized_body_split= lemmatized_body.split(" ")
+        body_pos_split= body_pos.split(" ")
+
         h_nouns = []
         b_nouns = []
 
         noun_count_headline = 0
-        for word, pos in zip(lemmatized_headline, headline_pos):
+        for word, pos in zip(lemmatized_headline_split, headline_pos_split):
             logging.debug(str("pos:") + ";" + str((pos)))
             logging.debug(str("word:") + ";" + str((word)))
 
             if pos.startswith('NN'):
+                logging.debug("pos.startswith('NN'):")
                 noun_count_headline = noun_count_headline + 1
                 h_nouns.append(word)
 
         noun_count_body = 0
-        for word, pos in zip(lemmatized_body, body_pos):
+        for word, pos in zip(lemmatized_body_split, body_pos_split):
             if pos.startswith('NN'):
                 noun_count_body = noun_count_body + 1
                 b_nouns.append(word)
