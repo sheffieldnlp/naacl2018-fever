@@ -334,6 +334,5 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
 
 
         logging.debug(str("features:") + ";" + str((features)))
-        sys.exit(1)
 
         return features
