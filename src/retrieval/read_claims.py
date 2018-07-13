@@ -81,7 +81,8 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug("and golden labels are:")
     logging.debug(str(gold_labels))
     logging.info("done testing. and the accuracy is:")
-    logging.info(accuracy_score(gold_labels, pred))
+    acc=accuracy_score(gold_labels, pred)*100
+    logging.info(str(acc)+"%")
     logging.debug(classification_report(gold_labels, pred))
     logging.debug(confusion_matrix(gold_labels, pred))
     sys.exit(1)
