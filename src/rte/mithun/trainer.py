@@ -27,6 +27,7 @@ combined_vector_training="combined_vector_testing_phase2.pkl"
 def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
 
     if not(load_combined_vector):
+        logging.debug("load_combined_vector is falsse. going to generate features")
         logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
 
         cwd=os.getcwd()
