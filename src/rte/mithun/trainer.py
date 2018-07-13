@@ -284,8 +284,8 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
 
         noun_count_headline = 0
         for word, pos in zip(lemmatized_headline, headline_pos):
-            logging.info(str("pos:") + ";" + str((pos)))
-            logging.info(str("word:") + ";" + str((word)))
+            logging.debug(str("pos:") + ";" + str((pos)))
+            logging.debug(str("word:") + ";" + str((word)))
 
             if pos.startswith('NN'):
                 noun_count_headline = noun_count_headline + 1
