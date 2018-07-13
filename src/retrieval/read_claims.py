@@ -76,9 +76,9 @@ def uofa_testing(args,jlr,method,logger):
     combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector)
     trained_model=load_model()
     pred=do_testing(combined_vector,trained_model)
-    logging.DEBUG(str(pred))
+    logging.debug(str(pred))
     logging.debug("and golden labels are:")
-    logging.DEBUG(str(gold_labels))
+    logging.debug(str(gold_labels))
     logging.info("done testing. going to quit")
     sys.exit(1)
 
