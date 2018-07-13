@@ -110,9 +110,10 @@ def normalize_dummy(text):
     return x.split(" ")
 
 def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags_related,logging):
+    #todo: dont hardcode. create this after u know the size
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
-    refuting_value_matrix = np.empty((0, 16), int)
+    refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_vector = np.empty((0, 2), int)
 
     for head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm(zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related),
@@ -243,7 +244,6 @@ def refuting_features_mithun(clean_headline, clean_body):
         'neither',
         'nor',
         'not',
-        #todo: make sure nltk doesn't remove not as a stop word
         'despite',
         'nope',
         'doubt',
@@ -252,9 +252,11 @@ def refuting_features_mithun(clean_headline, clean_body):
         'debunk',
         'pranks',
         'retract',
-        #todo: check the lamm form for 'n't and add it
+
     ]
 
+    # todo: make sure nltk doesn't remove not as a stop word
+    # todo: check the lamm form for 'n't and add it
     length_hedge=len(refuting_words)
     refuting_body_vector = [0] * length_hedge
 
