@@ -295,6 +295,11 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
             prop_nouns_sent1 = overlap_noun_counter / (noun_count_body)
             prop_nouns_sent2 = overlap_noun_counter / (noun_count_headline)
 
+            if not (prop_nouns_sent1==0) or (prop_nouns_sent2==0):
+                logging.info("found noun overlap")
+                logging.info(str(prop_nouns_sent1)+";"+str(logging(prop_nouns_sent2)))
+
             features = [prop_nouns_sent1, prop_nouns_sent2]
+
 
         return features
