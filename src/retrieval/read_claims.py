@@ -66,6 +66,7 @@ def uofa_training(args,jlr,method,logger):
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector)
+    sys.exit(1)
     do_training(combined_vector, gold_labels_tr)
 
     sys.exit(1)

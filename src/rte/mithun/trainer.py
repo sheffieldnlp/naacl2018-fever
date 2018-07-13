@@ -278,7 +278,7 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
         logging.info(str("lemmatized_body:") + ";" + str((lemmatized_body)))
         logging.info(str("body_pos:") + ";" + str((body_pos)))
 
-        sys.exit(1)
+
         h_nouns = []
         b_nouns = []
 
@@ -299,6 +299,19 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
         overlap_noun_counter = len(overlap)
 
         features = [0, 0]
+
+
+        logging.debug(str("h_nouns:") + ";" + str((h_nouns)))
+        logging.debug(str("b_nouns:") + ";" + str((b_nouns)))
+        logging.debug(str("overlap_noun_counter:") + ";" + str((overlap_noun_counter)))
+        logging.debug(str("overlap:") + ";" + str((overlap)))
+
+
+        logging.debug(str("noun_count_body:") + ";" + str((noun_count_body)))
+        logging.debug(str("noun_count_headline:") + ";" + str((noun_count_headline)))
+
+
+        sys.exit(1)
 
         if (noun_count_body > 0 and noun_count_headline > 0):
             prop_nouns_sent1 = overlap_noun_counter / (noun_count_body)
