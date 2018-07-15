@@ -190,7 +190,7 @@ def word_overlap_features_mithun(clean_headline, clean_body):
     logging.info("set(clean_headline).intersection(clean_body):" + str(set(clean_headline).intersection(clean_body)))
     logging.info("set(clean_headline).union(clean_body):" + str(set(clean_headline).union(clean_body)))
     logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
-    logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
+    logging.info("len(set(clean_headline).intersection(clean_body)):" + str(len(set(clean_headline).intersection(clean_body))))
     logging.info("features:" + str(features))
     sys.exit(1)
 
