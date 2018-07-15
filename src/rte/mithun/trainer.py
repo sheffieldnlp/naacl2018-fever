@@ -292,17 +292,17 @@ def refuting_features_mithun(clean_headline, clean_body):
 
     return refuting_body_vector
 
-def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, body_pos):
+def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split):
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
     #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
     #todo4: make smaller case
     #todo5: split everywhere based on space-i.e for word overlap etc etc..
 
-        logging.debug(str("lemmatized_headline:") + ";" + str((lemmatized_headline)))
-        logging.debug(str("headline_pos:") + ";" + str((headline_pos)))
-        logging.debug(str("lemmatized_body:") + ";" + str((lemmatized_body)))
-        logging.debug(str("body_pos:") + ";" + str((body_pos)))
+        # logging.debug(str("lemmatized_headline:") + ";" + str((lemmatized_headline)))
+        # logging.debug(str("headline_pos:") + ";" + str((headline_pos)))
+        # logging.debug(str("lemmatized_body:") + ";" + str((lemmatized_body)))
+        # logging.debug(str("body_pos:") + ";" + str((body_pos)))
 
 
 
