@@ -189,19 +189,11 @@ def word_overlap_features_mithun(clean_headline, clean_body):
         len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))]
 
 
-    logging.info("clean_headline:" + str(clean_headline))
-    logging.info("clean_body:" + str(clean_body))
 
-    logging.info("set(clean_headline).intersection(clean_body):" + str(set(clean_headline).intersection(clean_body)))
-    logging.info("set(clean_headline).union(clean_body):" + str(set(clean_headline).union(clean_body)))
-    logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
-    logging.info("len(set(clean_headline).intersection(clean_body)):" + str(len(set(clean_headline).intersection(clean_body))))
-    logging.info("features:" + str(features))
-    sys.exit(1)
 
     return features
 
-def hedging_features_mithun(headline, clean_body):
+def hedging_features_mithun(clean_headline, clean_body):
 
     #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
 
@@ -254,7 +246,20 @@ def hedging_features_mithun(headline, clean_body):
             hedging_body_vector[index]=1
 
     #logging.debug("shape of hedging_body_vector is" + str(len(hedging_body_vector)))
-    #logging.debug(hedging_body_vector)
+    logging.debug(hedging_body_vector)
+    logging.info("clean_headline:" + str(clean_headline))
+    logging.info("clean_body:" + str(clean_body))
+
+    logging.info("set(clean_headline).intersection(clean_body):" + str(set(clean_headline).intersection(clean_body)))
+    logging.info("set(clean_headline).union(clean_body):" + str(set(clean_headline).union(clean_body)))
+    logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
+    logging.info(
+        "len(set(clean_headline).intersection(clean_body)):" + str(len(set(clean_headline).intersection(clean_body))))
+    sys.exit(1)
+
+    sys.exit(1)
+
+
     return hedging_body_vector
 
 def refuting_features_mithun(clean_headline, clean_body):
