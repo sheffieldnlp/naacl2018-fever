@@ -228,27 +228,13 @@ def hedging_features(clean_headline, clean_body):
     length_hedge=len(hedging_words)
     hedging_body_vector = [0] * length_hedge
 
-    logging.debug("inside hedging")
-    logging.info("clean_headline inside hedging body:" + str(clean_headline))
-    logging.info("clean_body:" + str(clean_body))
 
-    logging.info("set(clean_headline).intersection(clean_body):" + str(set(clean_headline).intersection(clean_body)))
-    logging.info("set(clean_headline).union(clean_body):" + str(set(clean_headline).union(clean_body)))
-    logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
-    logging.info(
-        "len(set(clean_headline).intersection(clean_body)):" + str(len(set(clean_headline).intersection(clean_body))))
-
-    logging.debug("length of hedging_body_vector is:" + str(len(hedging_body_vector)))
-    logging.debug("and value of hedging_body_vector is:" + str((hedging_body_vector)))
 
 
     for word in clean_body:
         if word in hedging_words:
             index=hedging_words.index(word)
             hedging_body_vector[index]=1
-            logging.debug("found an overlapping hedging word in teh body and the word is:" + str((word)))
-            logging.debug("and value of hedging_body_vector is:" + str((hedging_body_vector)))
-            sys.exit(1)
 
 
     return hedging_body_vector
@@ -289,6 +275,13 @@ def refuting_features_mithun(clean_headline, clean_body):
             index=refuting_words.index(word)
             refuting_body_vector[index]=1
 
+    logging.info("inside refuting")
+    logging.info("clean_headline inside refuting body:" + str(clean_headline))
+    logging.info("clean_body:" + str(clean_body))
+
+    logging.info("length of hedging_body_vector is:" + str(len(refuting_body_vector)))
+    logging.info("and value of hedging_body_vector is:" + str((refuting_body_vector)))
+    sys.exit(1)
 
     return refuting_body_vector
 
