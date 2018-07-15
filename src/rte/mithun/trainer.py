@@ -169,7 +169,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     refuting_value = refuting_features_mithun(lemmatized_headline, lemmatized_body)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = noun_overlap_features(lemmatized_headline, tagged_headline, lemmatized_body, tagged_body)
+    noun_overlap = noun_overlap_features(lemmatized_headline, headline_pos_split, lemmatized_body, body_pos_split)
     noun_overlap_array = np.array([noun_overlap])
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array
@@ -183,13 +183,17 @@ def word_overlap_features_mithun(clean_headline, clean_body):
     features = [
         len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))]
 
+
     logging.info("clean_headline:" + str(clean_headline))
     logging.info("clean_body:" + str(clean_body))
-    logging.info("features:" + str(features))
+
     logging.info("set(clean_headline).intersection(clean_body):" + str(set(clean_headline).intersection(clean_body)))
     logging.info("set(clean_headline).union(clean_body):" + str(set(clean_headline).union(clean_body)))
     logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
+    logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
+    logging.info("features:" + str(features))
     sys.exit(1)
+
     return features
 
 def hedging_features_mithun(headline, clean_body):
