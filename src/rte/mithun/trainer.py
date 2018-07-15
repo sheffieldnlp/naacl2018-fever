@@ -151,6 +151,15 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
 
 def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logging):
+
+
+    #todo5: split everywhere based on space-i.e for word overlap etc etc..
+
+    # lemmatized_headline_split = lemmatized_headline.split(" ")
+    # headline_pos_split = headline_pos.split(" ")
+    # lemmatized_body_split = lemmatized_body.split(" ")
+    # body_pos_split = body_pos.split(" ")
+
     word_overlap = word_overlap_features_mithun(lemmatized_headline, lemmatized_body)
     word_overlap_array = np.array([word_overlap])
 
@@ -169,9 +178,18 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 def word_overlap_features_mithun(clean_headline, clean_body):
     # todo: try adding word overlap features direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
 
+
+
     features = [
         len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))]
 
+    logging.info("clean_headline:" + str(clean_headline))
+    logging.info("clean_body:" + str(clean_body))
+    logging.info("features:" + str(features))
+    logging.info("set(clean_headline).intersection(clean_body):" + str(set(clean_headline).intersection(clean_body)))
+    logging.info("set(clean_headline).union(clean_body):" + str(set(clean_headline).union(clean_body)))
+    logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
+    sys.exit(1)
     return features
 
 def hedging_features_mithun(headline, clean_body):
@@ -282,10 +300,7 @@ def noun_overlap_features(lemmatized_headline, headline_pos, lemmatized_body, bo
         logging.debug(str("body_pos:") + ";" + str((body_pos)))
 
 
-        lemmatized_headline_split= lemmatized_headline.split(" ")
-        headline_pos_split = headline_pos.split(" ")
-        lemmatized_body_split= lemmatized_body.split(" ")
-        body_pos_split= body_pos.split(" ")
+
 
         h_nouns = []
         b_nouns = []
