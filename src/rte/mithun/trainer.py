@@ -238,7 +238,6 @@ def hedging_features(clean_headline, clean_body):
             hedging_body_vector[index]=1
 
     logging.debug("inside hedging")
-    logging.debug(hedging_body_vector)
     logging.info("clean_headline inside hedging body:" + str(clean_headline))
     logging.info("clean_body:" + str(clean_body))
 
@@ -247,7 +246,10 @@ def hedging_features(clean_headline, clean_body):
     logging.info("len(set(clean_headline).union(clean_body)):" + str(len(set(clean_headline).union(clean_body))))
     logging.info(
         "len(set(clean_headline).intersection(clean_body)):" + str(len(set(clean_headline).intersection(clean_body))))
-    sys.exit(1)
+
+    logging.debug("length of hedging_body_vector is:" + str(len(hedging_body_vector)))
+    logging.debug("and value of hedging_body_vector is:" + str((hedging_body_vector)))
+
 
     sys.exit(1)
 
