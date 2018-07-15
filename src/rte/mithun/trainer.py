@@ -228,15 +228,6 @@ def hedging_features(clean_headline, clean_body):
     length_hedge=len(hedging_words)
     hedging_body_vector = [0] * length_hedge
 
-
-
-
-    for word in clean_body:
-        if word in hedging_words:
-            index=hedging_words.index(word)
-            #logging.debug(index)
-            hedging_body_vector[index]=1
-
     logging.debug("inside hedging")
     logging.info("clean_headline inside hedging body:" + str(clean_headline))
     logging.info("clean_body:" + str(clean_body))
@@ -251,7 +242,13 @@ def hedging_features(clean_headline, clean_body):
     logging.debug("and value of hedging_body_vector is:" + str((hedging_body_vector)))
 
 
-    sys.exit(1)
+    for word in clean_body:
+        if word in hedging_words:
+            index=hedging_words.index(word)
+            hedging_body_vector[index]=1
+            logging.debug("found an overlapping hedging word in teh body and the word is:" + str((word)))
+            logging.debug("and value of hedging_body_vector is:" + str((hedging_body_vector)))
+            sys.exit(1)
 
 
     return hedging_body_vector
