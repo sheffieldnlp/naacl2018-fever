@@ -168,13 +168,13 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features_mithun(lemmatized_headline, lemmatized_body)
+    hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
-    refuting_value = refuting_features_mithun(lemmatized_headline, lemmatized_body)
+    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = noun_overlap_features(lemmatized_headline, headline_pos_split, lemmatized_body, body_pos_split)
+    noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split)
     noun_overlap_array = np.array([noun_overlap])
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array
@@ -183,17 +183,12 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 def word_overlap_features_mithun(clean_headline, clean_body):
     # todo: try adding word overlap features direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
 
-
-
     features = [
         len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))]
 
-
-
-
     return features
 
-def hedging_features_mithun(clean_headline, clean_body):
+def hedging_features(clean_headline, clean_body):
 
     #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
 
@@ -231,12 +226,9 @@ def hedging_features_mithun(clean_headline, clean_body):
     ]
 
     length_hedge=len(hedging_words)
-    #logging.debug(length_hedge)
     hedging_body_vector = [0] * length_hedge
 
 
-    #logging.debug("shape of hedging_body_vector is" + str(len(hedging_body_vector)))
-    #logging.debug(hedging_body_vector)
 
 
     for word in clean_body:
@@ -245,9 +237,9 @@ def hedging_features_mithun(clean_headline, clean_body):
             #logging.debug(index)
             hedging_body_vector[index]=1
 
-    #logging.debug("shape of hedging_body_vector is" + str(len(hedging_body_vector)))
+    logging.debug("inside hedging")
     logging.debug(hedging_body_vector)
-    logging.info("clean_headline:" + str(clean_headline))
+    logging.info("clean_headline inside hedging body:" + str(clean_headline))
     logging.info("clean_body:" + str(clean_body))
 
     logging.info("set(clean_headline).intersection(clean_body):" + str(set(clean_headline).intersection(clean_body)))
