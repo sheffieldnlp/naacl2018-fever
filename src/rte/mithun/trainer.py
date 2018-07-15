@@ -156,9 +156,9 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     #todo5: split everywhere based on space-i.e for word overlap etc etc..
 
     lemmatized_headline_split = lemmatized_headline.split(" ")
-    headline_pos_split = headline_pos.split(" ")
+    headline_pos_split = tagged_headline.split(" ")
     lemmatized_body_split = lemmatized_body.split(" ")
-    body_pos_split = body_pos.split(" ")
+    body_pos_split = tagged_body.split(" ")
 
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     word_overlap_array = np.array([word_overlap])
