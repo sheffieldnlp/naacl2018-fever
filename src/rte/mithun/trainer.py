@@ -155,6 +155,11 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     #todo5: split everywhere based on space-i.e for word overlap etc etc..
 
+
+    lemmatized_headline = lemmatized_headline.lower()
+    lemmatized_body = lemmatized_body.lower()
+
+
     lemmatized_headline_split = lemmatized_headline.split(" ")
     headline_pos_split = tagged_headline.split(" ")
     lemmatized_body_split = lemmatized_body.split(" ")
