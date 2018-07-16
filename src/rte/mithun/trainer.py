@@ -10,7 +10,7 @@ from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
 from processors import Document
 from nltk.corpus import stopwords
-import json
+import json,string
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 my_out_dir = "poop-out"
 n_cores = 2
@@ -193,11 +193,21 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logging):
 
 
-    #todo5: split everywhere based on space-i.e for word overlap etc etc..
-
-
+    #This is a string now. split everywhere based on space-i.e for word overlap etc etc..
     lemmatized_headline = lemmatized_headline.lower()
     lemmatized_body = lemmatized_body.lower()
+
+    logging.debug("before punctuation removal :")
+    logging.debug(lemmatized_body)
+
+
+    #to remove punctuation.
+    lemmatized_body= lemmatized_body.translate(None, string.punctuation)
+
+    logging.debug("after punctuation removal words:")
+    logging.debug(lemmatized_body)
+
+    sys.exit(1)
 
 
     lemmatized_headline_split = lemmatized_headline.split(" ")
@@ -206,8 +216,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     body_pos_split = tagged_body.split(" ")
 
 
-    logging.debug("before stop words:")
-    logging.debug(lemmatized_body_split)
+
 
     #remove stop words
     stop_words = set(stopwords.words('english'))
@@ -216,10 +225,6 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
 
-    logging.debug("after stop words:")
-    logging.debug(lemmatized_body_split_sw)
-
-    sys.exit(1)
 
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
