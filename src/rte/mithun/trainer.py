@@ -71,15 +71,19 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
         combined_vector = joblib.load(combined_vector_training)
 
     # go through all the vectors last row and print the coordinates of non zero entries
-    ns=np.nonzero(combined_vector[13331])
+
+
+    c=0
+    ns=np.nonzero(combined_vector[c])
+
     for x in ns:
+        c=c+1
         for y in x:
-                logging.debug(y);
-                sys.exit(1)
-        if(x not in(0,50,51)):
-            logging.debug("non zero entries combined_vectorare at:" + str(np.nonzero(combined_vector[13331])))
-            logging.debug("non zero entriescombined_vector are :" + str(combined_vector[np.nonzero(combined_vector)]))
-            sys.exit(1)
+                if(y not in(0,50,51)):
+                    logging.debug(" found a non nozero entry other than 0 50 51")
+                    logging.debug("non zero entries combined_vectorare at:" + str(np.nonzero(combined_vector[13331])))
+                    logging.debug("non zero entriescombined_vector are :" + str(combined_vector[np.nonzero(combined_vector)]))
+                    sys.exit(1)
 
     return combined_vector;
 
