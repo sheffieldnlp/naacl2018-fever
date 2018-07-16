@@ -83,6 +83,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
             for y in x:
                     if(y not in(0,50,51)):
                         logging.debug(x)
+                        logging.debug(combined_vector[c])
 
 
     sys.exit(1)
