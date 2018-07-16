@@ -143,11 +143,12 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
 
 def get_gold_labels(args,jlr):
     labels = np.array([[]])
-
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels:"):
             label=claim_full["label"]
+            logging.info("label is:"+str(label))
+            sys.exit(1)
             if (label == "SUPPORTS"):
                 labels = np.append(labels, 0)
             else:
