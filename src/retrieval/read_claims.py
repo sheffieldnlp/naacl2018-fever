@@ -14,7 +14,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=True
-load_combined_vector=False
+load_combined_vector=True
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -71,6 +71,18 @@ def uofa_training(args,jlr,method,logger):
     logging.info("done with training. going to exit")
     sys.exit(1)
 
+def print_nonzeroes(combined_vector):
+        #debug code: go through all the vectors last row and print the coordinates of non zero entries
+        logging.debug(" starting: print_nonzeroes")
+        logging.debug(combined_vector)
+        ns = np.nonzero(combined_vector)
+        l=len(ns)
+        logging.debug("length of ns is:"+str(l))
+        for x in ns:
+            logging.debug(x)
+
+        sys.exit(1)
+
 def uofa_testing(args,jlr,method,logger):
     logger.debug("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
@@ -81,6 +93,7 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug("weights:")
     logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
+    print_nonzeroes(pred)
     logging.debug("predicted labels:")
     logging.debug(str(pred))
     logging.debug("and gold labels are:")

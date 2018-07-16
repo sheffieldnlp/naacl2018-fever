@@ -81,7 +81,6 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
 
     # debug code: go through all the vectors last row and print the coordinates of non zero entries
 
-
     # c=0
     #
     # logging.debug(" starting: found a non nozero entry other than 0 50 51")
