@@ -9,6 +9,7 @@ import time
 from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
 from processors import Document
+from nltk.corpus import stopwords
 import json
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 my_out_dir = "poop-out"
@@ -200,20 +201,36 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
     lemmatized_headline_split = lemmatized_headline.split(" ")
-    headline_pos_split = tagged_headline.split(" ")
     lemmatized_body_split = lemmatized_body.split(" ")
+    headline_pos_split = tagged_headline.split(" ")
     body_pos_split = tagged_body.split(" ")
 
-    word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+
+    logging.debug("before stop words:")
+    logging.debug(lemmatized_body_split)
+
+    #remove stop words
+    stop_words = set(stopwords.words('english'))
+    lemmatized_headline_split_sw = [w for w in lemmatized_headline_split if not w in stop_words]
+    lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
+
+
+
+    logging.debug("after stop words:")
+    logging.debug(lemmatized_body_split_sw)
+
+    sys.exit(1)
+
+    word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
+    hedge_value = hedging_features(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     hedge_value_array = np.array([hedge_value])
 
-    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+    refuting_value = refuting_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
+    noun_overlap = pos_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw, body_pos_split, "NN")
     noun_overlap_array = np.array([noun_overlap])
 
     logging.debug(word_overlap_array)
