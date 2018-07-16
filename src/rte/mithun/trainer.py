@@ -186,7 +186,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap,found = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
+    noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
     noun_overlap_array = np.array([noun_overlap])
 
     logging.debug(word_overlap_array)
