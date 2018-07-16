@@ -128,7 +128,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array,found = adxd_vectors(
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array,found = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
