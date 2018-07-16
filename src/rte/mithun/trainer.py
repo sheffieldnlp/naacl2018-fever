@@ -73,8 +73,9 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
     # go through all the vectors last row and print the coordinates of non zero entries
     ns=np.nonzero(combined_vector[13331])
     for x in ns:
-        print(x);
-        sys.exit(1)
+        for y in x:
+                logging.debug(y);
+                sys.exit(1)
         if(x not in(0,50,51)):
             logging.debug("non zero entries combined_vectorare at:" + str(np.nonzero(combined_vector[13331])))
             logging.debug("non zero entriescombined_vector are :" + str(combined_vector[np.nonzero(combined_vector)]))
