@@ -168,7 +168,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
+    hedge_value,found = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
@@ -176,6 +176,14 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
     noun_overlap_array = np.array([noun_overlap])
+
+    if(found):
+        logging.debug(word_overlap_array)
+        logging.debug(hedge_value_array)
+        logging.debug(refuting_value_array)
+        logging.debug(noun_overlap_array)
+
+        sys.exit(1)
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array
 
@@ -229,15 +237,16 @@ def hedging_features(clean_headline, clean_body):
     hedging_body_vector = [0] * length_hedge
 
 
-
+    found=None
 
     for word in clean_body:
         if word in hedging_words:
             index=hedging_words.index(word)
             hedging_body_vector[index]=1
+            found=True
 
 
-    return hedging_body_vector
+    return hedging_body_vector,found
 
 def refuting_features_mithun(clean_headline, clean_body):
     # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors

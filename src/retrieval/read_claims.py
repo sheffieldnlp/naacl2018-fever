@@ -14,7 +14,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=False
-load_combined_vector=True
+load_combined_vector=False
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
