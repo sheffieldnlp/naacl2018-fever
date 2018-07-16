@@ -275,13 +275,14 @@ def refuting_features_mithun(clean_headline, clean_body):
             index=refuting_words.index(word)
             refuting_body_vector[index]=1
 
-    logging.info("inside refuting")
-    logging.info("clean_headline inside refuting body:" + str(clean_headline))
-    logging.info("clean_body:" + str(clean_body))
+            logging.info("inside refuting")
+            logging.info("clean_headline inside refuting body:" + str(clean_headline))
+            logging.info("clean_body:" + str(clean_body))
+            logging.info("found a refuting word and the word is:"+str(word))
 
-    logging.info("length of hedging_body_vector is:" + str(len(refuting_body_vector)))
-    logging.info("and value of hedging_body_vector is:" + str((refuting_body_vector)))
-    sys.exit(1)
+            logging.info("length of hedging_body_vector is:" + str(len(refuting_body_vector)))
+            logging.info("and value of hedging_body_vector is:" + str((refuting_body_vector)))
+            sys.exit(1)
 
     return refuting_body_vector
 
