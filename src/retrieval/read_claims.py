@@ -147,22 +147,14 @@ def get_gold_labels(args,jlr):
         all_claims = jlr.process(f)
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels:"):
             label=claim_full["label"]
-            logging.info("starting new. index is:" + str(index))
-
-            logging.info("label is:"+str(label))
-
+            # logging.info("starting new. index is:" + str(index))
+            # logging.info("label is:"+str(label))
             if (label == "SUPPORTS"):
                 labels = np.append(labels, 0)
             else:
                 if (label == "REFUTES"):
                     labels = np.append(labels, 1)
 
-            logging.debug("labels array now is:" + str(labels))
-            if(index==10):
-                sys.exit(1)
-
-            # else:
-                #     if (label=="NOT ENOUGH INFO"):
-                #         labels = np.append(labels, 2)
-
+    logging.debug("labels array now is:" + str(labels))
+    sys.exit(1)
     return labels
