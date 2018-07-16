@@ -19,18 +19,26 @@ annotated_only_lemmas="ann_lemmas.json"
 annotated_only_tags="ann_tags.json"
 annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
-data_folder="/data/fever-data-ann/"
+data_folder_train="/data/fever-data-ann/fever-data-ann/train/"
+data_folder_dev="/data/fever-data-ann/fever-data-ann/dev/"
 model_trained="model_trained.pkl"
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
-def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
+def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
 
     if not(load_combined_vector):
         logging.debug("load_combined_vector is falsse. going to generate features")
         logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
 
         cwd=os.getcwd()
+        data_folder=None
+        if(args.mode=="test"):
+            data_folder=data_folder_dev
+        else:
+            if(args.mode=="train"):
+                data_folder=data_folder_train
+
         bf=cwd+data_folder+annotated_body_split_folder
         bff=bf+annotated_only_lemmas
         bft=bf+annotated_only_tags
