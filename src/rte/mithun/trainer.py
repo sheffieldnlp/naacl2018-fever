@@ -84,7 +84,7 @@ def load_model():
     return model;
 
 def do_testing(combined_vector,svm):
-    logging.info("first value of combined_vector is:"+str(combined_vector[0]))
+    logging.info("all value of combined_vector is:"+str(combined_vector))
     logging.info("going to predict...")
     p=svm.predict(combined_vector)
     joblib.dump(p, predicted_results)
