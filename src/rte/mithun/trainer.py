@@ -138,12 +138,13 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         if(found):
             logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
-            logging.debug("shape  hedging_words_vector is:" + str(hedging_words_vector.shape))
-            logging.debug("non zero entries are at:" + str(np.nonzero(hedging_words_vector)))
-            logging.debug("non zero entries are :" + str(hedging_words_vector[np.nonzero(hedging_words_vector)]))
-            logging.debug("shape  hedging_words_vector is:" + str(hedging_words_vector.shape))
+
 
             logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
+            logging.debug("shape  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
+            logging.debug("non zero entries are at:" + str(np.nonzero(refuting_value_matrix)))
+            logging.debug("non zero entries are :" + str(refuting_value_matrix[np.nonzero(hedging_words_vector)]))
+
             logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
             sys.exit(1)
 
@@ -179,10 +180,10 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value,found = hedging_features(lemmatized_headline_split, lemmatized_body_split)
+    hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
-    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+    refuting_value,found = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
     noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
@@ -248,16 +249,14 @@ def hedging_features(clean_headline, clean_body):
     hedging_body_vector = [0] * length_hedge
 
 
-    found=None
 
     for word in clean_body:
         if word in hedging_words:
             index=hedging_words.index(word)
             hedging_body_vector[index]=1
-            found=True
 
 
-    return hedging_body_vector,found
+    return hedging_body_vector
 
 def refuting_features_mithun(clean_headline, clean_body):
     # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
@@ -290,14 +289,16 @@ def refuting_features_mithun(clean_headline, clean_body):
     length_hedge=len(refuting_words)
     refuting_body_vector = [0] * length_hedge
 
+    found=False
     for word in clean_body:
         if word in refuting_words:
             index=refuting_words.index(word)
             refuting_body_vector[index]=1
+            found=True
 
 
 
-    return refuting_body_vector
+    return refuting_body_vector,found
 
 def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,pos_in):
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
