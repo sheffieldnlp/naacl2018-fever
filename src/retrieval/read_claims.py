@@ -156,5 +156,7 @@ def get_gold_labels(args,jlr):
                     labels = np.append(labels, 1)
 
     logging.debug("labels array now is:" + str(labels))
+    ns = np.nonzero(labels)
+    logging.debug("nonzero array now is:" + str(ns))
     sys.exit(1)
     return labels
