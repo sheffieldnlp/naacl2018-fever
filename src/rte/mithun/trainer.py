@@ -99,28 +99,24 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
     return combined_vector;
 
 def do_training(combined_vector,gold_labels_tr):
-    logging.debug("going to load the classifier:")
-
-    logging.debug("labels array before ravel is:" + str(gold_labels_tr))
-    ns1 = np.nonzero(gold_labels_tr)
-    logging.debug("nonzero array now is:" + str(ns1))
-
-    q=gold_labels_tr.ravel()
-    logging.debug("labels array before ravel is:" + str(q))
-    ns2 = np.nonzero(q)
-    logging.debug("nonzero array now is:" + str(ns2))
-    for x in ns2:
-        logging.debug(q[x])
-
-
-    sys.exit(1)
-
+    #logging.debug("going to load the classifier:")
+    #
+    # logging.debug("labels array before ravel is:" + str(gold_labels_tr))
+    # ns1 = np.nonzero(gold_labels_tr)
+    # logging.debug("nonzero array now is:" + str(ns1))
+    #
+    # q=gold_labels_tr.ravel()
+    # logging.debug("labels array before ravel is:" + str(q))
+    # ns2 = np.nonzero(q)
+    # logging.debug("nonzero array now is:" + str(ns2))
+    # for x in ns2:
+    #     logging.debug(q[x])
+    #
+    #
+    # sys.exit(1)
 
     clf = svm.SVC(kernel='linear', C=1.0)
-
-
     clf.fit(combined_vector, gold_labels_tr.ravel())
-    #todo:print the weights.
     joblib.dump(clf, model_trained)
     logging.debug("done saving model to disk")
 

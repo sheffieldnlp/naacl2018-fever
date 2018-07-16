@@ -64,20 +64,15 @@ def uofa_training(args,jlr,method,logger):
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
     gold_labels_tr = get_gold_labels(args, jlr)
-
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     logging.info("gold label list is is:" + str((gold_labels_tr)))
-    combined_vector=None
-    #combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
     logging.info("done with generating feature vectors. Model training next")
-
-
     do_training(combined_vector, gold_labels_tr)
     logging.info("done with training. going to exit")
     sys.exit(1)
 
 def print_nonzeroes(combined_vector):
-        #debug code: go through all the vectors last row and print the coordinates of non zero entries
         logging.debug(" starting: print_nonzeroes")
         logging.debug(combined_vector)
         ns = np.nonzero(combined_vector)
