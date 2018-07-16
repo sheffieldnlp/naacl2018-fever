@@ -226,7 +226,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
 
     logging.debug("after  removal of stop  words:")
-    logging.debug(lemmatized_body)
+    logging.debug(lemmatized_body_split_sw)
     sys.exit(1)
 
 
