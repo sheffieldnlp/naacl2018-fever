@@ -213,7 +213,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
+    noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
     noun_overlap_array = np.array([noun_overlap])
 
     logging.debug(word_overlap_array)
@@ -324,7 +324,7 @@ def refuting_features_mithun(clean_headline, clean_body):
 
     return refuting_body_vector
 
-def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,pos_in):
+def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
     #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
