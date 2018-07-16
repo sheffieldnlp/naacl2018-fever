@@ -81,20 +81,20 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
     # debug code: go through all the vectors last row and print the coordinates of non zero entries
 
 
-    c=0
-
-    logging.debug(" starting: found a non nozero entry other than 0 50 51")
-    while(c<13331):
-        ns = np.nonzero(combined_vector[c])
-        for x in ns:
-
-            for y in x:
-                    if(y not in(0,50,51)):
-                        logging.debug(x)
-                        logging.debug(combined_vector[c])
-        c = c + 1
-
-    sys.exit(1)
+    # c=0
+    #
+    # logging.debug(" starting: found a non nozero entry other than 0 50 51")
+    # while(c<13331):
+    #     ns = np.nonzero(combined_vector[c])
+    #     for x in ns:
+    #
+    #         for y in x:
+    #                 if(y not in(0,50,51)):
+    #                     logging.debug(x)
+    #                     logging.debug(combined_vector[c])
+    #     c = c + 1
+    #
+    # sys.exit(1)
 
     return combined_vector;
 
