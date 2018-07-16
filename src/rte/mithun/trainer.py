@@ -143,7 +143,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
             logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
             logging.debug("shape  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
             logging.debug("non zero entries are at:" + str(np.nonzero(refuting_value_matrix)))
-            logging.debug("non zero entries are :" + str(refuting_value_matrix[np.nonzero(hedging_words_vector)]))
+            logging.debug("non zero entries are :" + str(refuting_value_matrix[np.nonzero(refuting_value_matrix)]))
 
             logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
             sys.exit(1)
@@ -183,10 +183,10 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
-    refuting_value,found = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
+    noun_overlap,found = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
     noun_overlap_array = np.array([noun_overlap])
 
     if(found):
@@ -289,16 +289,14 @@ def refuting_features_mithun(clean_headline, clean_body):
     length_hedge=len(refuting_words)
     refuting_body_vector = [0] * length_hedge
 
-    found=False
     for word in clean_body:
         if word in refuting_words:
             index=refuting_words.index(word)
             refuting_body_vector[index]=1
-            found=True
 
 
 
-    return refuting_body_vector,found
+    return refuting_body_vector
 
 def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,pos_in):
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
@@ -371,5 +369,6 @@ def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmati
         logging.debug("b_nouns:" + str(b_nouns))
 
         logging.debug("and value of features is:" + str((features)))
+        sys.exit(1)
 
         return features
