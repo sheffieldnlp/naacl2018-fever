@@ -222,6 +222,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     #remove stop words
     stop_words = set(stopwords.words('english'))
+    logging.debug(stop_words)
     for w in stop_words:
         logging.debug(w)
         if(w=="not"):
