@@ -79,12 +79,12 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
     while(c<13331):
         ns = np.nonzero(combined_vector[c])
         for x in ns:
-            c=c+1
+
             for y in x:
                     if(y not in(0,50,51)):
                         logging.debug(x)
                         logging.debug(combined_vector[c])
-
+        c = c + 1
 
     sys.exit(1)
 
