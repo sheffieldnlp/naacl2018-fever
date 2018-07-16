@@ -128,13 +128,20 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array = add_vectors(
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array,found = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
         refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
         noun_overlap_vector = np.vstack([noun_overlap_vector, noun_overlap_array])
+
+        if(found):
+            logging.debug("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
+            logging.debug("shape of  hedging_words_vector is:" + str(hedging_words_vector.shape))
+            logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
+            logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
+            sys.exit(1)
 
 
 
@@ -183,9 +190,9 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
         logging.debug(refuting_value_array)
         logging.debug(noun_overlap_array)
 
-        sys.exit(1)
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array
+
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,found
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
