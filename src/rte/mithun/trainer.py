@@ -144,9 +144,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
         logging.debug("shape  noun_overlap_vector is:" + str(noun_overlap_vector.shape))
-        logging.debug("non zero entries are at:" + str(np.nonzero(noun_overlap_vector)))
-        logging.debug("non zero entries are :" + str(noun_overlap_vector[np.nonzero(noun_overlap_vector)]))
-        sys.exit(1)
+
 
 
 
@@ -156,8 +154,12 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     logging.debug("refuting_value_matrix.dtype=" + str(refuting_value_matrix.dtype))
     logging.debug("refuting_value_matrix is =" + str(refuting_value_matrix))
 
-    combined_vector = np.hstack(
+    combined_vector= np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_vector])
+
+    logging.debug("non zero entries combined_vectorare at:" + str(np.nonzero(combined_vector)))
+    logging.debug("non zero entriescombined_vector are :" + str(combined_vector[np.nonzero(combined_vector)]))
+    sys.exit(1)
 
     return combined_vector
 
