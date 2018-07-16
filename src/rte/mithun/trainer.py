@@ -174,7 +174,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split)
+    noun_overlap = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
     noun_overlap_array = np.array([noun_overlap])
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array
@@ -275,18 +275,11 @@ def refuting_features_mithun(clean_headline, clean_body):
             index=refuting_words.index(word)
             refuting_body_vector[index]=1
 
-            logging.info("inside refuting")
-            logging.info("clean_headline inside refuting body:" + str(clean_headline))
-            logging.info("clean_body:" + str(clean_body))
-            logging.info("found a refuting word and the word is:"+str(word))
 
-            logging.info("length of hedging_body_vector is:" + str(len(refuting_body_vector)))
-            logging.info("and value of hedging_body_vector is:" + str((refuting_body_vector)))
-            sys.exit(1)
 
     return refuting_body_vector
 
-def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split):
+def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,pos_in):
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
     #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
@@ -309,14 +302,14 @@ def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmati
             logging.debug(str("pos:") + ";" + str((pos)))
             logging.debug(str("word:") + ";" + str((word)))
 
-            if pos.startswith('NN'):
-                logging.debug("pos.startswith('NN'):")
+            if pos.startswith(pos_in):
+                logging.debug("pos.startswith:"+str(pos_in))
                 noun_count_headline = noun_count_headline + 1
                 h_nouns.append(word)
 
         noun_count_body = 0
         for word, pos in zip(lemmatized_body_split, body_pos_split):
-            if pos.startswith('NN'):
+            if pos.startswith(pos_in):
                 noun_count_body = noun_count_body + 1
                 b_nouns.append(word)
 
@@ -350,5 +343,13 @@ def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmati
 
 
         logging.debug(str("features:") + ";" + str((features)))
+
+
+        logging.info("inside noun overlap")
+        logging.info("h_nouns:" + str(h_nouns))
+        logging.info("b_nouns:" + str(b_nouns))
+
+        logging.info("and value of features is:" + str((features)))
+        sys.exit(1)
 
         return features
