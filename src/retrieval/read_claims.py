@@ -81,8 +81,9 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug("weights:")
     logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
+    logging.debug("predicted labels:")
     logging.debug(str(pred))
-    logging.debug("and golden labels are:")
+    logging.debug("and gold labels are:")
     logging.debug(str(gold_labels))
     logging.info("done testing. and the accuracy is:")
     acc=accuracy_score(gold_labels, pred)*100
