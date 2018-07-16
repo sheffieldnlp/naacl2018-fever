@@ -14,7 +14,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=True
-load_combined_vector=True
+load_combined_vector=False
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -59,23 +59,27 @@ def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    # tr_data=read_claims_annotate(args,jlr,logger,method)
+    #tr_data=read_claims_annotate(args,jlr,logger,method)
     # logger.info(
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-    combined_vector = read_json_create_feat_vec(load_ann_corpus, gold_labels_tr, load_combined_vector)
+    combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    logging.info("done with generating feature vectors. Model training next")
     do_training(combined_vector, gold_labels_tr)
-
+    logging.info("done with training. going to exit")
     sys.exit(1)
 
 def uofa_testing(args,jlr,method,logger):
     logger.debug("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
-    combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector)
+    combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    logging.info("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()
+    logging.debug("weights:")
+    logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
@@ -85,15 +89,13 @@ def uofa_testing(args,jlr,method,logger):
     logging.info(str(acc)+"%")
     logging.debug(classification_report(gold_labels, pred))
     logging.debug(confusion_matrix(gold_labels, pred))
+    logging.info("done with testing. going to exit")
     sys.exit(1)
 
 def annotate_save_quit(test_data,logger):
 
-
     for i, d in tqdm(enumerate(test_data), total=len(test_data),desc="annotate_json:"):
         annotate_and_save_doc(d, i, API, ann_head_tr, ann_body_tr,logger)
-
-
 
 
     sys.exit(1)
