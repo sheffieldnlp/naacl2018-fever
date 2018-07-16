@@ -79,16 +79,12 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
     while(c<13331):
         ns = np.nonzero(combined_vector[c])
         for x in ns:
-            logging.debug(x)
             c=c+1
-            logging.debug(c)
             for y in x:
                     logging.debug(y)
                     if(y not in(0,50,51)):
-                        logging.debug(" found a non nozero entry other than 0 50 51")
-                        logging.debug("non zero entries combined_vectorare at:" + str(np.nonzero(combined_vector[13331])))
-                        logging.debug("non zero entriescombined_vector are :" + str(combined_vector[np.nonzero(combined_vector)]))
-                        sys.exit(1)
+                        logging.debug(x)
+
 
     sys.exit(1)
 
