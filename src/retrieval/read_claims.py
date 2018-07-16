@@ -67,9 +67,11 @@ def uofa_training(args,jlr,method,logger):
 
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     logging.info("gold label list is is:" + str((gold_labels_tr)))
-    sys.exit(1)
-    combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    combined_vector=None
+    #combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
     logging.info("done with generating feature vectors. Model training next")
+
+
     do_training(combined_vector, gold_labels_tr)
     logging.info("done with training. going to exit")
     sys.exit(1)
@@ -155,8 +157,5 @@ def get_gold_labels(args,jlr):
                 if (label == "REFUTES"):
                     labels = np.append(labels, 1)
 
-    logging.debug("labels array now is:" + str(labels))
-    ns = np.nonzero(labels)
-    logging.debug("nonzero array now is:" + str(ns))
-    sys.exit(1)
+
     return labels
