@@ -202,7 +202,11 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
     #to remove punctuation.
-    lemmatized_body= lemmatized_body.translate(None, string.punctuation)
+    #lemmatized_body= lemmatized_body.translate(None, string.punctuation)
+
+    translate_table = dict((ord(char), None) for char in string.punctuation)
+    lemmatized_body=lemmatized_body.translate(translate_table)
+
 
     logging.debug("after punctuation removal words:")
     logging.debug(lemmatized_body)
