@@ -69,6 +69,12 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector):
     else:
         logging.info("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
+
+    # go through all the vectors last row and print the coordinates of non zero entries
+    logging.debug("non zero entries combined_vectorare at:" + str(np.nonzero(combined_vector[13331])))
+    logging.debug("non zero entriescombined_vector are :" + str(combined_vector[np.nonzero(combined_vector)]))
+    sys.exit(1)
+
     return combined_vector;
 
 def do_training(combined_vector,gold_labels_tr):
@@ -157,9 +163,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     combined_vector= np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_vector])
 
-    logging.debug("non zero entries combined_vectorare at:" + str(np.nonzero(combined_vector)))
-    logging.debug("non zero entriescombined_vector are :" + str(combined_vector[np.nonzero(combined_vector)]))
-    sys.exit(1)
+
 
     return combined_vector
 
