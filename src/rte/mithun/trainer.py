@@ -202,8 +202,6 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
     #to remove punctuation.
-    #lemmatized_body= lemmatized_body.translate(None, string.punctuation)
-
     translate_table = dict((ord(char), None) for char in string.punctuation)
     lemmatized_body=lemmatized_body.translate(translate_table)
 
@@ -211,7 +209,6 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     logging.debug("after punctuation removal words:")
     logging.debug(lemmatized_body)
 
-    sys.exit(1)
 
 
     lemmatized_headline_split = lemmatized_headline.split(" ")
@@ -219,7 +216,8 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     headline_pos_split = tagged_headline.split(" ")
     body_pos_split = tagged_body.split(" ")
 
-
+    logging.debug("before removal of stop  words:")
+    logging.debug(lemmatized_body)
 
 
     #remove stop words
@@ -227,7 +225,9 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     lemmatized_headline_split_sw = [w for w in lemmatized_headline_split if not w in stop_words]
     lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
 
-
+    logging.debug("after  removal of stop  words:")
+    logging.debug(lemmatized_body)
+    sys.exit(1)
 
 
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
