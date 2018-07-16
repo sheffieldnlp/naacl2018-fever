@@ -137,8 +137,12 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         noun_overlap_vector = np.vstack([noun_overlap_vector, noun_overlap_array])
 
         if(found):
-            logging.debug("shape of  word_overlap_vector is:" + str(word_overlap_vector))
-            logging.debug("shape of  hedging_words_vector is:" + str(hedging_words_vector))
+            logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
+            logging.debug("shape  hedging_words_vector is:" + str(hedging_words_vector.shape))
+            logging.debug("non zero entries are at:" + str(np.nonzero(hedging_words_vector)))
+            logging.debug("non zero entries are :" + str(hedging_words_vector[np.nonzero(hedging_words_vector)]))
+            logging.debug("shape  hedging_words_vector is:" + str(hedging_words_vector.shape))
+
             logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
             logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
             sys.exit(1)
