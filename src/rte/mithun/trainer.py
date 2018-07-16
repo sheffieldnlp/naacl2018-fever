@@ -105,9 +105,13 @@ def do_training(combined_vector,gold_labels_tr):
     ns1 = np.nonzero(gold_labels_tr)
     logging.debug("nonzero array now is:" + str(ns1))
 
-    logging.debug("labels array before ravel is:" + str(gold_labels_tr.ravel()))
-    ns2 = np.nonzero(gold_labels_tr.ravel())
+    q=gold_labels_tr.ravel()
+    logging.debug("labels array before ravel is:" + str(q))
+    ns2 = np.nonzero(q)
     logging.debug("nonzero array now is:" + str(ns2))
+    for x in ns2:
+        logging.debug(q[x])
+
 
     sys.exit(1)
 
