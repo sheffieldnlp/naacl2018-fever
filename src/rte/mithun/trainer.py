@@ -345,11 +345,10 @@ def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmati
         logging.debug(str("features:") + ";" + str((features)))
 
 
-        logging.info("inside noun overlap")
-        logging.info("h_nouns:" + str(h_nouns))
-        logging.info("b_nouns:" + str(b_nouns))
+        logging.debug("inside noun overlap")
+        logging.debug("h_nouns:" + str(h_nouns))
+        logging.debug("b_nouns:" + str(b_nouns))
 
-        logging.info("and value of features is:" + str((features)))
-        sys.exit(1)
+        logging.debug("and value of features is:" + str((features)))
 
         return features
