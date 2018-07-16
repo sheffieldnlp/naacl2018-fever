@@ -136,17 +136,17 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
         noun_overlap_vector = np.vstack([noun_overlap_vector, noun_overlap_array])
 
-        if(found):
-            logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
+        logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
 
 
-            logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
-            logging.debug("shape  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
-            logging.debug("non zero entries are at:" + str(np.nonzero(refuting_value_matrix)))
-            logging.debug("non zero entries are :" + str(refuting_value_matrix[np.nonzero(refuting_value_matrix)]))
+        logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
 
-            logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
-            sys.exit(1)
+
+        logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
+        logging.debug("shape  noun_overlap_vector is:" + str(noun_overlap_vector.shape))
+        logging.debug("non zero entries are at:" + str(np.nonzero(noun_overlap_vector)))
+        logging.debug("non zero entries are :" + str(noun_overlap_vector[np.nonzero(noun_overlap_vector)]))
+        sys.exit(1)
 
 
 
@@ -189,11 +189,10 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     noun_overlap,found = noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split,"NN")
     noun_overlap_array = np.array([noun_overlap])
 
-    if(found):
-        logging.debug(word_overlap_array)
-        logging.debug(hedge_value_array)
-        logging.debug(refuting_value_array)
-        logging.debug(noun_overlap_array)
+    logging.debug(word_overlap_array)
+    logging.debug(hedge_value_array)
+    logging.debug(refuting_value_array)
+    logging.debug(noun_overlap_array)
 
 
 
@@ -369,6 +368,5 @@ def noun_overlap_features(lemmatized_headline_split, headline_pos_split, lemmati
         logging.debug("b_nouns:" + str(b_nouns))
 
         logging.debug("and value of features is:" + str((features)))
-        sys.exit(1)
 
         return features
