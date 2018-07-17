@@ -59,7 +59,7 @@ def read_claims_annotate(args,jlr,logger,method):
 def print_cv(combined_vector,gold_labels_tr):
     logging.debug(gold_labels_tr.shape)
     logging.debug(combined_vector.shape)
-    x= np.vstack([gold_labels_tr,combined_vector])
+    x= np.hstack([gold_labels_tr,combined_vector])
     np.savetxt("cv.csv", x, delimiter=",")
     sys.exit(1)
 
@@ -88,6 +88,7 @@ def uofa_testing(args,jlr,method,logger):
     gold_labels = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
     combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()
     logging.debug("weights:")
@@ -148,8 +149,8 @@ def get_gold_labels(args,jlr):
             else:
                 if (label == "REFUTES"):
                     labels = np.append(labels, 1)
-                # else:
-                #     if (label=="NOT ENOUGH INFO"):
-                #         labels = np.append(labels, 2)
+                else:
+                    if (label=="NOT ENOUGH INFO"):
+                        labels = np.append(labels, 2)
 
     return labels
