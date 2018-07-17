@@ -174,7 +174,6 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         logging.debug("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
         logging.debug("vb_overlap_matrix is =" + str(vb_overlap_matrix))
         logging.debug("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
-        sys.exit(1)
 
 
 
