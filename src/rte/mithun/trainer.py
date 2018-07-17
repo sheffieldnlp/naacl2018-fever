@@ -97,7 +97,7 @@ def print_nonzero_cv(combined_vector):
         #     for y in x:
         #             if(y not in(0,50,51)):
         #                 logging.debug(x)
-        # c = c + 1
+        c = c + 1
 
     sys.exit(1)
 
