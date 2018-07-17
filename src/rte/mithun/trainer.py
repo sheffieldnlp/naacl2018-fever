@@ -222,7 +222,8 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
                                         body_pos_split, "VB")
     vb_overlap_array = np.array([vb_overlap])
 
-    if(found2):
+    logging.debug(str("found2:") + ";" + str((found2)))
+    if(found2==True):
         logging.debug(word_overlap_array)
         logging.debug(hedge_value_array)
         logging.debug(refuting_value_array)
@@ -380,7 +381,7 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
             prop_nouns_sent2 = overlap_noun_counter / (noun_count_headline)
 
             if not ((prop_nouns_sent1==0) or (prop_nouns_sent2==0)):
-                logging.debug("found noun overlap")
+                logging.debug("found  overlap")
                 logging.debug(str(prop_nouns_sent1)+";"+str((prop_nouns_sent2)))
                 found=True;
 
@@ -390,7 +391,9 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         logging.debug(str("features:") + ";" + str((features)))
 
 
-        logging.debug("inside noun overlap")
+        logging.debug(str("found:") + ";" + str((found)))
+
+        logging.debug("inside "+pos_in+" overlap")
         logging.debug("h_nouns:" + str(h_nouns))
         logging.debug("b_nouns:" + str(b_nouns))
 
