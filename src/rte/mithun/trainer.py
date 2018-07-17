@@ -166,6 +166,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
+        logging.info("inside create_feature_vec. just received verb_overlap_array is =" + str(verb_overlap_array))
+        logging.info("inside create_feature_vec. vb_overlap_matrix is =" + str(vb_overlap_matrix))
+
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
         refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
@@ -229,7 +232,9 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                         body_pos_split, "VB")
+    logging.debug("just after receiving vb_overlap in add_vectors. value of vb_overlap is:"+str(vb_overlap))
     vb_overlap_array = np.array([vb_overlap])
+    logging.debug("just after receiving vb_overlap in add_vectors. value of vb_overlap_array is:" + str(vb_overlap_array))
 
 
 
