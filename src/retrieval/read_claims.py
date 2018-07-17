@@ -56,7 +56,7 @@ def read_claims_annotate(args,jlr,logger,method):
         return obj_all_heads_bodies
 
 def uofa_training(args,jlr,method,logger):
-    logger.debug("got inside uofa_training")
+    logger.debug("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
     #tr_data=read_claims_annotate(args,jlr,logger,method)
@@ -67,7 +67,7 @@ def uofa_training(args,jlr,method,logger):
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
     logging.info("done with generating feature vectors. Model training next")
-    do_training(combined_vector, gold_labels_tr)
+    do_training(combined_vector, gold_labels_tr,args)
     logging.info("done with training. going to exit")
     sys.exit(1)
 
