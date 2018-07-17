@@ -7,20 +7,20 @@ class LogHelper():
 
         FORMAT = '[%(levelname)s] %(asctime)s - %(name)s - %(message)s'
         LogHelper.handler = logging.StreamHandler()
-        LogHelper.handler.setLevel(logging.INFO)
+        LogHelper.handler.setLevel(logging.WARNING)
         LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
 
         LogHelper.handler2 = logging.FileHandler("old_log.log" ,mode='w')
-        LogHelper.handler2.setLevel(logging.INFO)
+        LogHelper.handler2.setLevel(logging.DEBUG)
         LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
 
         LogHelper.get_logger(LogHelper.__name__)
 
 
     @staticmethod
-    def get_logger(name,level=logging.DEBUG):
+    def get_logger(name):
         l = logging.getLogger(name)
-        l.setLevel(level)
+        #l.setLevel(level)
         l.addHandler(LogHelper.handler)
         l.addHandler(LogHelper.handler2)
 
