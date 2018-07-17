@@ -75,10 +75,8 @@ def uofa_training(args,jlr,method,logger):
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus,args)
-    print_cv(combined_vector,gold_labels_tr)
     logging.info("done with generating feature vectors. Model training next")
     logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
-    
     do_training(combined_vector, gold_labels_tr,args)
     logging.info("done with training. going to exit")
     sys.exit(1)
