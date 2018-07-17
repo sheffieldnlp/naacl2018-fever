@@ -2,8 +2,7 @@
 ## Instructions to do AFTER you run the shefiield [instructions for manual install](https://github.com/sheffieldnlp/fever-baselines/wiki/Manual-Install)
 
 - source activate fever
-`PYTHONPATH=src python src/scripts/retrieval/ir.py --db data/fever/fever.db --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file data/fever-data/train.jsonl --out-file data/fever/train.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode train
---svmc 0.01 --kernel linear`
+`PYTHONPATH=src python src/scripts/retrieval/ir.py --db data/fever/fever.db --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file data/fever-data/train.jsonl --out-file data/fever/train.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode train --svmc 0.01 --kernel linear`
 
     ## To run our entailment trainer on training data alone :
 
