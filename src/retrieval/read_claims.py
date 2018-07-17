@@ -149,8 +149,8 @@ def get_gold_labels(args,jlr):
             else:
                 if (label == "REFUTES"):
                     labels = np.append(labels, 1)
-                else:
-                    if (label=="NOT ENOUGH INFO"):
-                        labels = np.append(labels, 2)
+                # else:
+                #     if (label=="NOT ENOUGH INFO"):
+                #         labels = np.append(labels, 2)
 
     return labels
