@@ -88,16 +88,16 @@ def print_nonzero_cv(combined_vector):
 
     c=0
 
-    logging.debug(" starting: found a non nozero entry other than 0 50 51")
-    while(c<13331):
+    logging.debug(" starting: combined vector"+str(combined_vector))
+    while(c<20):
         ns = np.nonzero(combined_vector[c])
-        for x in ns:
-
-            for y in x:
-                    if(y not in(0,50,51)):
-                        logging.debug(x)
-                        logging.debug(combined_vector[c])
-        c = c + 1
+        logging.debug(ns)
+        # for x in ns:
+        #
+        #     for y in x:
+        #             if(y not in(0,50,51)):
+        #                 logging.debug(x)
+        # c = c + 1
 
     sys.exit(1)
 
