@@ -78,9 +78,11 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
         logging.info("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
 
+    print_nonzero_cv(combined_vector)
+
     return combined_vector;
 
-def print_nonsero_cv(combined_vector):
+def print_nonzero_cv(combined_vector):
     # debug code: go through all the vectors last row and print the coordinates of non zero entries
 
 
@@ -177,8 +179,6 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
 
 
-
-
     logging.debug("\ndone with all headline body.:")
     logging.debug("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
     logging.debug("refuting_value_matrix.dtype=" + str(refuting_value_matrix.dtype))
@@ -214,21 +214,13 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap,found1 = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
+    noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
     noun_overlap_array = np.array([noun_overlap])
 
-    vb_overlap,found2 = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+    vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                         body_pos_split, "VB")
     vb_overlap_array = np.array([vb_overlap])
 
-    logging.debug(str("found2:") + ";" + str((found2)))
-    if(found2==True):
-        logging.debug(word_overlap_array)
-        logging.debug(hedge_value_array)
-        logging.debug(refuting_value_array)
-        logging.debug(noun_overlap_array)
-        logging.debug(vb_overlap_array)
-        sys.exit(1)
 
 
 
@@ -398,4 +390,4 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
         logging.debug("and value of features is:" + str((features)))
 
-        return features, found
+        return features
