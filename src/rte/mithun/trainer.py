@@ -106,7 +106,7 @@ def print_nonzero_cv(combined_vector):
 
 
 def do_training(combined_vector,gold_labels_tr,args):
-    cvalue=int(args.svmc)
+    cvalue=float(args.svmc)
     k=args.kernel
     logging.debug("going to load the classifier:")
     clf = svm.SVC(kernel=k, C=cvalue)
