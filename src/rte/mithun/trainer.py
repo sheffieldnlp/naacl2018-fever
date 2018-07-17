@@ -98,9 +98,11 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
 
     return combined_vector;
 
-def do_training(combined_vector,gold_labels_tr):
+def do_training(combined_vector,gold_labels_tr,args):
+    cvalue=args.svmc
+    k=args.kernel
     logging.debug("going to load the classifier:")
-    clf = svm.SVC(kernel='linear', C=1.0)
+    clf = svm.SVC(kernel=k, C=cvalue)
     clf.fit(combined_vector, gold_labels_tr.ravel())
     #todo:print the weights.
     joblib.dump(clf, model_trained)
