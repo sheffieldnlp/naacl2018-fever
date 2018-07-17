@@ -14,7 +14,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=True
-load_combined_vector=False
+load_combined_vector=True
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -55,6 +55,15 @@ def read_claims_annotate(args,jlr,logger,method):
 
         return obj_all_heads_bodies
 
+
+def print_cv(combined_vector,gold_labels_tr):
+    logging.debug(gold_labels_tr.shape)
+    logging.debug(combined_vector.shape)
+    x= np.column_stack([gold_labels_tr,combined_vector])
+    np.savetxt("cv.csv", x, delimiter=",")
+    sys.exit(1)
+
+
 def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofatraining")
 
@@ -66,7 +75,10 @@ def uofa_training(args,jlr,method,logger):
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    print_cv(combined_vector,gold_labels_tr)
     logging.info("done with generating feature vectors. Model training next")
+    logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
+    
     do_training(combined_vector, gold_labels_tr,args)
     logging.info("done with training. going to exit")
     sys.exit(1)
@@ -76,6 +88,7 @@ def uofa_testing(args,jlr,method,logger):
     gold_labels = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
     combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()
     logging.debug("weights:")
