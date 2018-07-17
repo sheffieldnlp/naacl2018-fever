@@ -78,25 +78,28 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
         logging.info("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
 
+    return combined_vector;
+
+def print_nonsero_cv(combined_vector):
     # debug code: go through all the vectors last row and print the coordinates of non zero entries
 
 
-    # c=0
-    #
-    # logging.debug(" starting: found a non nozero entry other than 0 50 51")
-    # while(c<13331):
-    #     ns = np.nonzero(combined_vector[c])
-    #     for x in ns:
-    #
-    #         for y in x:
-    #                 if(y not in(0,50,51)):
-    #                     logging.debug(x)
-    #                     logging.debug(combined_vector[c])
-    #     c = c + 1
-    #
-    # sys.exit(1)
+    c=0
 
-    return combined_vector;
+    logging.debug(" starting: found a non nozero entry other than 0 50 51")
+    while(c<13331):
+        ns = np.nonzero(combined_vector[c])
+        for x in ns:
+
+            for y in x:
+                    if(y not in(0,50,51)):
+                        logging.debug(x)
+                        logging.debug(combined_vector[c])
+        c = c + 1
+
+    sys.exit(1)
+
+
 
 def do_training(combined_vector,gold_labels_tr):
     logging.debug("going to load the classifier:")
@@ -142,7 +145,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
-    noun_overlap_vector = np.empty((0, 2), int)
+    noun_overlap_matrix = np.empty((0, 2), int)
+    vb_overlap_matrix = np.empty((0, 2), int)
 
     for head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm(zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related),
                            total=len(bodies_tags_related), desc="feat_gen:"):
@@ -155,22 +159,22 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array = add_vectors(
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
         refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
-        noun_overlap_vector = np.vstack([noun_overlap_vector, noun_overlap_array])
+        noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
+        vb_overlap_matrix== np.vstack([vb_overlap_matrix, verb_overlap_array])
 
         logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
-
-
         logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
-
-
-        logging.debug("noun_overlap_vector is =" + str(noun_overlap_vector))
-        logging.debug("shape  noun_overlap_vector is:" + str(noun_overlap_vector.shape))
+        logging.debug("noun_overlap_matrix is =" + str(noun_overlap_matrix))
+        logging.debug("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+        logging.debug("vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.debug("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+        sys.exit(1)
 
 
 
@@ -182,7 +186,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     logging.debug("refuting_value_matrix is =" + str(refuting_value_matrix))
 
     combined_vector= np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_vector])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix])
 
 
 
@@ -192,12 +196,10 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logging):
 
 
-    #todo5: split everywhere based on space-i.e for word overlap etc etc..
-
+    #split everywhere based on space-i.e for word overlap etc etc..
 
     lemmatized_headline = lemmatized_headline.lower()
     lemmatized_body = lemmatized_body.lower()
-
 
     lemmatized_headline_split = lemmatized_headline.split(" ")
     headline_pos_split = tagged_headline.split(" ")
@@ -216,14 +218,20 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
     noun_overlap_array = np.array([noun_overlap])
 
+    vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                        body_pos_split, "VB")
+    vb_overlap_array = np.array([vb_overlap])
+
     logging.debug(word_overlap_array)
     logging.debug(hedge_value_array)
     logging.debug(refuting_value_array)
     logging.debug(noun_overlap_array)
+    logging.debug(vb_overlap_array)
+    sys.exit(1)
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -327,16 +335,6 @@ def refuting_features_mithun(clean_headline, clean_body):
 def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
-    #todo3: maybe abstract this method based on the POS so that you can resuse it for verbs and nouns..
-    #todo4: make smaller case
-    #todo5: split everywhere based on space-i.e for word overlap etc etc..
-
-        # logging.debug(str("lemmatized_headline:") + ";" + str((lemmatized_headline)))
-        # logging.debug(str("headline_pos:") + ";" + str((headline_pos)))
-        # logging.debug(str("lemmatized_body:") + ";" + str((lemmatized_body)))
-        # logging.debug(str("body_pos:") + ";" + str((body_pos)))
-
-
 
 
         h_nouns = []
