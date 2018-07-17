@@ -170,19 +170,21 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
         vb_overlap_matrix== np.vstack([vb_overlap_matrix, verb_overlap_array])
 
-        logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
-        logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
-        logging.debug("noun_overlap_matrix is =" + str(noun_overlap_matrix))
-        logging.debug("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
-        logging.debug("vb_overlap_matrix is =" + str(vb_overlap_matrix))
-        logging.debug("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+        logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
+        logging.info("refuting_value_matrix" + str(refuting_value_matrix))
+        logging.info("noun_overlap_matrix is =" + str(noun_overlap_matrix))
+        logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+        logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
 
 
 
-    logging.debug("\ndone with all headline body.:")
-    logging.debug("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
-    logging.debug("refuting_value_matrix.dtype=" + str(refuting_value_matrix.dtype))
-    logging.debug("refuting_value_matrix is =" + str(refuting_value_matrix))
+    logging.info("\ndone with all headline body.:")
+    logging.info("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
+    logging.info("shape of  hedging_words_vector is:" + str(hedging_words_vector.shape))
+    logging.info("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
+    logging.info("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+    logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
 
     combined_vector= np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
