@@ -374,7 +374,7 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         logging.debug(str("noun_count_headline:") + ";" + str((noun_count_headline)))
 
 
-
+        found=False
         if (noun_count_body > 0 and noun_count_headline > 0):
             prop_nouns_sent1 = overlap_noun_counter / (noun_count_body)
             prop_nouns_sent2 = overlap_noun_counter / (noun_count_headline)
