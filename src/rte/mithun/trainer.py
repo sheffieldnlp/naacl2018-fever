@@ -24,6 +24,7 @@ data_root=""
 data_folder_train=data_root+"/fever-data-ann/train/"
 data_folder_dev=data_root+"/data/fever-data-ann/dev/"
 model_trained="model_trained.pkl"
+
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
@@ -103,12 +104,15 @@ def print_nonzero_cv(combined_vector):
 
 
 
-def do_training(combined_vector,gold_labels_tr):
+def do_training(combined_vector,gold_labels_tr,args):
+    cvalue=args.svmc
+    k=args.kernel
     logging.debug("going to load the classifier:")
-    clf = svm.SVC(kernel='linear', C=1.0)
+    clf = svm.SVC(kernel=k, C=cvalue)
     clf.fit(combined_vector, gold_labels_tr.ravel())
     #todo:print the weights.
-    joblib.dump(clf, model_trained)
+    file=model_trained+"_"+cvalue+"_"+k+".pkl"
+    joblib.dump(clf, file)
     logging.debug("done saving model to disk")
 
 def load_model():

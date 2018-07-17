@@ -65,7 +65,7 @@ def print_cv(combined_vector,gold_labels_tr):
 
 
 def uofa_training(args,jlr,method,logger):
-    logger.debug("got inside uofa_training")
+    logger.debug("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
     #tr_data=read_claims_annotate(args,jlr,logger,method)
@@ -78,8 +78,8 @@ def uofa_training(args,jlr,method,logger):
     print_cv(combined_vector,gold_labels_tr)
     logging.info("done with generating feature vectors. Model training next")
     logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
-    sys.exit(1)
-    do_training(combined_vector, gold_labels_tr)
+    
+    do_training(combined_vector, gold_labels_tr,args)
     logging.info("done with training. going to exit")
     sys.exit(1)
 
