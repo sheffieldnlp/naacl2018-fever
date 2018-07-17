@@ -28,10 +28,15 @@ model_trained="model_trained.pkl"
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
-def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
+def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
-    if not(load_combined_vector):
-        logging.debug("load_combined_vector is falsse. going to generate features")
+    if (args.load_feat_vec==True):
+
+        logging.info("going to load combined vector from disk")
+        combined_vector = joblib.load(combined_vector_training)
+
+    else:
+        logging.debug("load_feat_vec is falsse. going to generate features")
         logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
 
         cwd=os.getcwd()
@@ -76,10 +81,6 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
         joblib.dump(combined_vector, combined_vector_training)
         logging.info("done generating feature vectors.")
 
-
-    else:
-        logging.info("going to load combined vector from disk")
-        combined_vector = joblib.load(combined_vector_training)
 
     return combined_vector;
 

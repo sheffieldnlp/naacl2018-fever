@@ -14,7 +14,7 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=True
-load_combined_vector=True
+#load_combined_vector=True
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -74,7 +74,7 @@ def uofa_training(args,jlr,method,logger):
 
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-    combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    combined_vector = read_json_create_feat_vec(load_ann_corpus,args)
     print_cv(combined_vector,gold_labels_tr)
     logging.info("done with generating feature vectors. Model training next")
     logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
@@ -87,7 +87,7 @@ def uofa_testing(args,jlr,method,logger):
     logger.debug("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
-    combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()

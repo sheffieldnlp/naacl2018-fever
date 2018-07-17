@@ -54,6 +54,9 @@ if __name__ == "__main__":
     parser.add_argument('--mode', type=str, help='do training or testing' )
     parser.add_argument('--svmc', type=str, help='C value for svm')
     parser.add_argument('--kernel', type=str, help='kernel for svm')
+    parser.add_argument('--load_feat_vec', type=str2bool,default=False)
+
+
     args = parser.parse_args()
 
     db = FeverDocDB(args.db)
