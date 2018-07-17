@@ -5,6 +5,7 @@ import tqdm
 import os
 import numpy as np
 from tqdm import tqdm
+import pandas as pd
 import time
 from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
@@ -77,8 +78,6 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
     else:
         logging.info("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
-
-    print_nonzero_cv(combined_vector)
 
     return combined_vector;
 

@@ -55,6 +55,13 @@ def read_claims_annotate(args,jlr,logger,method):
 
         return obj_all_heads_bodies
 
+
+def print_cv(combined_vector,gold_labels_tr):
+    x= np.hstack([gold_labels_tr,combined_vector])
+    np.savetxt("cv.csv", x, delimiter=",")
+    sys.exit(1)
+
+
 def uofa_training(args,jlr,method,logger):
     logger.debug("got inside uofa_training")
 
@@ -66,6 +73,7 @@ def uofa_training(args,jlr,method,logger):
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    print_cv(combined_vector,gold_labels_tr)
     logging.info("done with generating feature vectors. Model training next")
     logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
     sys.exit(1)
