@@ -56,7 +56,7 @@ def read_claims_annotate(args,jlr,logger,method):
         return obj_all_heads_bodies
 
 def uofa_training(args,jlr,method,logger):
-    logger.debug("got inside uofa_training")
+    logger.debug("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
     #tr_data=read_claims_annotate(args,jlr,logger,method)
