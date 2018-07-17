@@ -88,7 +88,7 @@ def uofa_testing(args,jlr,method,logger):
     gold_labels = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
     combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
-    print_cv(combined_vector, gold_labels)
+    #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()
     logging.debug("weights:")
