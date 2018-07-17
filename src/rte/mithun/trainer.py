@@ -182,8 +182,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
         logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
 
-        if(counter==10):
-            sys.exit(1)
+        sys.exit(1)
 
         counter = counter + 1
 
@@ -232,9 +231,9 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                         body_pos_split, "VB")
-    logging.debug("just after receiving vb_overlap in add_vectors. value of vb_overlap is:"+str(vb_overlap))
+    logging.info("just after receiving vb_overlap in add_vectors. value of vb_overlap is:"+str(vb_overlap))
     vb_overlap_array = np.array([vb_overlap])
-    logging.debug("just after receiving vb_overlap in add_vectors. value of vb_overlap_array is:" + str(vb_overlap_array))
+    logging.info("just after receiving vb_overlap in add_vectors. value of vb_overlap_array is:" + str(vb_overlap_array))
 
 
 
@@ -344,7 +343,7 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
 
-
+        logging.info("inside " + pos_in + " overlap")
         h_nouns = []
         b_nouns = []
 
@@ -371,37 +370,32 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         features = [0, 0]
 
 
-        logging.debug(str("h_nouns:") + ";" + str((h_nouns)))
-        logging.debug(str("b_nouns:") + ";" + str((b_nouns)))
-        logging.debug(str("overlap_noun_counter:") + ";" + str((overlap_noun_counter)))
-        logging.debug(str("overlap:") + ";" + str((overlap)))
+        logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+        logging.info(str("b_nouns:") + ";" + str((b_nouns)))
+        logging.info(str("overlap_noun_counter:") + ";" + str((overlap_noun_counter)))
+        logging.info(str("overlap:") + ";" + str((overlap)))
 
 
         logging.debug(str("noun_count_body:") + ";" + str((noun_count_body)))
         logging.debug(str("noun_count_headline:") + ";" + str((noun_count_headline)))
 
 
-        found=False
         if (noun_count_body > 0 and noun_count_headline > 0):
-            prop_nouns_sent1 = overlap_noun_counter / (noun_count_body)
-            prop_nouns_sent2 = overlap_noun_counter / (noun_count_headline)
+            ratio_pos_dir1 = overlap_noun_counter / (noun_count_body)
+            ratio_pos_dir2 = overlap_noun_counter / (noun_count_headline)
 
-            if not ((prop_nouns_sent1==0) or (prop_nouns_sent2==0)):
+            if not ((ratio_pos_dir1==0) or (ratio_pos_dir2==0)):
                 logging.debug("found  overlap")
-                logging.debug(str(prop_nouns_sent1)+";"+str((prop_nouns_sent2)))
-                found=True;
+                logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
 
-            features = [prop_nouns_sent1, prop_nouns_sent2]
-
-
-        logging.debug(str("features:") + ";" + str((features)))
+            features = [ratio_pos_dir1, ratio_pos_dir2]
 
 
-        logging.debug(str("found:") + ";" + str((found)))
+        logging.info(str("features:") + ";" + str((features)))
 
-        logging.debug("inside "+pos_in+" overlap")
-        logging.debug("h_nouns:" + str(h_nouns))
-        logging.debug("b_nouns:" + str(b_nouns))
+
+
+
 
         logging.debug("and value of features is:" + str((features)))
 
