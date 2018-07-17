@@ -59,7 +59,7 @@ def read_claims_annotate(args,jlr,logger,method):
 def print_cv(combined_vector,gold_labels_tr):
     logging.debug(gold_labels_tr.shape)
     logging.debug(combined_vector.shape)
-    x= np.hstack([gold_labels_tr,combined_vector])
+    x= np.column_stack([gold_labels_tr,combined_vector])
     np.savetxt("cv.csv", x, delimiter=",")
     sys.exit(1)
 
