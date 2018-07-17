@@ -215,19 +215,20 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
+    noun_overlap,found1 = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
     noun_overlap_array = np.array([noun_overlap])
 
-    vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+    vb_overlap,found2 = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                         body_pos_split, "VB")
     vb_overlap_array = np.array([vb_overlap])
 
-    logging.debug(word_overlap_array)
-    logging.debug(hedge_value_array)
-    logging.debug(refuting_value_array)
-    logging.debug(noun_overlap_array)
-    logging.debug(vb_overlap_array)
-    sys.exit(1)
+    if(found2):
+        logging.debug(word_overlap_array)
+        logging.debug(hedge_value_array)
+        logging.debug(refuting_value_array)
+        logging.debug(noun_overlap_array)
+        logging.debug(vb_overlap_array)
+        sys.exit(1)
 
 
 
@@ -378,9 +379,10 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
             prop_nouns_sent1 = overlap_noun_counter / (noun_count_body)
             prop_nouns_sent2 = overlap_noun_counter / (noun_count_headline)
 
-            if not (prop_nouns_sent1==0) or (prop_nouns_sent2==0):
+            if not ((prop_nouns_sent1==0) or (prop_nouns_sent2==0)):
                 logging.debug("found noun overlap")
                 logging.debug(str(prop_nouns_sent1)+";"+str((prop_nouns_sent2)))
+                found=True;
 
             features = [prop_nouns_sent1, prop_nouns_sent2]
 
@@ -394,4 +396,4 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
         logging.debug("and value of features is:" + str((features)))
 
-        return features
+        return features, found
