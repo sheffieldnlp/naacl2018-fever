@@ -5,7 +5,6 @@ import tqdm
 import os
 import numpy as np
 from tqdm import tqdm
-import pandas as pd
 import time
 from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
