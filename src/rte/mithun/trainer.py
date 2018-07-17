@@ -150,7 +150,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     noun_overlap_matrix = np.empty((0, 2), int)
     vb_overlap_matrix = np.empty((0, 2), int)
 
-    for index, head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm(enumerate(zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
+    counter=0
+
+    for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
                            total=len(bodies_tags_related), desc="feat_gen:"):
 
         lemmatized_headline = head_lemmas
@@ -176,8 +178,11 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
         logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
         logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
-        if(index==10):
+
+        if(counter==10):
             sys.exit(1)
+
+        counter = counter + 1
 
 
 
