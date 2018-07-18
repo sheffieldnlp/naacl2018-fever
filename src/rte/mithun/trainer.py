@@ -24,7 +24,7 @@ annotated_head_split_folder="split_head/"
 data_root=""
 data_folder_train=data_root+"/data/fever-data-ann/train/"
 data_folder_dev=data_root+"/data/fever-data-ann/dev/"
-model_trained="model_trained"
+model_trained="model_trained.pkl"
 
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
@@ -110,7 +110,7 @@ def do_training(combined_vector,gold_labels_tr):
     logging.debug("going to load the classifier:")
     clf=svm.NuSVC()
     clf.fit(combined_vector, gold_labels_tr.ravel())
-    file = model_trained + ".pkl"
+    file = model_trained
     joblib.dump(clf, file)
     logging.debug("done saving model to disk")
 
