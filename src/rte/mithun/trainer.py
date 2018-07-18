@@ -111,7 +111,7 @@ def do_training(combined_vector,gold_labels_tr,args):
     clf = svm.SVC(kernel=k, C=cvalue)
     clf.fit(combined_vector, gold_labels_tr.ravel())
     #todo:print the weights.
-    file=model_trained+"_"+cvalue+"_"+k+".pkl"
+    file=model_trained+"_"+str(cvalue)+"_"+k+".pkl"
     joblib.dump(clf, file)
     logging.debug("done saving model to disk")
 
