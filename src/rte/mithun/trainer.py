@@ -42,11 +42,11 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
             if(args.mode=="train"):
                 data_folder=data_folder_train
 
-        bf=cwd+data_folder+annotated_body_split_folder
+        bf=data_folder+annotated_body_split_folder
         bff=bf+annotated_only_lemmas
         bft=bf+annotated_only_tags
 
-        hf=cwd+data_folder+annotated_head_split_folder
+        hf=data_folder+annotated_head_split_folder
         hff=hf+annotated_only_lemmas
         hft=hf+annotated_only_tags
 
