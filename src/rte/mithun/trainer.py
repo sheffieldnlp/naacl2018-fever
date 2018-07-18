@@ -9,6 +9,7 @@ import time
 from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
 from processors import Document
+from sklearn import linear_model
 import json
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 my_out_dir = "poop-out"
@@ -106,11 +107,14 @@ def print_nonzero_cv(combined_vector):
 
 
 def do_training(combined_vector,gold_labels_tr,args):
+    clf = linear_model.LogisticRegression()
+
     cvalue=float(args.svmc)
     k=args.kernel
-    logging.debug("going to load the classifier:")
-    clf=svm.NuSVC()
-    #clf = svm.SVC(kernel=k, C=cvalue)
+    # logging.debug("going to load the classifier:")
+    # clf=svm.NuSVC()
+    # #clf = svm.SVC(kernel=k, C=cvalue)
+    # clf.fit(combined_vector, gold_labels_tr.ravel())
     clf.fit(combined_vector, gold_labels_tr.ravel())
     file=model_trained+"_"+str(cvalue)+"_"+str(k)+".pkl"
     joblib.dump(clf, file)

@@ -90,7 +90,7 @@ def uofa_testing(args,jlr,method,logger):
     logging.info("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()
     logging.debug("weights:")
-    logging.debug(trained_model.coef_ )
+    #logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
