@@ -20,8 +20,8 @@ annotated_only_lemmas="ann_lemmas.json"
 annotated_only_tags="ann_tags.json"
 annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
-#data_root="/work/mithunpaul/fever/my_fork/fever-baselines/data"
-data_root=""
+#pick based on which folder you are running from. if not on home folder:
+data_root="/work/mithunpaul/fever/my_fork/fever-baselines/"
 data_folder_train=data_root+"/data/fever-data-ann/train/"
 data_folder_dev=data_root+"/data/fever-data-ann/dev/"
 model_trained="model_trained.pkl"
@@ -48,11 +48,11 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
             if(args.mode=="train"):
                 data_folder=data_folder_train
 
-        bf=cwd+data_folder+annotated_body_split_folder
+        bf=data_folder+annotated_body_split_folder
         bff=bf+annotated_only_lemmas
         bft=bf+annotated_only_tags
 
-        hf=cwd+data_folder+annotated_head_split_folder
+        hf=data_folder+annotated_head_split_folder
         hff=hf+annotated_only_lemmas
         hft=hf+annotated_only_tags
 
@@ -106,10 +106,12 @@ def print_nonzero_cv(combined_vector):
 
 
 
+
 def do_training(combined_vector,gold_labels_tr):
     logging.debug("going to load the classifier:")
     clf=svm.NuSVC()
     clf.fit(combined_vector, gold_labels_tr.ravel())
+
     file = model_trained
     joblib.dump(clf, file)
     logging.debug("done saving model to disk")
@@ -150,10 +152,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
-    noun_overlap_matrix = np.empty((0, 2), int)
-    vb_overlap_matrix = np.empty((0, 2), int)
+    noun_overlap_matrix = np.empty((0, 2), float)
+    vb_overlap_matrix = np.empty((0, 2), float)
 
-    counter=0
 
     for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
                            total=len(bodies_tags_related), desc="feat_gen:"):
@@ -169,24 +170,27 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
-        logging.info("inside create_feature_vec. just received verb_overlap_array is =" + str(verb_overlap_array))
-        logging.info("inside create_feature_vec. vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
+        logging.info(verb_overlap_array)
+        logging.info("inside create_feature_vec. vb_overlap_matrix is =" + repr(vb_overlap_matrix))
+        logging.info("inside create_feature_vec. just received noun_overlap_array is =" + repr(noun_overlap_array))
+        logging.info("inside create_feature_vec. noun_overlap_matrix is =" + repr(noun_overlap_matrix))
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
         refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
-        vb_overlap_matrix== np.vstack([vb_overlap_matrix, verb_overlap_array])
+        vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
 
         logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
         logging.info("refuting_value_matrix" + str(refuting_value_matrix))
+
         logging.info("noun_overlap_matrix is =" + str(noun_overlap_matrix))
         logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
         logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
         logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
 
 
-        counter = counter + 1
 
 
 
@@ -375,12 +379,12 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
         logging.info(str("h_nouns:") + ";" + str((h_nouns)))
         logging.info(str("b_nouns:") + ";" + str((b_nouns)))
-        logging.info(str("overlap_noun_counter:") + ";" + str((overlap_noun_counter)))
+        logging.info(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
         logging.info(str("overlap:") + ";" + str((overlap)))
 
 
-        logging.debug(str("noun_count_body:") + ";" + str((noun_count_body)))
-        logging.debug(str("noun_count_headline:") + ";" + str((noun_count_headline)))
+        logging.debug(str("count_body:") + ";" + str((noun_count_body)))
+        logging.debug(str("count_headline:") + ";" + str((noun_count_headline)))
 
 
         if (noun_count_body > 0 and noun_count_headline > 0):
