@@ -376,12 +376,12 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
         logging.info(str("h_nouns:") + ";" + str((h_nouns)))
         logging.info(str("b_nouns:") + ";" + str((b_nouns)))
-        logging.info(str("overlap_noun_counter:") + ";" + str((overlap_noun_counter)))
+        logging.info(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
         logging.info(str("overlap:") + ";" + str((overlap)))
 
 
-        logging.debug(str("noun_count_body:") + ";" + str((noun_count_body)))
-        logging.debug(str("noun_count_headline:") + ";" + str((noun_count_headline)))
+        logging.debug(str("count_body:") + ";" + str((noun_count_body)))
+        logging.debug(str("count_headline:") + ";" + str((noun_count_headline)))
 
 
         if (noun_count_body > 0 and noun_count_headline > 0):
