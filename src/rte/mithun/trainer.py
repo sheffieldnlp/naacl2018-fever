@@ -180,7 +180,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
         refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
-        vb_overlap_matrix== np.vstack([vb_overlap_matrix, verb_overlap_array])
+        vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
 
         logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
         logging.info("refuting_value_matrix" + str(refuting_value_matrix))
