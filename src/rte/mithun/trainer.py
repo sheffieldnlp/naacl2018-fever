@@ -170,10 +170,11 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
-        logging.info("inside create_feature_vec. just received verb_overlap_array is =" + (verb_overlap_array))
-        logging.info("inside create_feature_vec. vb_overlap_matrix is =" + (vb_overlap_matrix))
-        logging.info("inside create_feature_vec. just received noun_overlap_array is =" + (noun_overlap_array))
-        logging.info("inside create_feature_vec. noun_overlap_matrix is =" + (noun_overlap_matrix))
+        logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
+        logging.info(verb_overlap_array)
+        logging.info("inside create_feature_vec. vb_overlap_matrix is =" + repr(vb_overlap_matrix))
+        logging.info("inside create_feature_vec. just received noun_overlap_array is =" + repr(noun_overlap_array))
+        logging.info("inside create_feature_vec. noun_overlap_matrix is =" + repr(noun_overlap_matrix))
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
@@ -183,9 +184,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
         logging.info("refuting_value_matrix" + str(refuting_value_matrix))
-        logging.info("noun_overlap_matrix is =" + (noun_overlap_matrix))
-        logging.info("shape  noun_overlap_matrix is:" + (noun_overlap_matrix.shape))
-        logging.info("vb_overlap_matrix is =" + (vb_overlap_matrix))
+        logging.info("noun_overlap_matrix is =" + repr(noun_overlap_matrix))
+        logging.info("shape  noun_overlap_matrix is:" + repr(noun_overlap_matrix.shape))
+        logging.info("vb_overlap_matrix is =" + repr(vb_overlap_matrix))
         logging.info("shape  vb_overlap_mdddatrix is:" + str(vb_overlap_matrix.shape))
 
         sys.exit(1)
