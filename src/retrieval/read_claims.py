@@ -14,7 +14,8 @@ ann_body_tr = "ann_body_tr.json"
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=True
-load_combined_vector=False
+#load_combined_vector=True
+
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -74,11 +75,11 @@ def uofa_training(args,jlr,method,logger):
 
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-    combined_vector = read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    combined_vector = read_json_create_feat_vec(load_ann_corpus,args)
+
     logging.info("done with generating feature vectors. Model training next")
     logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
-    
-    do_training(combined_vector, gold_labels_tr,args)
+    do_training(combined_vector, gold_labels_tr)
     logging.info("done with training. going to exit")
     sys.exit(1)
 
@@ -86,12 +87,12 @@ def uofa_testing(args,jlr,method,logger):
     logger.debug("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
-    combined_vector= read_json_create_feat_vec(load_ann_corpus, load_combined_vector,args)
+    combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()
     logging.debug("weights:")
-    logging.debug(trained_model.coef_ )
+    #logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
@@ -101,6 +102,9 @@ def uofa_testing(args,jlr,method,logger):
     logging.info(str(acc)+"%")
     logging.debug(classification_report(gold_labels, pred))
     logging.debug(confusion_matrix(gold_labels, pred))
+
+    # get number of support vectors for each class
+    #logging.debug(trained_model.n_support_)
     logging.info("done with testing. going to exit")
     sys.exit(1)
 

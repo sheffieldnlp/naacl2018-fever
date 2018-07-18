@@ -9,6 +9,7 @@ import time
 from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
 from processors import Document
+from sklearn import linear_model
 import json
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 my_out_dir = "poop-out"
@@ -19,8 +20,8 @@ annotated_only_lemmas="ann_lemmas.json"
 annotated_only_tags="ann_tags.json"
 annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
+#pick based on which folder you are running from. if not on home folder:
 data_root="/work/mithunpaul/fever/my_fork/fever-baselines/"
-#data_root=""
 data_folder_train=data_root+"/data/fever-data-ann/train/"
 data_folder_dev=data_root+"/data/fever-data-ann/dev/"
 model_trained="model_trained.pkl"
@@ -28,10 +29,15 @@ model_trained="model_trained.pkl"
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
 
-def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
+def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
-    if not(load_combined_vector):
-        logging.debug("load_combined_vector is falsse. going to generate features")
+    if (args.load_feat_vec==True):
+
+        logging.info("going to load combined vector from disk")
+        combined_vector = joblib.load(combined_vector_training)
+
+    else:
+        logging.debug("load_feat_vec is falsse. going to generate features")
         logging.debug("value of load_ann_corpus_tph2:" + str(load_ann_corpus_tr))
 
         cwd=os.getcwd()
@@ -77,10 +83,6 @@ def read_json_create_feat_vec(load_ann_corpus_tr, load_combined_vector,args):
         logging.info("done generating feature vectors.")
 
 
-    else:
-        logging.info("going to load combined vector from disk")
-        combined_vector = joblib.load(combined_vector_training)
-
     return combined_vector;
 
 def print_nonzero_cv(combined_vector):
@@ -104,14 +106,13 @@ def print_nonzero_cv(combined_vector):
 
 
 
-def do_training(combined_vector,gold_labels_tr,args):
-    cvalue=float(args.svmc)
-    k=args.kernel
+
+def do_training(combined_vector,gold_labels_tr):
     logging.debug("going to load the classifier:")
-    clf = svm.SVC(kernel=k, C=cvalue)
+    clf=svm.NuSVC()
     clf.fit(combined_vector, gold_labels_tr.ravel())
-    #todo:print the weights.
-    file=model_trained+"_"+str(cvalue)+"_"+k+".pkl"
+
+    file = model_trained
     joblib.dump(clf, file)
     logging.debug("done saving model to disk")
 
@@ -183,10 +184,12 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
         logging.info("refuting_value_matrix" + str(refuting_value_matrix))
-        logging.info("noun_overlap_matrix is =" + repr(noun_overlap_matrix))
-        logging.info("shape  noun_overlap_matrix is:" + repr(noun_overlap_matrix.shape))
-        logging.info("vb_overlap_matrix is =" + repr(vb_overlap_matrix))
-        logging.info("shape  vb_overlap_mdddatrix is:" + str(vb_overlap_matrix.shape))
+
+        logging.info("noun_overlap_matrix is =" + str(noun_overlap_matrix))
+        logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+        logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+
 
 
 
@@ -199,10 +202,11 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     logging.info("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
 
-    combined_vector= np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
+    # combined_vector= np.hstack(
+    #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
 
-
+    combined_vector = np.hstack(
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix])
 
     return combined_vector
 
