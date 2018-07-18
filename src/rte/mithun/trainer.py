@@ -151,8 +151,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
-    noun_overlap_matrix = np.empty((0, 2), int)
-    vb_overlap_matrix = np.empty((0, 2), int)
+    noun_overlap_matrix = np.empty((0, 2), float)
+    vb_overlap_matrix = np.empty((0, 2), float)
 
     counter=0
 
