@@ -105,13 +105,13 @@ def print_nonzero_cv(combined_vector):
 
 
 def do_training(combined_vector,gold_labels_tr,args):
-    cvalue=args.svmc
+    cvalue=float(args.svmc)
     k=args.kernel
     logging.debug("going to load the classifier:")
     clf = svm.SVC(kernel=k, C=cvalue)
     clf.fit(combined_vector, gold_labels_tr.ravel())
     #todo:print the weights.
-    file=model_trained+"_"+cvalue+"_"+k+".pkl"
+    file=model_trained+"_"+str(cvalue)+"_"+k+".pkl"
     joblib.dump(clf, file)
     logging.debug("done saving model to disk")
 
@@ -154,7 +154,6 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
 
-    counter=0
 
     for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
                            total=len(bodies_tags_related), desc="feat_gen:"):
@@ -189,9 +188,6 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         logging.info("vb_overlap_matrix is =" + repr(vb_overlap_matrix))
         logging.info("shape  vb_overlap_mdddatrix is:" + str(vb_overlap_matrix.shape))
 
-        sys.exit(1)
-
-        counter = counter + 1
 
 
 
