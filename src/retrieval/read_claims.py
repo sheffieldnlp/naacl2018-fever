@@ -102,7 +102,7 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug(confusion_matrix(gold_labels, pred))
 
     # get number of support vectors for each class
-    logging.debug(trained_model.n_support_)
+    #logging.debug(trained_model.n_support_)
     logging.info("done with testing. going to exit")
     sys.exit(1)
 
