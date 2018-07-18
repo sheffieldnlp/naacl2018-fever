@@ -106,17 +106,11 @@ def print_nonzero_cv(combined_vector):
 
 
 
-def do_training(combined_vector,gold_labels_tr,args):
-    clf = linear_model.LogisticRegression()
-
-    cvalue=float(args.svmc)
-    k=args.kernel
-    # logging.debug("going to load the classifier:")
-    # clf=svm.NuSVC()
-    # #clf = svm.SVC(kernel=k, C=cvalue)
-    # clf.fit(combined_vector, gold_labels_tr.ravel())
+def do_training(combined_vector,gold_labels_tr):
+    logging.debug("going to load the classifier:")
+    clf=svm.NuSVC()
     clf.fit(combined_vector, gold_labels_tr.ravel())
-    file=model_trained+"_"+str(cvalue)+"_"+str(k)+".pkl"
+    file = model_trained + ".pkl"
     joblib.dump(clf, file)
     logging.debug("done saving model to disk")
 
