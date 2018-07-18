@@ -200,10 +200,11 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     logging.info("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
 
-    combined_vector= np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
+    # combined_vector= np.hstack(
+    #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
 
-
+    combined_vector = np.hstack(
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix])
 
     return combined_vector
 
