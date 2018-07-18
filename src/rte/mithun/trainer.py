@@ -172,6 +172,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + str(verb_overlap_array))
         logging.info("inside create_feature_vec. vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.info("inside create_feature_vec. just received noun_overlap_array is =" + str(noun_overlap_array))
+        logging.info("inside create_feature_vec. noun_overlap_matrix is =" + str(noun_overlap_matrix))
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
