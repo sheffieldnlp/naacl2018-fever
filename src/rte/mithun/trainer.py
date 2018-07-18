@@ -24,7 +24,7 @@ annotated_head_split_folder="split_head/"
 data_root=""
 data_folder_train=data_root+"/data/fever-data-ann/train/"
 data_folder_dev=data_root+"/data/fever-data-ann/dev/"
-model_trained="model_trained.pkl"
+model_trained="model_trained"
 
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
