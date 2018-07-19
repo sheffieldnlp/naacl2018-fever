@@ -498,6 +498,5 @@ def get_ant(word):
 
     for syn in wordnet.synsets(word):
         for l in syn.lemmas():
-            synonyms.append(l.name())
             if l.antonyms():
                 antonyms.append(l.antonyms()[0].name())
