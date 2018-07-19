@@ -510,7 +510,9 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 logging.info(overlap2)
                 overlap_dir2 = len(overlap2)
 
-
+        if(overlap_dir1>0||overlap_dir2>0):
+            logging.info("found overlapping antonym adjectives")
+            sys.exit(1)
 
         features = [overlap_dir1, overlap_dir2]
         logging.debug(str("features_ant:") + str((features)))
