@@ -436,7 +436,10 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 h_nouns.append(word1)
                 ant_h_list=get_ant(word1)
                 logging.debug(ant_h_list)
-                h_nouns_antonyms.append(ant_h_list)
+                if(len(ant_h_list)>0):
+                    logging.debug(ant_h_list)
+                    sys.exit(1)
+                    h_nouns_antonyms.append(ant_h_list)
 
 
 
@@ -446,8 +449,10 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 noun_count_body = noun_count_body + 1
                 b_nouns.append(word2)
                 ant_b_list = get_ant(word2)
-                logging.debug(ant_b_list)
-                b_nouns_antonyms.append(ant_b_list)
+                if (len(ant_b_list) > 0):
+                    logging.debug(ant_b_list)
+                    sys.exit(1)
+                    b_nouns_antonyms.append(ant_b_list)
 
         # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
         overlap = set(h_nouns_antonyms).intersection(set(b_nouns))
@@ -499,6 +504,7 @@ def get_ant(word):
     logging.debug("list of lemmas are:")
     for syn in wordnet.synsets(word):
         for l in syn.lemmas():
-            logging.debug(l)
             if l.antonyms():
                 antonyms.append(l.antonyms()[0].name())
+
+    return antonyms
