@@ -463,22 +463,25 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                     logging.debug(ant_b_list)
                     b_nouns_antonyms.append(ant_b_list)
 
-        import itertools
-        flatten_h = list(itertools.chain.from_iterable(h_nouns_antonyms))
-        logging.debug(" flatten_h1:" + str((flatten_h)))
-        logging.debug(" flatten_h2:" + str(' '.join(flatten_h)))
 
-        flatten_h = lambda l: [item for sublist in l for item in h_nouns_antonyms]
-        flatten_b = lambda l: [item for sublist in l for item in b_nouns_antonyms]
-        logging.debug(" flatten_b:" + str(' '.join(flatten_b)))
-        logging.debug(" flatten_h3:" + str(' '.join(flatten_h)))
-        logging.debug("full list. b_nouns_antonyms:" + str(b_nouns_antonyms))
-        logging.debug("full list h_nouns_antonyms:" + str(h_nouns_antonyms))
-        logging.info(str("h_nouns:") + ";" + str((h_nouns)))
-        logging.info(str("b_nouns:") + ";" + str((b_nouns)))
 
                 # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
+        logging.debug(len("h_nouns_antonyms"))
+        logging.debug(len(h_nouns_antonyms))
         if(len(h_nouns_antonyms)>0):
+            import itertools
+            flatten_h = list(itertools.chain.from_iterable(h_nouns_antonyms))
+            logging.debug(" flatten_h1:" + str((flatten_h)))
+            logging.debug(" flatten_h2:" + str(' '.join(flatten_h)))
+
+            flatten_h = lambda l: [item for sublist in l for item in h_nouns_antonyms]
+            flatten_b = lambda l: [item for sublist in l for item in b_nouns_antonyms]
+            logging.debug(" flatten_b:" + str(' '.join(flatten_b)))
+            logging.debug(" flatten_h3:" + str(' '.join(flatten_h)))
+            logging.debug("full list. b_nouns_antonyms:" + str(b_nouns_antonyms))
+            logging.debug("full list h_nouns_antonyms:" + str(h_nouns_antonyms))
+            logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+            logging.info(str("b_nouns:") + ";" + str((b_nouns)))
             overlap = set(flatten_h).intersection(set(b_nouns))
 
             if(len(overlap)>0):
