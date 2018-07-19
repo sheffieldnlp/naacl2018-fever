@@ -13,6 +13,7 @@ from sklearn import linear_model
 import json
 import nltk
 from nltk.corpus import wordnet
+import itertools
 
 
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
@@ -172,7 +173,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, antonym_overlap_array = add_vectors(
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
+        antonym_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -426,6 +428,8 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
 
         logging.info("inside " + pos_in + " antonyms")
+        logging.info("lemmatized_headline_split " +str(lemmatized_headline_split))
+        logging.info("lemmatized_headline_split " + str(lemmatized_body_split))
         h_nouns = []
         b_nouns = []
         h_nouns_antonyms=[]
@@ -465,21 +469,19 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
 
                 # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
-        logging.debug(("len h_nouns_antonyms"))
-        logging.debug(len(h_nouns_antonyms))
-        if(len(h_nouns_antonyms)>0):
-            import itertools
-            flatten_h = list(itertools.chain.from_iterable(h_nouns_antonyms))
-            logging.debug(" flatten_h1:" + str((flatten_h)))
-            logging.debug(" flatten_h2:" + str(' '.join(flatten_h)))
 
-            logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+        if(len(h_nouns_antonyms)>0):
+
+            logging.info(("len h_nouns_antonyms"))
+            logging.info(len(h_nouns_antonyms))
+            flatten_h = list(itertools.chain.from_iterable(h_nouns_antonyms))
+            logging.info(" flatten_h1:" + str((flatten_h)))
             logging.info(str("b_nouns:") + ";" + str((b_nouns)))
             overlap = set(flatten_h).intersection(set(b_nouns))
 
             if(len(overlap)>0):
-                logging.debug("found overlap")
-                logging.debug(overlap)
+                logging.info("found overlap")
+                logging.info(overlap)
                 sys.exit(1)
 
         #
