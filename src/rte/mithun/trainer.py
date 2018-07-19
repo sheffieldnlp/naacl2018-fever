@@ -11,6 +11,10 @@ from processors import ProcessorsBaseAPI
 from processors import Document
 from sklearn import linear_model
 import json
+import nltk
+from nltk.corpus import wordnet
+
+
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 my_out_dir = "poop-out"
 n_cores = 2
@@ -224,6 +228,11 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     lemmatized_body_split = lemmatized_body.split(" ")
     body_pos_split = tagged_body.split(" ")
 
+    antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                      body_pos_split, "NN")
+    antonym_overlap_array = np.array([antonym_overlap])
+
+
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     word_overlap_array = np.array([word_overlap])
 
@@ -238,14 +247,12 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                         body_pos_split, "VB")
-    logging.info("just after receiving vb_overlap in add_vectors. value of vb_overlap is:"+str(vb_overlap))
     vb_overlap_array = np.array([vb_overlap])
-    logging.info("just after receiving vb_overlap in add_vectors. value of vb_overlap_array is:" + str(vb_overlap_array))
 
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -407,3 +414,90 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         logging.debug("and value of features is:" + str((features)))
 
         return features
+
+#number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
+#todo ask if we should do this for adjectives also
+
+def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
+
+        logging.info("inside " + pos_in + " antonyms")
+        h_nouns = []
+        b_nouns = []
+        h_nouns_antonyms=[]
+        b_nouns_antonyms = []
+
+        noun_count_headline = 0
+        for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
+            logging.debug(str("pos:") + ";" + str((pos)))
+            logging.debug(str("word:") + ";" + str((word1)))
+            if pos.startswith(pos_in):
+                logging.debug("pos.startswith:"+str(pos_in))
+                noun_count_headline = noun_count_headline + 1
+                h_nouns.append(word1)
+                ant_h_list=get_ant(word1)
+                logging.debug(ant_h_list)
+                h_nouns_antonyms.append(ant_h_list)
+
+
+
+        noun_count_body = 0
+        for word2, pos in zip(lemmatized_body_split, body_pos_split):
+            if pos.startswith(pos_in):
+                noun_count_body = noun_count_body + 1
+                b_nouns.append(word2)
+                ant_b_list = get_ant(word2)
+                logging.debug(ant_b_list)
+                b_nouns_antonyms.append(ant_b_list)
+
+        # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
+        overlap = set(h_nouns_antonyms).intersection(set(b_nouns))
+
+        overlap_noun_counter = len(overlap)
+
+        features = [0, 0]
+
+
+        logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+        logging.info(str("b_nouns:") + ";" + str((b_nouns)))
+        logging.info(str("h_nouns_antonyms:") + ";" + str((h_nouns_antonyms)))
+        logging.info(str("b_nouns_antonyms:") + ";" + str((b_nouns_antonyms)))
+
+        logging.info(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
+        logging.info(str("overlap:") + ";" + str((overlap)))
+
+
+        logging.debug(str("count_body:") + ";" + str((noun_count_body)))
+        logging.debug(str("count_headline:") + ";" + str((noun_count_headline)))
+        sys.exit(1)
+
+
+        if (noun_count_body > 0 and noun_count_headline > 0):
+            ratio_pos_dir1 = overlap_noun_counter / (noun_count_body)
+            ratio_pos_dir2 = overlap_noun_counter / (noun_count_headline)
+
+            if not ((ratio_pos_dir1==0) or (ratio_pos_dir2==0)):
+                logging.debug("found  overlap")
+                logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
+
+            features = [ratio_pos_dir1, ratio_pos_dir2]
+
+
+        logging.info(str("features:") + ";" + str((features)))
+
+
+
+
+
+        logging.debug("and value of features is:" + str((features)))
+
+        return features
+
+
+def get_ant(word):
+    antonyms = []
+
+    for syn in wordnet.synsets(word):
+        for l in syn.lemmas():
+            synonyms.append(l.name())
+            if l.antonyms():
+                antonyms.append(l.antonyms()[0].name())
