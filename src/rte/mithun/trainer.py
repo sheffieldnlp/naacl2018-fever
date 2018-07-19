@@ -496,7 +496,9 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 def get_ant(word):
     antonyms = []
 
+    logging.debug("list of lemmas are:")
     for syn in wordnet.synsets(word):
         for l in syn.lemmas():
+            logging.debug(l)
             if l.antonyms():
                 antonyms.append(l.antonyms()[0].name())
