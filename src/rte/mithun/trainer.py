@@ -160,7 +160,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
 
-
+    counter=0
     for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
                            total=len(bodies_tags_related), desc="feat_gen:"):
 
@@ -195,6 +195,10 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
         logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
         logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+
+        counter=counter+1
+        if(counter==20):
+            sys.exit(1)
 
 
 
@@ -439,8 +443,8 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 ant_h_list=get_ant(word1)
                 logging.debug(ant_h_list)
                 if(len(ant_h_list)>0):
+                    logging.debug("ant_h_list:")
                     logging.debug(ant_h_list)
-                    sys.exit(1)
                     h_nouns_antonyms.append(ant_h_list)
 
 
@@ -452,8 +456,8 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 b_nouns.append(word2)
                 ant_b_list = get_ant(word2)
                 if (len(ant_b_list) > 0):
+                    logging.debug("ant_b_list:")
                     logging.debug(ant_b_list)
-                    sys.exit(1)
                     b_nouns_antonyms.append(ant_b_list)
 
         # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
@@ -502,7 +506,6 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 def get_ant(word):
     antonyms = []
 
-    logging.debug("list of lemmas are:")
     for syn in wordnet.synsets(word):
         for l in syn.lemmas():
             if l.antonyms():
