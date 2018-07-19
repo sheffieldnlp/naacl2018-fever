@@ -11,6 +11,11 @@ from processors import ProcessorsBaseAPI
 from processors import Document
 from sklearn import linear_model
 import json
+import nltk
+from nltk.corpus import wordnet
+import itertools
+
+
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 my_out_dir = "poop-out"
 n_cores = 2
@@ -154,8 +159,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
+    ant_overlap_matrix = np.empty((0, 2), float)
 
-
+    counter=0
     for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
                            total=len(bodies_tags_related), desc="feat_gen:"):
 
@@ -167,7 +173,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
         #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array = add_vectors(
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
+        antonym_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -181,6 +188,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
+        ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
 
         logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
         logging.info("refuting_value_matrix" + str(refuting_value_matrix))
@@ -189,6 +197,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
         logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
         logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+
+        counter=counter+1
+
 
 
 
@@ -206,7 +217,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
 
     combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix])
 
     return combined_vector
 
@@ -224,6 +235,11 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     lemmatized_body_split = lemmatized_body.split(" ")
     body_pos_split = tagged_body.split(" ")
 
+    antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                      body_pos_split, "NN")
+    antonym_overlap_array = np.array([antonym_overlap])
+
+
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     word_overlap_array = np.array([word_overlap])
 
@@ -238,14 +254,12 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                         body_pos_split, "VB")
-    logging.info("just after receiving vb_overlap in add_vectors. value of vb_overlap is:"+str(vb_overlap))
     vb_overlap_array = np.array([vb_overlap])
-    logging.info("just after receiving vb_overlap in add_vectors. value of vb_overlap_array is:" + str(vb_overlap_array))
 
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -407,3 +421,102 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         logging.debug("and value of features is:" + str((features)))
 
         return features
+
+#number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
+#todo ask if we should do this for adjectives also
+
+def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
+
+        logging.info("inside " + pos_in + " antonyms")
+        logging.info("lemmatized_headline_split " +str(lemmatized_headline_split))
+        logging.info("lemmatized_headline_split " + str(lemmatized_body_split))
+        h_nouns = []
+        b_nouns = []
+        h_nouns_antonyms=[]
+        b_nouns_antonyms = []
+
+        noun_count_headline = 0
+        for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:")  + str((word1)))
+            if pos.startswith(pos_in):
+                logging.debug("pos.startswith:"+str(pos_in))
+                noun_count_headline = noun_count_headline + 1
+                h_nouns.append(word1)
+                ant_h_list=get_ant(word1)
+                logging.debug(ant_h_list)
+                if(len(ant_h_list)>0):
+                    logging.debug("ant_h_list:")
+                    logging.debug(ant_h_list)
+                    h_nouns_antonyms.append(ant_h_list)
+
+
+
+
+        noun_count_body = 0
+        for word2, pos in zip(lemmatized_body_split, body_pos_split):
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:") + str((word2)))
+            if pos.startswith(pos_in):
+                noun_count_body = noun_count_body + 1
+                b_nouns.append(word2)
+                ant_b_list = get_ant(word2)
+                if (len(ant_b_list) > 0):
+                    logging.debug("ant_b_list:")
+                    logging.debug(ant_b_list)
+                    b_nouns_antonyms.append(ant_b_list)
+
+
+
+
+        overlap_dir1=0
+        overlap_dir2=0
+
+        #number of nouns in evidence that were antonyms of any word in claim
+        if(len(h_nouns_antonyms)>0):
+
+            logging.info(("len h_nouns_antonyms"))
+            logging.info(len(h_nouns_antonyms))
+            flatten_h = list(itertools.chain.from_iterable(h_nouns_antonyms))
+            logging.info(" flatten_h1:" + str((flatten_h)))
+            logging.info(str("b_nouns:") + ";" + str((b_nouns)))
+            overlap = set(flatten_h).intersection(set(b_nouns))
+
+            if(len(overlap)>0):
+                logging.info("found overlap1")
+                logging.info(overlap)
+                overlap_dir1 = len(overlap)
+
+        #vice versa
+        if (len(b_nouns_antonyms) > 0):
+
+            logging.info(("len b_nouns_antonyms"))
+            logging.info(len(b_nouns_antonyms))
+            flatten_b = list(itertools.chain.from_iterable(b_nouns_antonyms))
+            logging.info(" flatten_b:" + str((flatten_b)))
+            logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+            overlap2 = set(flatten_b).intersection(set(h_nouns))
+
+            if (len(overlap2) > 0):
+                logging.info("found overlap2")
+                logging.info(overlap2)
+                overlap_dir2 = len(overlap2)
+
+
+
+        features = [overlap_dir1, overlap_dir2]
+        logging.debug(str("features_ant:") + str((features)))
+
+
+        return features
+
+
+def get_ant(word):
+    antonyms = []
+
+    for syn in wordnet.synsets(word):
+        for l in syn.lemmas():
+            if l.antonyms():
+                antonyms.append(l.antonyms()[0].name())
+
+    return antonyms
