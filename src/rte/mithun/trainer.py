@@ -113,7 +113,7 @@ def print_nonzero_cv(combined_vector):
 
 
 def do_training(combined_vector,gold_labels_tr):
-    logging.debug("going to load the classifier:")
+    logging.debug("going to train the classifier:")
     clf=svm.NuSVC()
     clf.fit(combined_vector, gold_labels_tr.ravel())
 
