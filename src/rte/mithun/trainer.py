@@ -434,8 +434,8 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
         noun_count_headline = 0
         for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
-            logging.debug(str("pos:") + ";" + str((pos)))
-            logging.debug(str("word:") + ";" + str((word1)))
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:")  + str((word1)))
             if pos.startswith(pos_in):
                 logging.debug("pos.startswith:"+str(pos_in))
                 noun_count_headline = noun_count_headline + 1
@@ -446,11 +446,14 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                     logging.debug("ant_h_list:")
                     logging.debug(ant_h_list)
                     h_nouns_antonyms.append(ant_h_list)
+                    logging.debug("full list h_nouns_antonyms:" + str(h_nouns_antonyms))
 
 
 
         noun_count_body = 0
         for word2, pos in zip(lemmatized_body_split, body_pos_split):
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:") + str((word2)))
             if pos.startswith(pos_in):
                 noun_count_body = noun_count_body + 1
                 b_nouns.append(word2)
@@ -459,6 +462,7 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                     logging.debug("ant_b_list:")
                     logging.debug(ant_b_list)
                     b_nouns_antonyms.append(ant_b_list)
+                    logging.debug("full list b_nouns_antonyms:"+str(b_nouns_antonyms))
 
         # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
         # overlap = set(h_nouns_antonyms).intersection(set(b_nouns))
