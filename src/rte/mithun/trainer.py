@@ -197,8 +197,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
 
         counter=counter+1
-        if(counter==20):
-            sys.exit(1)
+
 
 
 
@@ -466,17 +465,13 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
 
                 # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
-        logging.debug(len("h_nouns_antonyms"))
+        logging.debug(("len h_nouns_antonyms"))
         logging.debug(len(h_nouns_antonyms))
         if(len(h_nouns_antonyms)>0):
             import itertools
             flatten_h = list(itertools.chain.from_iterable(h_nouns_antonyms))
             logging.debug(" flatten_h1:" + str((flatten_h)))
             logging.debug(" flatten_h2:" + str(' '.join(flatten_h)))
-
-
-            logging.debug("full list. b_nouns_antonyms:" + str(b_nouns_antonyms))
-            logging.debug("full list h_nouns_antonyms:" + str(h_nouns_antonyms))
 
             logging.info(str("h_nouns:") + ";" + str((h_nouns)))
             logging.info(str("b_nouns:") + ";" + str((b_nouns)))
