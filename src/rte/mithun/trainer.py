@@ -446,7 +446,7 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                     logging.debug("ant_h_list:")
                     logging.debug(ant_h_list)
                     h_nouns_antonyms.append(ant_h_list)
-                    logging.debug("full list h_nouns_antonyms:" + str(h_nouns_antonyms))
+
 
 
 
@@ -462,10 +462,25 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                     logging.debug("ant_b_list:")
                     logging.debug(ant_b_list)
                     b_nouns_antonyms.append(ant_b_list)
-                    logging.debug("full list. b_nouns_antonyms:"+str(b_nouns_antonyms))
 
-        # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
-        # overlap = set(h_nouns_antonyms).intersection(set(b_nouns))
+
+
+        flatten_h = lambda l: [item for sublist in l for item in h_nouns_antonyms]
+        flatten_b = lambda l: [item for sublist in l for item in b_nouns_antonyms]
+        logging.debug(" flatten_b:" + str(flatten_b))
+        logging.debug(" flatten_h:" + str(flatten_h))
+        logging.debug("full list. b_nouns_antonyms:" + str(b_nouns_antonyms))
+        logging.debug("full list h_nouns_antonyms:" + str(h_nouns_antonyms))
+
+                # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
+        if(len(h_nouns_antonyms)>0):
+            overlap = set(h_nouns_antonyms).intersection(set(b_nouns))
+
+            if(len(overlap)>0):
+                logging.debug("found overlap")
+                logging.debug(overlap)
+                sys.exit(1)
+
         #
         # overlap_noun_counter = len(overlap)
         #
