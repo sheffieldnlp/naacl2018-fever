@@ -472,8 +472,6 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
         overlap_dir1=0
         overlap_dir2=0
 
-        found=False
-
         #number of nouns in evidence that were antonyms of any word in claim
         if(len(h_nouns_antonyms)>0):
 
@@ -488,7 +486,6 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 logging.info("found overlap1")
                 logging.info(overlap)
                 overlap_dir1 = len(overlap)
-                found=True
 
         #vice versa
         if (len(b_nouns_antonyms) > 0):
@@ -504,13 +501,12 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 logging.info("found overlap2")
                 logging.info(overlap)
                 overlap_dir1 = len(overlap)
-                found = True
 
 
 
         features = [overlap_dir1, overlap_dir2]
 
-        if(found):
+        if(overlap_dir1>0)and (overlap_dir2>0):
             logging.info(str("features:") + ";" + str((features)))
             sys.exit(1)
 
