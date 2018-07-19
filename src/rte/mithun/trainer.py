@@ -495,20 +495,20 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
             flatten_b = list(itertools.chain.from_iterable(b_nouns_antonyms))
             logging.info(" flatten_b:" + str((flatten_b)))
             logging.info(str("h_nouns:") + ";" + str((h_nouns)))
-            overlap = set(flatten_b).intersection(set(h_nouns))
+            overlap2 = set(flatten_b).intersection(set(h_nouns))
 
-            if (len(overlap) > 0):
+            if (len(overlap2) > 0):
                 logging.info("found overlap2")
-                logging.info(overlap)
-                overlap_dir1 = len(overlap)
+                logging.info(overlap2)
+                overlap_dir2 = len(overlap2)
 
 
 
         features = [overlap_dir1, overlap_dir2]
-        logging.warning(str("features_ant:") + ";" + str((features)))
+        logging.warning(str("features_ant:") + str((features)))
 
         if(overlap_dir1>0)and (overlap_dir2>0):
-            logging.warning(str("features:") + ";" + str((features)))
+            logging.warning(str("features:") + str((features)))
             sys.exit(1)
 
         #
