@@ -86,6 +86,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         joblib.dump(combined_vector, combined_vector_training)
         logging.info("done generating feature vectors.")
+        sys.exit(1)
 
 
     return combined_vector;
@@ -507,44 +508,6 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
         features = [overlap_dir1, overlap_dir2]
         logging.warning(str("features_ant:") + str((features)))
 
-        if(overlap_dir1>0)and (overlap_dir2>0):
-            logging.warning(str("features:") + str((features)))
-            sys.exit(1)
-
-        #
-
-        #
-        #
-        #
-        # logging.info(str("h_nouns_antonyms:") + ";" + str((h_nouns_antonyms)))
-        # logging.info(str("b_nouns_antonyms:") + ";" + str((b_nouns_antonyms)))
-        #
-        # logging.info(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
-        # logging.info(str("overlap:") + ";" + str((overlap)))
-        #
-        #
-        # logging.debug(str("count_body:") + ";" + str((noun_count_body)))
-        # logging.debug(str("count_headline:") + ";" + str((noun_count_headline)))
-        #
-        #
-        # if (noun_count_body > 0 and noun_count_headline > 0):
-        #     ratio_pos_dir1 = overlap_noun_counter / (noun_count_body)
-        #     ratio_pos_dir2 = overlap_noun_counter / (noun_count_headline)
-        #
-        #     if not ((ratio_pos_dir1==0) or (ratio_pos_dir2==0)):
-        #         logging.debug("found  overlap")
-        #         logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
-        #
-        #     features = [ratio_pos_dir1, ratio_pos_dir2]
-        #
-        #
-        #
-        #
-        #
-        #
-        #
-        #
-        # logging.debug("and value of features is:" + str((features)))
 
         return features
 
