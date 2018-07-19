@@ -86,7 +86,6 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         joblib.dump(combined_vector, combined_vector_training)
         logging.info("done generating feature vectors.")
-        sys.exit(1)
 
 
     return combined_vector;
