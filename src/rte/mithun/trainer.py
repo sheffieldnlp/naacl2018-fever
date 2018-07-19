@@ -160,6 +160,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
+    hedging_headline_matrix = np.empty((0, 30), int)
+
+
 
     counter=0
     for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
@@ -174,7 +177,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array = add_vectors(
+        antonym_overlap_array,hedge_headline_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -189,6 +192,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
+        hedging_headline_matrix = np.vstack([hedging_headline_matrix, hedge_headline_array])
+
 
         logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
         logging.info("refuting_value_matrix" + str(refuting_value_matrix))
@@ -217,7 +222,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
 
     combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix])
 
     return combined_vector
 
@@ -246,6 +251,11 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
+    hedge_headline = hedging_features_headline(lemmatized_headline_split, lemmatized_body_split)
+    hedge_headline_array = np.array([hedge_headline])
+
+
+
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
@@ -259,7 +269,8 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,\
+           vb_overlap_array,antonym_overlap_array,hedge_headline_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -319,6 +330,53 @@ def hedging_features(clean_headline, clean_body):
 
 
     return hedging_body_vector
+
+def hedging_features_headline(clean_headline):
+
+    hedging_words = [
+        'allegedly',
+        'reportedly',
+      'argue',
+      'argument',
+      'believe',
+      'belief',
+      'conjecture',
+      'consider',
+      'hint',
+      'hypothesis',
+      'hypotheses',
+      'hypothesize',
+      'implication',
+      'imply',
+      'indicate',
+      'predict',
+      'prediction',
+      'previous',
+      'previously',
+      'proposal',
+      'propose',
+      'question',
+      'speculate',
+      'speculation',
+      'suggest',
+      'suspect',
+      'theorize',
+      'theory',
+      'think',
+      'whether'
+    ]
+
+    length_hedge=len(hedging_words)
+    hedging_h_vector = [0] * length_hedge
+
+
+    for word in clean_headline:
+        if word in hedging_words:
+            index=hedging_words.index(word)
+            hedging_h_vector[index]=1
+
+    return hedging_h_vector
+
 
 def refuting_features_mithun(clean_headline, clean_body):
     # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
