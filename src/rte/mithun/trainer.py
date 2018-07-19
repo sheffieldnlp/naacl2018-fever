@@ -504,7 +504,8 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 logging.info("found overlap2")
                 logging.info(overlap)
                 overlap_dir1 = len(overlap)
-                sys.exit(1)
+                found = True
+
 
 
         features = [overlap_dir1, overlap_dir2]
