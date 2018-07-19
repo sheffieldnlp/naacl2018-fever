@@ -468,8 +468,13 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
 
 
-                # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
 
+        overlap_dir1=0
+        overlap_dir2=0
+
+        found=False
+
+        #number of nouns in evidence that were antonyms of any word in claim
         if(len(h_nouns_antonyms)>0):
 
             logging.info(("len h_nouns_antonyms"))
@@ -480,14 +485,36 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
             overlap = set(flatten_h).intersection(set(b_nouns))
 
             if(len(overlap)>0):
-                logging.info("found overlap")
+                logging.info("found overlap1")
                 logging.info(overlap)
+                overlap_dir1 = len(overlap)
+                found=True
+
+        #vice versa
+        if (len(b_nouns_antonyms) > 0):
+
+            logging.info(("len b_nouns_antonyms"))
+            logging.info(len(b_nouns_antonyms))
+            flatten_b = list(itertools.chain.from_iterable(b_nouns_antonyms))
+            logging.info(" flatten_b:" + str((flatten_b)))
+            logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+            overlap = set(flatten_b).intersection(set(h_nouns))
+
+            if (len(overlap) > 0):
+                logging.info("found overlap2")
+                logging.info(overlap)
+                overlap_dir1 = len(overlap)
                 sys.exit(1)
 
+
+        features = [overlap_dir1, overlap_dir2]
+
+        if(found):
+            logging.info(str("features:") + ";" + str((features)))
+            sys.exit(1)
+
         #
-        # overlap_noun_counter = len(overlap)
-        #
-        features = [0, 0]
+
         #
         #
         #
@@ -513,7 +540,7 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
         #     features = [ratio_pos_dir1, ratio_pos_dir2]
         #
         #
-        # logging.info(str("features:") + ";" + str((features)))
+        #
         #
         #
         #
