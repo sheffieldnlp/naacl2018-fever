@@ -505,9 +505,10 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
 
         features = [overlap_dir1, overlap_dir2]
+        logging.warning(str("features_ant:") + ";" + str((features)))
 
         if(overlap_dir1>0)and (overlap_dir2>0):
-            logging.info(str("features:") + ";" + str((features)))
+            logging.warning(str("features:") + ";" + str((features)))
             sys.exit(1)
 
         #
