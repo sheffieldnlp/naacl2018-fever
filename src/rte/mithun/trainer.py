@@ -251,7 +251,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
-    hedge_headline = hedging_features_headline(lemmatized_headline_split, lemmatized_body_split)
+    hedge_headline = hedging_features_headline(lemmatized_headline_split)
     hedge_headline_array = np.array([hedge_headline])
 
 
