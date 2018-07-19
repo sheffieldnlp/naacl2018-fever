@@ -471,6 +471,8 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
         logging.debug(" flatten_h:" + str(flatten_h))
         logging.debug("full list. b_nouns_antonyms:" + str(b_nouns_antonyms))
         logging.debug("full list h_nouns_antonyms:" + str(h_nouns_antonyms))
+        logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+        logging.info(str("b_nouns:") + ";" + str((b_nouns)))
 
                 # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
         if(len(h_nouns_antonyms)>0):
@@ -487,8 +489,7 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
         features = [0, 0]
         #
         #
-        # logging.info(str("h_nouns:") + ";" + str((h_nouns)))
-        # logging.info(str("b_nouns:") + ";" + str((b_nouns)))
+        #
         # logging.info(str("h_nouns_antonyms:") + ";" + str((h_nouns_antonyms)))
         # logging.info(str("b_nouns_antonyms:") + ";" + str((b_nouns_antonyms)))
         #
