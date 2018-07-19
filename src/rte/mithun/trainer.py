@@ -462,7 +462,7 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                     logging.debug("ant_b_list:")
                     logging.debug(ant_b_list)
                     b_nouns_antonyms.append(ant_b_list)
-                    logging.debug("full list b_nouns_antonyms:"+str(b_nouns_antonyms))
+                    logging.debug("full list. b_nouns_antonyms:"+str(b_nouns_antonyms))
 
         # for antonyms of each noun in headline, do an intersection with the list of nouns in the body.
         # overlap = set(h_nouns_antonyms).intersection(set(b_nouns))
