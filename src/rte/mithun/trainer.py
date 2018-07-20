@@ -249,17 +249,13 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
       'myself', 'then', 'yours', 'the', 'there', "you're", 'can', 'ourselves', "you'll", 'with', 'as', 'him', "shan't",
       'own', 'than', 'aren', 'nor', 'you', 'at', 'mightn', 'hasn', 'am', 'shan', 'needn', 'this', 'having', 'hadn',
       'yourself', 'themselves', 'too', 'couldn', 'will', "aren't", "you'd", 'more', 'few', 'our', 'most', 'very', 'me',
-      'into', 'their', 'those', 'wasn', 'all', 'here', 'been', 'your', 'on',
-      'isn','these', 'until', 'haven', 'we', 'theirs', 'be', 'what', 'while', 'why', 'where', 'which', 'when', 'who',
-                 'whom', 'his', 'they', 'she', 'himself', 'herself', 'has', 'have', 'do','and','is' , "weren't",
-                          'were', 'did', "did n't", 'it', "won't", "doesn't", 'had', "needn't", "wouldn't",
-                                   "that'll", "mightn't",
-                 "hadn't","mustn't",
-                 'he',"don't","she's", "isn't","should've",'should', "shouldn't",'does',"couldn't","wasn't","haven't"
-    ,"hasn't",'was', "it's"}
+      'into', 'their', 'those', 'wasn', 'all', 'here', 'been', 'your', 'on','isn','these', 'until', 'haven', 'we',
+        'theirs', 'be', 'what', 'while', 'why', 'where', 'which', 'when', 'who','whom', 'his', 'they', 'she', 'himself',
+                  'herself', 'has', 'have', 'do','and','is' , "weren't",'were', 'did', "did n't", 'it', "won't", "doesn't",
+                  'had', "needn't", "wouldn't","that'll", "mightn't","hadn't","mustn't",'he',"don't","she's", "isn't","should've",
+                  'should', "shouldn't",'does',"couldn't","wasn't","haven't","hasn't",'was', "it's"}
 
     logging.debug(stop_words)
-    sys.exit(1)
 
     lemmatized_headline_split_sw = [w for w in lemmatized_headline_split if not w in stop_words]
     lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
@@ -269,12 +265,12 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
     
-    antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+    antonym_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
                                       body_pos_split, "NN")
     antonym_overlap_array = np.array([antonym_overlap])
 
 
-    word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+    word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
 
     word_overlap_array = np.array([word_overlap])
 
