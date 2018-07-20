@@ -262,6 +262,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
     logging.debug("after  removal of stop  words:")
     logging.debug(lemmatized_body_split_sw)
+    sys.exit(1)
 
 
     
