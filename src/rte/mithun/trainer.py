@@ -9,10 +9,11 @@ import time
 from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
 from processors import Document
+
 from sklearn import linear_model
-import json
+import json,string
 import nltk
-from nltk.corpus import wordnet
+from nltk.corpus import wordnet,stopwords
 import itertools
 
 
@@ -93,7 +94,6 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 def print_nonzero_cv(combined_vector):
     # debug code: go through all the vectors last row and print the coordinates of non zero entries
 
-
     c=0
 
     logging.debug(" starting: combined vector"+str(combined_vector))
@@ -111,14 +111,15 @@ def print_nonzero_cv(combined_vector):
 
 
 
-
 def do_training(combined_vector,gold_labels_tr):
+
     logging.debug("going to load the classifier:")
     clf=svm.NuSVC()
     clf.fit(combined_vector, gold_labels_tr.ravel())
 
     file = model_trained
     joblib.dump(clf, file)
+
     logging.debug("done saving model to disk")
 
 def load_model():
@@ -225,31 +226,49 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logging):
 
 
+
     #split everywhere based on space-i.e for word overlap etc etc..
 
     lemmatized_headline = lemmatized_headline.lower()
     lemmatized_body = lemmatized_body.lower()
-
     lemmatized_headline_split = lemmatized_headline.split(" ")
-    headline_pos_split = tagged_headline.split(" ")
     lemmatized_body_split = lemmatized_body.split(" ")
+    headline_pos_split = tagged_headline.split(" ")
     body_pos_split = tagged_body.split(" ")
 
+
+    logging.debug("before removal of stop  words:")
+    logging.debug(lemmatized_body)
+
+
+    #remove stop words
+    stop_words = set(stopwords.words('english'))
+    # logging.debug(stop_words)
+
+    lemmatized_headline_split_sw = [w for w in lemmatized_headline_split if not w in stop_words]
+    lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
+
+    logging.debug("after  removal of stop  words:")
+    logging.debug(lemmatized_body_split_sw)
+
+
+    
     antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "NN")
     antonym_overlap_array = np.array([antonym_overlap])
 
 
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
+    hedge_value = hedging_features(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     hedge_value_array = np.array([hedge_value])
 
-    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+    refuting_value = refuting_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     refuting_value_array = np.array([refuting_value])
 
-    noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
+    noun_overlap = pos_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw, body_pos_split, "NN")
     noun_overlap_array = np.array([noun_overlap])
 
     vb_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
