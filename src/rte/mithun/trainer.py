@@ -459,10 +459,19 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
         #then  for each of these verbs, take that position value, go through dependency parse
         for p in vb_positions:
-            for x in e:
-                logging.debug (x)
-
-        sys.exit(1)
+            logging.debug(p)
+            for edges in body_deps:
+                logging.debug(edges)
+                for x in edges:
+                    dest = x["destination"]
+                    src = x["source"]
+                    rel = x["relation"]
+                    if (p==src):
+                        logging.debug("found a verb src dest")
+                        logging.debug(src)
+                        logging.debug(rel)
+                        logging.debug(dest)
+                        sys.exit(1)
 
 
 
