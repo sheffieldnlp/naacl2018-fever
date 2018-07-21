@@ -465,12 +465,15 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         for p in vb_positions:
             logging.debug(p)
             for edges in body_deps:
-                logging.debug(edges)
-                sys.exit(1)
-                for x in edges:
-                    dest = x["destination"]
-                    src = x["source"]
-                    rel = x["relation"]
+                    logging.debug(edges)
+                    dest = edges["destination"]
+                    src = edges["source"]
+                    rel = edges["relation"]
+                    logging.debug(src)
+                    logging.debug(rel)
+                    logging.debug(dest)
+                    # and find if any of the leading edges go through "neg"
+                    sys.exit(1)
                     if (p==src):
                         logging.debug("found a verb src dest")
                         logging.debug(src)
