@@ -491,28 +491,28 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
                     logging.debug(lemmatized_body_split)
                     sys.exit(1)
 
-        sys.exit(1)
-        # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
-        for p in vb_positions_body:
-            logging.debug(p)
-            for edges in body_deps:
-                    logging.debug(edges)
-                    dest = edges["destination"]
-                    src = edges["source"]
-                    rel = edges["relation"]
-                    logging.debug(src)
-                    logging.debug(rel)
-                    logging.debug(dest)
-
-                    if ((p==src) and (rel=="neg")):
-                        logging.debug("found a verb having negative edge")
-                        logging.debug("lemmatized_headline_split")
-                        logging.debug(lemmatized_headline_split)
-                        logging.debug(src)
-                        logging.debug(rel)
-                        logging.debug(dest)
-                        # and find if any of the leading edges go through "neg"
-                        sys.exit(1)
+        #
+        # # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
+        # for p in vb_positions_body:
+        #     logging.debug(p)
+        #     for edges in body_deps:
+        #             logging.debug(edges)
+        #             dest = edges["destination"]
+        #             src = edges["source"]
+        #             rel = edges["relation"]
+        #             logging.debug(src)
+        #             logging.debug(rel)
+        #             logging.debug(dest)
+        #
+        #             if ((p==src) and (rel=="neg")):
+        #                 logging.debug("found a verb having negative edge")
+        #                 logging.debug("lemmatized_headline_split")
+        #                 logging.debug(lemmatized_headline_split)
+        #                 logging.debug(src)
+        #                 logging.debug(rel)
+        #                 logging.debug(dest)
+        #                 # and find if any of the leading edges go through "neg"
+        #                 sys.exit(1)
 
 
         features = [0, 0]
