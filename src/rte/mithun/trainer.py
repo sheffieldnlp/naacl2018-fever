@@ -452,7 +452,6 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.debug("vb_positions")
         logging.debug(vb_positions)
 
-        e = body_deps["edges"]
 
         logging.debug("edges")
         logging.debug(e)
