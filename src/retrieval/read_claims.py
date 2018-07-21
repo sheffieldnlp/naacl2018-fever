@@ -113,9 +113,9 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug(str(gold_labels))
     logging.info("done testing. and the accuracy is:")
     acc=accuracy_score(gold_labels, pred)*100
-    logging.info(str(acc)+"%")
-    logging.debug(classification_report(gold_labels, pred))
-    logging.debug(confusion_matrix(gold_labels, pred))
+    logging.warning(str(acc)+"%")
+    logging.info(classification_report(gold_labels, pred))
+    logging.info(confusion_matrix(gold_labels, pred))
 
     # get number of support vectors for each class
     #logging.debug(trained_model.n_support_)
