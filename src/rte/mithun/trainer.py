@@ -169,6 +169,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
+    neg_vb_matrix = np.empty((0, 2), float)
+
 
     counter=0
     for  head_lemmas, body_lemmas,head_tags_related,body_tags_related,head_deps,body_deps in \
@@ -181,7 +183,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         tagged_body=body_tags_related
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array = add_vectors(
+        antonym_overlap_array,neg_vb_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps,body_deps)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -196,6 +198,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
+        neg_vb_matrix= np.vstack([neg_vb_matrix, neg_vb_array])
+
 
         logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
         logging.info("refuting_value_matrix" + str(refuting_value_matrix))
@@ -224,7 +228,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
 
     combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,neg_vb_matrix])
 
     return combined_vector
 
@@ -483,54 +487,10 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
                         sys.exit(1)
 
 
-
-
-
-        #do the same for body.
-        noun_count_headline = 0
-
-
-        noun_count_body = 0
-        for word, pos in zip(lemmatized_body_split, body_pos_split):
-            if pos.startswith(pos_in):
-                noun_count_body = noun_count_body + 1
-                b_nouns.append(word)
-
-        overlap = set(h_nouns).intersection(set(b_nouns))
-
-        overlap_noun_counter = len(overlap)
-
         features = [0, 0]
 
 
-        logging.info(str("h_nouns:") + ";" + str((h_nouns)))
-        logging.info(str("b_nouns:") + ";" + str((b_nouns)))
-        logging.info(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
-        logging.info(str("overlap:") + ";" + str((overlap)))
 
-
-        logging.debug(str("count_body:") + ";" + str((noun_count_body)))
-        logging.debug(str("count_headline:") + ";" + str((noun_count_headline)))
-
-
-        if (noun_count_body > 0 and noun_count_headline > 0):
-            ratio_pos_dir1 = overlap_noun_counter / (noun_count_body)
-            ratio_pos_dir2 = overlap_noun_counter / (noun_count_headline)
-
-            if not ((ratio_pos_dir1==0) or (ratio_pos_dir2==0)):
-                logging.debug("found  overlap")
-                logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
-
-            features = [ratio_pos_dir1, ratio_pos_dir2]
-
-
-        logging.info(str("features:") + ";" + str((features)))
-
-
-
-
-
-        logging.debug("and value of features is:" + str((features)))
 
         return features
 
