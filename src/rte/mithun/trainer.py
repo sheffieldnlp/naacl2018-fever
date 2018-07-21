@@ -75,8 +75,8 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         bodies_lemmas = read_json(bff,logging)
         heads_tags = read_json(hft,logging)
         bodies_tags = read_json(bft,logging)
-        heads_deps = read_json(hfd, logging)
-        bodies_deps = read_json(bfd, logging)
+        heads_deps = read_json_deps(hfd)
+        bodies_deps = read_json_deps(bfd)
 
 
         logging.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
@@ -604,6 +604,20 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
         return features
 
+def read_json_deps(json_file):
+    logging.debug("inside read_json")
+    l = []
+    counter=0
+    edges_list=[]
+
+    with open(json_file) as f:
+        for eachline in (f):
+            d = json.loads(eachline)
+            a=d["data"]
+            for e in a:
+                edges=e["edges"]
+                edges_list.append(edges)
+    return edges_list
 
 def get_ant(word):
     antonyms = []
