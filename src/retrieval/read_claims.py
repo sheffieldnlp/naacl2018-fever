@@ -66,7 +66,7 @@ def print_cv(combined_vector,gold_labels_tr):
 
 
 def uofa_training(args,jlr,method,logger):
-    logger.debug("got inside uofatraining")
+    logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
     #tr_data=read_claims_annotate(args,jlr,logger,method)
@@ -77,19 +77,19 @@ def uofa_training(args,jlr,method,logger):
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus,args)
 
-    logging.info("done with generating feature vectors. Model training next")
+    logging.warning("done with generating feature vectors. Model training next")
     logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
     do_training(combined_vector, gold_labels_tr)
-    logging.info("done with training. going to exit")
+    logging.warning("done with training. going to exit")
     sys.exit(1)
 
 def uofa_testing(args,jlr,method,logger):
-    logger.debug("got inside uofa_testing")
+    logger.warning("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
-    logging.info("done with generating feature vectors. Model loading and predicting next")
+    logging.warning("done with generating feature vectors. Model loading and predicting next")
     trained_model=load_model()
     logging.debug("weights:")
     #logging.debug(trained_model.coef_ )
@@ -97,9 +97,9 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
     logging.debug(str(gold_labels))
-    logging.info("done testing. and the accuracy is:")
+    logging.warning("done testing. and the accuracy is:")
     acc=accuracy_score(gold_labels, pred)*100
-    logging.info(str(acc)+"%")
+    logging.warning(str(acc)+"%")
     logging.debug(classification_report(gold_labels, pred))
     logging.debug(confusion_matrix(gold_labels, pred))
 
