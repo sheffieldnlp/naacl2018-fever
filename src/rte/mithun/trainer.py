@@ -479,7 +479,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         vb_positions_body=[]
         # then  for each of these verbs, check if this verb occurs in the body.
         for vb_head in verb_head_list:
-            for index,word2, pos in zip(lemmatized_body_split):
+            for index,word2, pos in enumerate(lemmatized_body_split):
                 logging.debug(word2)
                 if (vb_head==word2):
                     # if it does then find the position of that verb in the body. then
