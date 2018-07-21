@@ -265,19 +265,18 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
     
-    antonym_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
+    antonym_noun_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
                                       body_pos_split, "NN")
-    antonym_overlap_array = np.array([antonym_overlap])
+    antonym_noun_overlap_array = np.array([antonym_noun_overlap])
 
 
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
-
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features(lemmatized_headline_split_sw, lemmatized_body_split_sw)
+    hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
-    refuting_value = refuting_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
+    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
     noun_overlap = pos_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw, body_pos_split, "NN")
@@ -290,7 +289,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_noun_overlap_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
