@@ -79,8 +79,10 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         bodies_deps = read_json_deps(bfd)
 
 
-        logging.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
-        logging.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
+        logging.debug("type of heads_deps is: " + str(type(heads_deps)))
+        logging.debug("size of heads_deps is: " + str(len(heads_deps)))
+        logging.debug("type of bodies_deps is: " + str(type(bodies_deps)))
+        logging.debug("size of bodies_deps is: " + str(len(bodies_deps)))
 
 
         if not ((len(heads_lemmas) == len(bodies_lemmas))or (len(heads_tags) == len(bodies_tags)) or
@@ -238,6 +240,10 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     lemmatized_body_split = lemmatized_body.split(" ")
     body_pos_split = tagged_body.split(" ")
 
+    neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                 body_pos_split, head_deps, body_deps, "VB")
+    neg_vb_array = np.array([neg_vb])
+
     antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "NN")
     antonym_overlap_array = np.array([antonym_overlap])
@@ -259,9 +265,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
                                         body_pos_split, "VB")
     vb_overlap_array = np.array([vb_overlap])
 
-    neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
-                                      body_pos_split,head_deps,body_deps,"VB")
-    neg_vb_array = np.array([neg_vb])
+
 
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,\
@@ -440,7 +444,7 @@ def find_pos_positions(headline_pos_split,pos_in):
 
 '''number of verbs in sentence one that were negated in sentence 2'''
 def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps,body_deps,pos_in):
-        logging.info("inside " + pos_in + " overlap")
+        logging.info("inside negated_verbs_count")
         h_nouns = []
         b_nouns = []
 
@@ -452,8 +456,11 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.debug("vb_positions")
         logging.debug(vb_positions)
 
+        logging.debug("body_deps")
+        logging.debug(body_deps)
 
 
+        sys.exit(1)
         #then  for each of these verbs, take that position value, go through dependency parse
         for p in vb_positions:
             logging.debug(p)
@@ -468,11 +475,12 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
                         logging.debug(src)
                         logging.debug(rel)
                         logging.debug(dest)
+                        # and find if any of the leading edges go through "neg"
                         sys.exit(1)
 
 
 
-        #find if any of the leading edges go through "neg"
+
 
         #do the same for body.
         noun_count_headline = 0
