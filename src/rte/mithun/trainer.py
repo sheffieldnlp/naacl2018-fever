@@ -438,7 +438,7 @@ def find_pos_positions(headline_pos_split,pos_in):
 
     return positions
 
-
+'''number of verbs in sentence one that were negated in sentence 2'''
 def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps,body_deps,pos_in):
         logging.info("inside " + pos_in + " overlap")
         h_nouns = []
@@ -451,9 +451,20 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         vb_positions=find_pos_positions(headline_pos_split,pos_in)
         logging.debug("vb_positions")
         logging.debug(vb_positions)
-        sys.exit(1)
+
+        e = body_deps["edges"]
+
+        logging.debug("edges")
+        logging.debug(e)
 
         #then  for each of these verbs, take that position value, go through dependency parse
+        for p in vb_positions:
+            for x in e:
+                logging.debug (x)
+
+        sys.exit(1)
+
+
 
         #find if any of the leading edges go through "neg"
 
