@@ -494,9 +494,6 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
         if(len(vb_positions_body)>0):
             logging.debug(vb_positions_body)
-            sys.exit(1)
-
-
             for p in vb_positions_body:
                 logging.debug(p)
                 for edges in body_deps:
