@@ -23,6 +23,7 @@ LABELS = ['SUPPORTS', 'REFUTES', 'NOT ENOUGH INFO']
 RELATED = LABELS[0:3]
 annotated_only_lemmas="ann_lemmas.json"
 annotated_only_tags="ann_tags.json"
+annotated_only_dep="ann_deps.json"
 annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
 #pick based on which folder you are running from. if not on home folder:
@@ -56,10 +57,14 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         bf=data_folder+annotated_body_split_folder
         bff=bf+annotated_only_lemmas
         bft=bf+annotated_only_tags
+        bfd = bf + annotated_only_dep
 
         hf=data_folder+annotated_head_split_folder
         hff=hf+annotated_only_lemmas
         hft=hf+annotated_only_tags
+        hfd=hf+annotated_only_dep
+
+
 
 
         logging.debug("hff:" + str(hff))
@@ -70,19 +75,22 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         bodies_lemmas = read_json(bff,logging)
         heads_tags = read_json(hft,logging)
         bodies_tags = read_json(bft,logging)
+        heads_deps = read_json(hfd, logging)
+        bodies_deps = read_json(bfd, logging)
 
 
         logging.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
         logging.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
 
 
-        if not (len(heads_lemmas) == len(bodies_lemmas)):
-            logging.debug("size of heads_lemmas and bodies_lemmas dont match")
+        if not ((len(heads_lemmas) == len(bodies_lemmas))or (len(heads_tags) == len(bodies_tags)) or
+                    (len(heads_deps) == len(bodies_deps)) ):
+            logging.debug("size of heads_lemmas and bodies_lemmas dont match. going to quit")
             sys.exit(1)
 
 
         combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,logging)
+                                             bodies_tags,heads_deps,bodies_deps)
 
         joblib.dump(combined_vector, combined_vector_training)
         logging.info("done generating feature vectors.")
@@ -152,8 +160,7 @@ def normalize_dummy(text):
     x = text.lower().translate(remove_punctuation_map)
     return x.split(" ")
 
-def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags_related,logging):
-    #todo: dont hardcode. create this after u know the size
+def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags_related,heads_deps,bodies_deps):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
@@ -162,7 +169,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     ant_overlap_matrix = np.empty((0, 2), float)
 
     counter=0
-    for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
+    for  head_lemmas, body_lemmas,head_tags_related,body_tags_related,head_deps,body_deps in \
+            tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related,heads_deps,bodies_deps)),
                            total=len(bodies_tags_related), desc="feat_gen:"):
 
         lemmatized_headline = head_lemmas
@@ -170,12 +178,9 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         tagged_headline=head_tags_related
         tagged_body=body_tags_related
 
-
-        #todo: remove stop words-bring in nltk list of stop words...and punctuation.
-
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
         antonym_overlap_array = add_vectors(
-            lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
+            lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps,body_deps)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
         logging.info(verb_overlap_array)
@@ -222,14 +227,12 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     return combined_vector
 
 
-def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logging):
+def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps):
 
 
     #split everywhere based on space-i.e for word overlap etc etc..
-
     lemmatized_headline = lemmatized_headline.lower()
     lemmatized_body = lemmatized_body.lower()
-
     lemmatized_headline_split = lemmatized_headline.split(" ")
     headline_pos_split = tagged_headline.split(" ")
     lemmatized_body_split = lemmatized_body.split(" ")
@@ -256,10 +259,13 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
                                         body_pos_split, "VB")
     vb_overlap_array = np.array([vb_overlap])
 
+    neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                      body_pos_split,head_deps,body_deps,"VB")
+    neg_vb_array = np.array([neg_vb])
 
 
-
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,\
+           antonym_overlap_array,neg_vb_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -422,9 +428,88 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
         return features
 
-#number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
-#todo ask if we should do this for adjectives also
+#find positions where all verbs occur in headline.
+def find_pos_positions(headline_pos_split,pos_in):
+    positions=[]
+    logging.debug(str("pos:") + ";" + str((pos)))
+    logging.debug(str("word:") + ";" + str((word)))
+    for index, pos in enumerate(headline_pos_split):
+        if pos.startswith(pos_in):
+            logging.debug("pos.startswith:" + str(pos_in))
+            positions.append(index)
 
+    return positions
+
+
+def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps,body_deps,pos_in):
+        logging.info("inside " + pos_in + " overlap")
+        h_nouns = []
+        b_nouns = []
+
+        logging.debug("lemmatized_headline_split")
+        logging.debug(lemmatized_headline_split)
+
+        #find positions where all verbs occur in headline.
+        vb_positions=find_pos_positions(headline_pos_split,pos_in)
+        logging.debug("vb_positions")
+        logging.debug(vb_positions)
+        sys.exit(1)
+
+        #then  for each of these verbs, take that position value, go through dependency parse
+
+        #find if any of the leading edges go through "neg"
+
+        #do the same for body.
+        noun_count_headline = 0
+
+
+        noun_count_body = 0
+        for word, pos in zip(lemmatized_body_split, body_pos_split):
+            if pos.startswith(pos_in):
+                noun_count_body = noun_count_body + 1
+                b_nouns.append(word)
+
+        overlap = set(h_nouns).intersection(set(b_nouns))
+
+        overlap_noun_counter = len(overlap)
+
+        features = [0, 0]
+
+
+        logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+        logging.info(str("b_nouns:") + ";" + str((b_nouns)))
+        logging.info(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
+        logging.info(str("overlap:") + ";" + str((overlap)))
+
+
+        logging.debug(str("count_body:") + ";" + str((noun_count_body)))
+        logging.debug(str("count_headline:") + ";" + str((noun_count_headline)))
+
+
+        if (noun_count_body > 0 and noun_count_headline > 0):
+            ratio_pos_dir1 = overlap_noun_counter / (noun_count_body)
+            ratio_pos_dir2 = overlap_noun_counter / (noun_count_headline)
+
+            if not ((ratio_pos_dir1==0) or (ratio_pos_dir2==0)):
+                logging.debug("found  overlap")
+                logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
+
+            features = [ratio_pos_dir1, ratio_pos_dir2]
+
+
+        logging.info(str("features:") + ";" + str((features)))
+
+
+
+
+
+        logging.debug("and value of features is:" + str((features)))
+
+        return features
+
+
+
+#number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
 def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
 
         logging.info("inside " + pos_in + " antonyms")
