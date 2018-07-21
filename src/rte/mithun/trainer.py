@@ -448,8 +448,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         h_nouns = []
         b_nouns = []
 
-        logging.debug("lemmatized_headline_split")
-        logging.debug(lemmatized_headline_split)
+
 
         #find positions where all verbs occur in headline.
         vb_positions=find_pos_positions(headline_pos_split,pos_in)
@@ -473,9 +472,10 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
                     logging.debug(rel)
                     logging.debug(dest)
                     # and find if any of the leading edges go through "neg"
-                    sys.exit(1)
-                    if (p==src):
-                        logging.debug("found a verb src dest")
+                    if ((p==src) and (rel=="neg")):
+                        logging.debug("found a verb having negative edge")
+                        logging.debug("lemmatized_headline_split")
+                        logging.debug(lemmatized_headline_split)
                         logging.debug(src)
                         logging.debug(rel)
                         logging.debug(dest)
