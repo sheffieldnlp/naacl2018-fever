@@ -472,6 +472,8 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
             if pos.startswith(pos_in):
                 verb_head_list.append(word1)
 
+        logging.debug(verb_head_list)
+        logging.debug("verb_head_list")
         vb_positions_body=[]
         # then  for each of these verbs, check if this verb occurs in the body.
         for vb_head in verb_head_list:
@@ -486,7 +488,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
                     logging.debug(lemmatized_body_split)
                     sys.exit(1)
 
-
+        sys.exit(1)
         # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
         for p in vb_positions_body:
             logging.debug(p)
