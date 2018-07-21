@@ -453,8 +453,6 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.debug(vb_positions)
 
 
-        logging.debug("edges")
-        logging.debug(e)
 
         #then  for each of these verbs, take that position value, go through dependency parse
         for p in vb_positions:
