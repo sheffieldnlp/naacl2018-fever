@@ -431,8 +431,6 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 #find positions where all verbs occur in headline.
 def find_pos_positions(headline_pos_split,pos_in):
     positions=[]
-    logging.debug(str("pos:") + ";" + str((pos)))
-    logging.debug(str("word:") + ";" + str((word)))
     for index, pos in enumerate(headline_pos_split):
         if pos.startswith(pos_in):
             logging.debug("pos.startswith:" + str(pos_in))
