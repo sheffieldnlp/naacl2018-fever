@@ -14,6 +14,7 @@ import json
 import nltk
 from nltk.corpus import wordnet
 import itertools
+from src.rte.mithun.proc_data import PyProcDoc
 
 
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
@@ -458,7 +459,17 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         b_nouns = []
 
 
+        id_h=head_deps.doc_id
+        id_b=body_deps.doc_id
+        e_h=head_deps.data
+        e_b = body_deps.data
 
+        logging.debug(id_h)
+        logging.debug(id_b)
+        logging.debug(e_h)
+        logging.debug(e_b)
+
+        sys.exit(1)
 
         #vb_positions=find_pos_positions(headline_pos_split,pos_in)
 
@@ -496,7 +507,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
             logging.debug(vb_positions_body)
             for p in vb_positions_body:
                 logging.debug(p)
-                for edges in body_deps:
+                for edges in body_deps.data:
                         logging.debug(edges)
                         dest = edges["destination"]
                         src = edges["source"]
@@ -612,19 +623,24 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
         return features
 
 def read_json_deps(json_file):
-    logging.debug("inside read_json")
+    logging.debug("inside read_json_deps")
     l = []
     counter=0
-    edges_list=[]
+    py_proc_doc_list=[]
 
     with open(json_file) as f:
         for eachline in (f):
+            obj_doc=PyProcDoc()
             d = json.loads(eachline)
             a=d["data"]
+            b = d["doc_id"]
+            obj_doc.doc_id=b
             for e in a:
                 edges=e["edges"]
-                edges_list.append(edges)
-    return edges_list
+                obj_doc.data=edges
+                py_proc_doc_list.append(obj_doc)
+
+    return py_proc_doc_list
 
 def get_ant(word):
     antonyms = []
