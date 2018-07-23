@@ -76,16 +76,9 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         logging.debug("bff:" + str(bff))
         logging.info("going to read heads_lemmas from disk:")
 
-        heads_lemmas1 = read_json(hff,logging)
-        heads_lemmas2= read_json_with_id(hff)
-
-        for n,r in zip(heads_lemmas1,heads_lemmas2):
-            logging.debug(n)
-            logging.debug(r.data)
-        sys.exit(1)
-
-
-        bodies_lemmas = read_json(bff,logging)
+        #heads_lemmas = read_json(hff,logging)
+        heads_lemmas= read_json_with_id(hff)
+        bodies_lemmas = read_json(bff)
         heads_tags = read_json(hft,logging)
         bodies_tags = read_json(bft,logging)
         heads_deps = read_json_deps(hfd)
@@ -238,9 +231,21 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     #split everywhere based on space-i.e for word overlap etc etc..
     lemmatized_headline = lemmatized_headline.lower()
     lemmatized_body = lemmatized_body.lower()
-    lemmatized_headline_split = lemmatized_headline.split(" ")
+
+    doc_id_h=lemmatized_headline.id
+    doc_id_b=lemmatized_body.id
+
+    lemmatized_headline_split = lemmatized_headline.data.split(" ")
+    lemmatized_body_split = lemmatized_body.data.split(" ")
+
+    logging.debug(doc_id_h)
+    logging.debug(doc_id_b)
+    logging.debug(lemmatized_headline_split)
+    logging.debug(lemmatized_body_split)
+
+    sys.exit(1)
+
     headline_pos_split = tagged_headline.split(" ")
-    lemmatized_body_split = lemmatized_body.split(" ")
     body_pos_split = tagged_body.split(" ")
 
     neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
