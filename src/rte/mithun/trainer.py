@@ -255,7 +255,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(doc_id_hw)
     logging.debug(doc_id_bw)
 
-    if not (doc_id_hl==doc_id_bl==doc_id_ht==doc_id_bt==doc_id_hd==doc_id_bl==doc_id_bd==doc_id_hw==doc_id_bw):
+    if not (doc_id_hl == doc_id_bl == doc_id_ht == doc_id_bt == doc_id_hd == doc_id_bd == doc_id_hw == doc_id_bw):
         logging.error("all doc ids dont match going to quit")
         sys.exit(1)
 
