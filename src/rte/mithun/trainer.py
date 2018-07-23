@@ -236,8 +236,8 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     lemmatized_headline_data = lemmatized_headline_data.lower()
     lemmatized_body_data = lemmatized_body_data.lower()
 
-    doc_id_h=lemmatized_headline_obj.id
-    doc_id_b=lemmatized_body_obj.id
+    doc_id_h=lemmatized_headline_obj.doc_id
+    doc_id_b=lemmatized_body_obj.doc_id
 
     lemmatized_headline_split = lemmatized_headline_data.split(" ")
     lemmatized_body_split = lemmatized_body_data.split(" ")
