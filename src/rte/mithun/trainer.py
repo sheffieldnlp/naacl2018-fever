@@ -79,8 +79,12 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         #heads_lemmas = read_json(hff,logging)
         heads_lemmas= read_json_with_id(hff)
         bodies_lemmas = read_json_with_id(bff)
-        heads_tags = read_json(hft,logging)
-        bodies_tags = read_json(bft,logging)
+
+        heads_tags= read_json_with_id(hft)
+        bodies_tags = read_json_with_id(hft)
+        #
+        # heads_tags = read_json(hft,logging)
+        # bodies_tags = read_json(hft,logging)
         heads_deps = read_json_deps(hfd)
         bodies_deps = read_json_deps(bfd)
 
@@ -154,7 +158,7 @@ def normalize_dummy(text):
     x = text.lower().translate(remove_punctuation_map)
     return x.split(" ")
 
-def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags_related,heads_deps,bodies_deps):
+def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
@@ -166,8 +170,8 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 
     counter=0
     for  head_lemmas, body_lemmas,head_tags_related,body_tags_related,head_deps,body_deps in \
-            tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related,heads_deps,bodies_deps)),
-                           total=len(bodies_tags_related), desc="feat_gen:"):
+            tqdm((zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list)),
+                 total=len(bodies_tags_obj_list), desc="feat_gen:"):
 
         lemmatized_headline = head_lemmas
         lemmatized_body=body_lemmas
@@ -236,16 +240,29 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     lemmatized_headline_data = lemmatized_headline_data.lower()
     lemmatized_body_data = lemmatized_body_data.lower()
 
-    doc_id_h=lemmatized_headline_obj.doc_id
-    doc_id_b=lemmatized_body_obj.doc_id
+    doc_id_hl=lemmatized_headline_obj.doc_id
+    doc_id_bl=lemmatized_body_obj.doc_id
+    doc_id_ht=tagged_headline.doc_id
+    doc_id_bt=tagged_body.doc_id
+    doc_id_hd=head_deps.doc_id
+    doc_id_bd=body_deps.doc_id
 
     lemmatized_headline_split = lemmatized_headline_data.split(" ")
     lemmatized_body_split = lemmatized_body_data.split(" ")
 
-    logging.debug(doc_id_h)
-    logging.debug(doc_id_b)
+    logging.debug(doc_id_hl)
+    logging.debug(doc_id_bl)
+    logging.debug(doc_id_ht)
+    logging.debug(doc_id_bt)
+    logging.debug(doc_id_hd)
+    logging.debug(doc_id_bd)
+
     logging.debug(lemmatized_headline_split)
     logging.debug(lemmatized_body_split)
+    logging.debug(tagged_headline.data)
+    logging.debug(tagged_body.data)
+    logging.debug(head_deps.data)
+    logging.debug(body_deps.data)
 
     sys.exit(1)
 
