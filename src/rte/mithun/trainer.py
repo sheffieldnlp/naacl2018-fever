@@ -267,6 +267,9 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(body_deps.data)
     logging.debug(head_words.data)
     logging.debug(body_words.data)
+
+    logging.debug(tagged_headline)
+    logging.debug(tagged_body)
     logging.debug(headline_pos_split)
     logging.debug(body_pos_split)
 
