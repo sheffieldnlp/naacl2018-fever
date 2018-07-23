@@ -221,7 +221,7 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     return combined_vector
 
 
-def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps,heads_words, bodies_words):
+def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps, head_words, body_words):
 
 
 
@@ -238,9 +238,13 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     doc_id_bt=tagged_body.doc_id
     doc_id_hd=head_deps.doc_id
     doc_id_bd=body_deps.doc_id
+    doc_id_hw=head_words.doc_id
+    doc_id_bw=body_words.doc_id
 
     lemmatized_headline_split = lemmatized_headline_data.split(" ")
     lemmatized_body_split = lemmatized_body_data.split(" ")
+    headline_pos_split = tagged_headline.data.split(" ")
+    body_pos_split = tagged_body.data.split(" ")
 
     logging.debug(doc_id_hl)
     logging.debug(doc_id_bl)
@@ -248,6 +252,12 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(doc_id_bt)
     logging.debug(doc_id_hd)
     logging.debug(doc_id_bd)
+    logging.debug(doc_id_hw)
+    logging.debug(doc_id_bw)
+
+    if not (doc_id_hl==doc_id_bl==doc_id_ht==doc_id_bt==doc_id_hd==doc_id_bl==doc_id_bd==doc_id_hw==doc_id_bw):
+        logging.error("all doc ids dont match going to quit")
+        sys.exit(1)
 
     logging.debug(lemmatized_headline_split)
     logging.debug(lemmatized_body_split)
@@ -255,13 +265,16 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(tagged_body.data)
     logging.debug(head_deps.data)
     logging.debug(body_deps.data)
-    logging.debug(heads_words.data)
-    logging.debug(bodies_words.data)
+    logging.debug(head_words.data)
+    logging.debug(body_words.data)
+    logging.debug(headline_pos_split)
+    logging.debug(body_pos_split)
 
     sys.exit(1)
 
-    headline_pos_split = tagged_headline.split(" ")
-    body_pos_split = tagged_body.split(" ")
+
+
+
 
     neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                  body_pos_split, head_deps, body_deps, "VB")
