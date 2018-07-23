@@ -78,7 +78,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         #heads_lemmas = read_json(hff,logging)
         heads_lemmas= read_json_with_id(hff)
-        bodies_lemmas = read_json(bff)
+        bodies_lemmas = read_json_with_id(bff)
         heads_tags = read_json(hft,logging)
         bodies_tags = read_json(bft,logging)
         heads_deps = read_json_deps(hfd)
