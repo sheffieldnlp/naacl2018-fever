@@ -76,7 +76,14 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         logging.debug("bff:" + str(bff))
         logging.info("going to read heads_lemmas from disk:")
 
-        heads_lemmas = read_json(hff,logging)
+        heads_lemmas1 = read_json(hff,logging)
+        heads_lemmas2= read_json_with_id(hff)
+
+        logging.debug(heads_lemmas1)
+        logging.debug(heads_lemmas2.data)
+        sys.exit(1)
+
+
         bodies_lemmas = read_json(bff,logging)
         heads_tags = read_json(hft,logging)
         bodies_tags = read_json(bft,logging)
@@ -147,20 +154,6 @@ def do_testing(combined_vector,svm):
     joblib.dump(p, predicted_results)
     logging.debug("done with predictions")
     return p
-
-def read_json(json_file,logging):
-    logging.debug("inside read_json")
-    l = []
-    counter=0
-
-    with open(json_file) as f:
-        for eachline in (f):
-            d = json.loads(eachline)
-            a=d["data"]
-            just_lemmas=' '.join(str(r) for v in a for r in v)
-            l.append(just_lemmas)
-            counter = counter + 1
-    return l
 
 
 def normalize_dummy(text):
@@ -646,6 +639,41 @@ def read_json_deps(json_file):
 
     return py_proc_doc_list
 
+
+def read_json_with_id(json_file):
+    logging.debug("inside read_json_deps")
+
+    py_proc_doc_list=[]
+
+    with open(json_file) as f:
+        for eachline in (f):
+            obj_doc=PyProcDoc()
+            d = json.loads(eachline)
+            a=d["data"]
+            just_lemmas=' '.join(str(r) for v in a for r in v)
+            obj_doc.data=just_lemmas
+            b = d["doc_id"]
+            obj_doc.doc_id=b
+            py_proc_doc_list.append(obj_doc)
+
+    return py_proc_doc_list
+
+
+def read_json(json_file,logging):
+    logging.debug("inside read_json")
+    l = []
+    counter=0
+
+    with open(json_file) as f:
+        for eachline in (f):
+            d = json.loads(eachline)
+            a=d["data"]
+            just_lemmas=' '.join(str(r) for v in a for r in v)
+            l.append(just_lemmas)
+            counter = counter + 1
+    return l
+
+
 def get_ant(word):
     antonyms = []
 
@@ -655,3 +683,4 @@ def get_ant(word):
                 antonyms.append(l.antonyms()[0].name())
 
     return antonyms
+
