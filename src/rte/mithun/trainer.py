@@ -228,6 +228,10 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
 def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps):
 
 
+
+    lemmatized_headline = lemmatized_headline.data
+    lemmatized_body= lemmatized_body.data
+
     #split everywhere based on space-i.e for word overlap etc etc..
     lemmatized_headline = lemmatized_headline.lower()
     lemmatized_body = lemmatized_body.lower()
@@ -235,8 +239,8 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     doc_id_h=lemmatized_headline.id
     doc_id_b=lemmatized_body.id
 
-    lemmatized_headline_split = lemmatized_headline.data.split(" ")
-    lemmatized_body_split = lemmatized_body.data.split(" ")
+    lemmatized_headline_split = lemmatized_headline.split(" ")
+    lemmatized_body_split = lemmatized_body.split(" ")
 
     logging.debug(doc_id_h)
     logging.debug(doc_id_b)
