@@ -79,8 +79,9 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         heads_lemmas1 = read_json(hff,logging)
         heads_lemmas2= read_json_with_id(hff)
 
-        logging.debug(heads_lemmas1)
-        logging.debug(heads_lemmas2.data)
+        for n,r in zip(heads_lemmas1,heads_lemmas2):
+            logging.debug(n)
+            logging.debug(r.data)
         sys.exit(1)
 
 
