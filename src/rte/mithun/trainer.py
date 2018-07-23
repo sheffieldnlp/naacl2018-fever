@@ -273,7 +273,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(headline_pos_split)
     logging.debug(body_pos_split)
 
-    sys.exit(1)
+
 
 
 
@@ -498,20 +498,6 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         e_h=head_deps.data
         e_b = body_deps.data
 
-        logging.debug(id_h)
-        logging.debug(id_b)
-        logging.debug(e_h)
-        logging.debug(e_b)
-
-        sys.exit(1)
-
-        #vb_positions=find_pos_positions(headline_pos_split,pos_in)
-
-
-        # logging.debug("body_deps")
-        # logging.debug(body_deps)
-        logging.debug(lemmatized_headline_split)
-        logging.debug(lemmatized_body_split)
 
         # find  all verbs that occur in headline.
         verb_head_list = []
