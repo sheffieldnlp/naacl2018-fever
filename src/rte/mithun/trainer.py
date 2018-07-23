@@ -14,7 +14,7 @@ import json
 import nltk
 from nltk.corpus import wordnet
 import itertools
-from proc_data import PyProcDoc
+from .proc_data import PyProcDoc
 
 
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
