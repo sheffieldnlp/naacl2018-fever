@@ -35,6 +35,10 @@ model_trained="model_trained.pkl"
 
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
+# if __name__ == "__main__":
+#         logger = setup_custom_logger('root')
+#         logger.debug('main message')
+
 
 def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
