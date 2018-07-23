@@ -25,6 +25,7 @@ RELATED = LABELS[0:3]
 annotated_only_lemmas="ann_lemmas.json"
 annotated_only_tags="ann_tags.json"
 annotated_only_dep="ann_deps.json"
+annotated_words="ann_words.json"
 annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
 #pick based on which folder you are running from. if not on home folder:
@@ -63,31 +64,31 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         bff=bf+annotated_only_lemmas
         bft=bf+annotated_only_tags
         bfd = bf + annotated_only_dep
+        bfw=bf+annotated_words
 
         hf=data_folder+annotated_head_split_folder
         hff=hf+annotated_only_lemmas
         hft=hf+annotated_only_tags
         hfd=hf+annotated_only_dep
-
-
+        hfw=hf+annotated_words
 
 
         logging.debug("hff:" + str(hff))
         logging.debug("bff:" + str(bff))
         logging.info("going to read heads_lemmas from disk:")
 
-        #heads_lemmas = read_json(hff,logging)
         heads_lemmas= read_json_with_id(hff)
         bodies_lemmas = read_json_with_id(bff)
 
         heads_tags= read_json_with_id(hft)
         bodies_tags = read_json_with_id(bft)
-        #
-        # heads_tags = read_json(hft,logging)
-        # bodies_tags = read_json(hft,logging)
+
         heads_deps = read_json_deps(hfd)
         bodies_deps = read_json_deps(bfd)
 
+
+        heads_words = read_json_with_id(hfw)
+        bodies_words = read_json_with_id(bfw)
 
         logging.debug("type of heads_deps is: " + str(type(heads_deps)))
         logging.debug("size of heads_deps is: " + str(len(heads_deps)))
@@ -102,7 +103,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
 
         combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,heads_deps,bodies_deps)
+                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words)
 
         joblib.dump(combined_vector, combined_vector_training)
         logging.info("done generating feature vectors.")
@@ -158,7 +159,7 @@ def normalize_dummy(text):
     x = text.lower().translate(remove_punctuation_map)
     return x.split(" ")
 
-def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list):
+def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
@@ -169,18 +170,9 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
 
 
     counter=0
-    for  head_lemmas, body_lemmas,head_tags_related,body_tags_related,head_deps,body_deps in \
-            tqdm((zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list)),
-                 total=len(bodies_tags_obj_list), desc="feat_gen:"):
+    for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,heads_words, bodies_words) in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
-        lemmatized_headline = head_lemmas
-        lemmatized_body=body_lemmas
-        tagged_headline=head_tags_related
-        tagged_body=body_tags_related
-
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,neg_vb_array = add_vectors(
-            lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps,body_deps)
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array,antonym_overlap_array,neg_vb_array  = add_vectors(lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps,body_deps,heads_words, bodies_words)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
         logging.info(verb_overlap_array)
@@ -229,7 +221,7 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     return combined_vector
 
 
-def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps):
+def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps,heads_words, bodies_words):
 
 
 
@@ -263,6 +255,8 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(tagged_body.data)
     logging.debug(head_deps.data)
     logging.debug(body_deps.data)
+    logging.debug(heads_words.data)
+    logging.debug(bodies_words.data)
 
     sys.exit(1)
 
