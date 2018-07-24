@@ -654,7 +654,7 @@ dependency parse of the sentence
 '''
 def get_neg_count(vb_positions, sent_deps, lemmatized_sent_split):
     vb_list=get_neg_list(vb_positions, sent_deps, lemmatized_sent_split)
-    logging.debug("vb_list:"+str(vb_list))
+    logging.info("vb_list:"+str(vb_list))
     return len(vb_list)
 
 
@@ -679,11 +679,10 @@ def get_neg_list(vb_positions, sent_deps,lemmatized_sent_split):
                         logging.debug(dest)
 
                         if ((p==src) and (rel=="neg")):
-                            logging.debug("found a verb having negative edge")
-
-                            logging.debug(src)
-                            logging.debug(rel)
-                            logging.debug(dest)
+                            logging.info("found a verb having negative edge")
+                            logging.info(src)
+                            logging.info(rel)
+                            logging.info(dest)
                             # and find if any of the leading edges go through "neg"-add it as a feature
                             vb_count_list.append(lemmatized_sent_split[p])
 
