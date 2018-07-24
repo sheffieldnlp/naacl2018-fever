@@ -555,7 +555,8 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.info(features)
         logging.info(nc2)
 
-
+        if(nc1>0):
+            sys.exit(1)
         #
         # #feature 2: find no of verbs in body that were negated in headline
         # verb_body_list= get_all_verbs(lemmatized_body_split,body_pos_split,pos_in)
