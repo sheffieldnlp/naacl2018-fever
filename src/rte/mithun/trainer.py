@@ -589,16 +589,12 @@ def get_neg_list(vb_positions, sent_deps,lemmatized_sent_split):
 '''given a list of verbs find all the positions if and where they occur in the given sentence'''
 def given_verb_find_positions(verb_list, lemmatized_sent):
         vb_positions_body=[]
-        # then  for each of these verbs, check if this verb occurs in the body.
         for vb_head in verb_list:
             for index,word2 in enumerate(lemmatized_sent):
-                logging.debug(word2)
                 if (vb_head==word2):
-                    # if it does then find the position of that verb in the body. then
                     vb_positions_body.append(index)
                     logging.debug("found a verb which has same verb in headline and body")
-                    logging.debug(index)
-                    logging.debug(vb_head)
+        return vb_positions_body
 
 # find  all verbs that occur in a given sentence.
 def get_all_verbs(lemmatized_headline_split, headline_pos_split,pos_in):
