@@ -491,7 +491,7 @@ def find_pos_positions(headline_pos_split,pos_in):
         # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
         '''
 def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps,body_deps,pos_in):
-        features = [0, 0,0]
+        features = [0, 0, 0,0 ]
         logging.info("inside negated_verbs_count")
 
         #feature 1: if a verb in headline is negated in body, add that as 1
@@ -521,30 +521,49 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.info(features)
 
 
-        # if the negative status is same, add that as another feature. i.e if verb is negated in both headline and body, that is one
+
 
         verb_head_list= get_all_verbs(lemmatized_headline_split,headline_pos_split,pos_in)
         vb_positions_head=given_verb_find_positions(verb_head_list, lemmatized_headline_split)
-        nc3=get_neg_list(vb_positions_head,head_deps,lemmatized_headline_split)
+        verbs_negated_head=get_neg_list(vb_positions_head,head_deps,lemmatized_headline_split)
         verb_body_list= get_all_verbs(lemmatized_body_split,body_pos_split,pos_in)
         vb_positions_body=given_verb_find_positions(verb_body_list, lemmatized_body_split)
-        nc4=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
+        verbs_negated_body=get_neg_list(vb_positions_body,body_deps,lemmatized_body_split)
 
+
+        #list of positive verbs will be the ones that are not negated
+        list_of_pos_verb_h=set(verb_head_list).difference(set(verbs_negated_head))
+        list_of_pos_verb_b=set(verb_body_list).difference(set(verbs_negated_body))
 
 
         logging.info(verb_head_list)
         logging.info(vb_positions_head)
-        logging.info(nc3)
+        logging.info(verbs_negated_head)
         logging.info(verb_body_list)
         logging.info(vb_positions_body)
-        logging.info(nc4)
-        logging.info(features)
+        logging.info(verbs_negated_body)
+        logging.info(verbs_negated_body)
+        logging.info(list_of_pos_verb_h)
+        logging.info(list_of_pos_verb_b)
 
-        sys.exit(1)
 
-        if(set(nc3).intersection(set(nc4))==0):
-            logging.info("found that verbs in both sentences have same polarity")
-            features[3]=1
+        # if the negative polarity status is same, add that as another feature. i.e if verb is negated in both headline and body, that is one
+
+
+        if(len(verbs_negated_head)>0) and (len(verbs_negated_body>0)):
+            if(set(verbs_negated_head).intersection(set(verbs_negated_body))==0):
+                logging.info("found that verbs in both sentences have same polarity")
+                features[3]=1
+
+
+        # same for positive, if the verb was not negated in headline and was not negated in body also
+
+
+        if(len(list_of_pos_verb_h)>0) and (len(list_of_pos_verb_b>0)):
+            if(set(list_of_pos_verb_h).intersection(set(list_of_pos_verb_b))==0):
+                logging.info("found that verbs in both sentences have same polarity")
+                features[4]=1
+
 
         logging.info(features)
         sys.exit(1)
