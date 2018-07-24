@@ -554,6 +554,9 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.info(nc1)
         logging.info(features)
         logging.info(nc2)
+        logging.info(verbs_negated_head)
+        logging.info(list_of_pos_verb_h)
+
 
         if(nc1>0):
             sys.exit(1)
