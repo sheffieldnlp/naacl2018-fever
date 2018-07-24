@@ -170,9 +170,12 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
 
 
     counter=0
-    for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,heads_words, bodies_words) in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
+    for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,heads_words, bodies_words) \
+            in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
+                        bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array,antonym_overlap_array,neg_vb_array  = add_vectors(lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps,body_deps,heads_words, bodies_words)
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array,antonym_overlap_array,\
+        neg_vb_array  = add_vectors(lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps,body_deps,heads_words, bodies_words)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
         logging.info(verb_overlap_array)
@@ -251,7 +254,10 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(doc_id_ht)
     logging.debug(doc_id_bt)
     logging.debug(doc_id_hd)
+
+    #this guy is not matching
     logging.debug(doc_id_bd)
+
     logging.debug(doc_id_hw)
     logging.debug(doc_id_bw)
 
@@ -658,7 +664,8 @@ def read_json_deps(json_file):
             for e in a:
                 edges=e["edges"]
                 obj_doc.data=edges
-                py_proc_doc_list.append(obj_doc)
+
+            py_proc_doc_list.append(obj_doc)
 
     return py_proc_doc_list
 
