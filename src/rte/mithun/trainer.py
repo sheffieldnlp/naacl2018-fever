@@ -512,10 +512,14 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         list_of_pos_verb_h=set(verb_head_list).difference(set(verbs_negated_head))
 
         #for each +ve verb in head find how many of those were negated in body
+        # e.g. ['be', 'jump'...]
         vb_head_in_body=given_verb_find_positions(list_of_pos_verb_h, lemmatized_body_split)
 
         #if the verb doesn't even exist nc1= zero
         if (len(vb_head_in_body) > 0):
+            # e.g.
+            # if both 'be' and 'jump' are negated body:
+            #  nc1 == 2
             nc1=get_neg_count(vb_head_in_body,body_deps,lemmatized_body_split)
         else:
             nc1=0
