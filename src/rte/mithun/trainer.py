@@ -512,15 +512,15 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         list_of_pos_verb_h=set(verb_head_list).difference(set(verbs_negated_head))
 
         #for each +ve verb in head find how many of those were negated in body
-        vb_positions_body=given_verb_find_positions(list_of_pos_verb_h, lemmatized_body_split)
+        vb_head_in_body=given_verb_find_positions(list_of_pos_verb_h, lemmatized_body_split)
 
         #if the verb doesn't even exist nc1= zero
-        if (len(vb_positions_body)>0):
-            nc1=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
+        if (len(vb_head_in_body) > 0):
+            nc1=get_neg_count(vb_head_in_body,body_deps,lemmatized_body_split)
         else:
             nc1=0
 
-        #if atleast one of them was negated, change the value to the count and the feature denoting same polarity==0
+        #if atleast one of the positive verbs in headline was negated, change the value to the count and the feature denoting same polarity==0
         if(nc1>0):
             #[1,0,0]
             features[0]=nc1
@@ -533,6 +533,18 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
             features[2]=1
 
 
+
+        logging.info(verb_head_list)
+        logging.info(vb_positions_head)
+        logging.info(nc1)
+        logging.info(features)
+        logging.info(nc2)
+        logging.info(verbs_negated_head)
+        logging.info(list_of_pos_verb_h)
+
+
+        if(nc1>0):
+            sys.exit(1)
 
 
         #for each -ve verb in head, find how many were negated in body also. if all were negated the feature denoting same polarity==0
@@ -555,19 +567,6 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
 
 
-
-        logging.info(verb_head_list)
-        logging.info(vb_positions_body)
-        logging.info(vb_positions_head)
-        logging.info(nc1)
-        logging.info(features)
-        logging.info(nc2)
-        logging.info(verbs_negated_head)
-        logging.info(list_of_pos_verb_h)
-
-
-        if(nc1>0):
-            sys.exit(1)
         #
         # #feature 2: find no of verbs in body that were negated in headline
         # verb_body_list= get_all_verbs(lemmatized_body_split,body_pos_split,pos_in)
