@@ -543,8 +543,6 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
             features[0]=0
             features[1]=0
             features[2]=1
-            logging.info(features)
-            sys.exit(1)
 
 
 
@@ -556,7 +554,25 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
         #for each -ve verb in head, find how many were negated in body also. if all were negated the feature denoting same polarity==0
         vb_positions_body=given_verb_find_positions(verbs_negated_head, lemmatized_body_split)
-        nc2=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
+
+        #if the verb doesn't even exist nc1= zero
+        if (len(vb_positions_body) > 0):
+            nc2=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
+        else:
+            nc2=0
+
+
+
+        logging.info(verb_head_list)
+        logging.info(verbs_negated_head)
+        logging.info(list_of_pos_verb_h)
+        logging.info(vb_positions_head)
+        logging.info(nc1)
+        logging.info(features)
+        logging.info(nc2)
+        logging.info(vb_positions_body)
+
+
 
 
         if(nc2>0):
@@ -565,6 +581,9 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
                 features[0]=0
                 features[1]=0
                 features[2]=1
+                logging.info(features)
+                sys.exit(1)
+
             else:
                 #[0,1,0]
                 features[0]=0
@@ -572,7 +591,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
                 features[2]=0
 
 
-  
+
 
 
         #
