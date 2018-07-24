@@ -537,6 +537,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
             features[0]=nc1
             features[1]=0
             features[2]=0
+            sys.exit(1)
         else:
 
             #[0,0,1]
@@ -680,7 +681,7 @@ dependency parse of the sentence
 '''
 def get_neg_count(vb_positions, sent_deps, lemmatized_sent_split):
     vb_list=get_neg_list(vb_positions, sent_deps, lemmatized_sent_split)
-    logging.info("vb_list:"+str(vb_list))
+    logging.debug("vb_list:"+str(vb_list))
     return len(vb_list)
 
 
@@ -705,10 +706,10 @@ def get_neg_list(vb_positions, sent_deps,lemmatized_sent_split):
                         logging.debug(dest)
 
                         if ((p==src) and (rel=="neg")):
-                            logging.info("found a verb having negative edge")
-                            logging.info(src)
-                            logging.info(rel)
-                            logging.info(dest)
+                            logging.debug("found a verb having negative edge")
+                            logging.debug(src)
+                            logging.debug(rel)
+                            logging.debug(dest)
                             # and find if any of the leading edges go through "neg"-add it as a feature
                             vb_count_list.append(lemmatized_sent_split[p])
 
