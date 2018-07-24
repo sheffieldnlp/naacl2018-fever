@@ -581,6 +581,8 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         # DEBUG
         logging.info(head_words.data)
         logging.info(body_words.data)
+        logging.info(lemmatized_headline_split)
+        logging.info(lemmatized_body_split)
         logging.info(features)
 
 
