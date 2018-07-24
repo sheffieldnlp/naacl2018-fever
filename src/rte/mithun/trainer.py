@@ -166,7 +166,7 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
-    neg_vb_matrix = np.empty((0, 2), float)
+    neg_vb_matrix = np.empty((0, 4), float)
 
 
     counter=0
