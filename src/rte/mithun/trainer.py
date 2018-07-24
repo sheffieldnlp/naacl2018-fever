@@ -812,7 +812,7 @@ def partition_by_polarity(vb_positions, sent_deps,lemmatized_sent_split):
                                 vb_count_list_negated.append(lemmatized_sent_split[p])
                             # else:
                             #   else  vb_count_list_positive.append(lemmatized_sent_split[p])
-        vb_count_list_positive = [vb for vb in lemmatized_sent_split[p] if vb not in vb_count_list_negated]
+        vb_count_list_positive = [lemmatized_sent_split[p] for p in vb_positions if lemmatized_sent_split[p] not in vb_count_list_negated]
         return vb_count_list_negated, vb_count_list_positive
 
 
