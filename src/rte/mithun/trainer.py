@@ -254,10 +254,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(doc_id_ht)
     logging.debug(doc_id_bt)
     logging.debug(doc_id_hd)
-
-    #this guy is not matching
     logging.debug(doc_id_bd)
-
     logging.debug(doc_id_hw)
     logging.debug(doc_id_bw)
 
@@ -265,8 +262,8 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
         logging.error("all doc ids dont match going to quit")
         sys.exit(1)
 
-    logging.debug(lemmatized_headline_split)
-    logging.debug(lemmatized_body_split)
+    logging.info(lemmatized_headline_data)
+    logging.info(lemmatized_body_data)
     logging.debug(tagged_headline.data)
     logging.debug(tagged_body.data)
     logging.debug(head_deps.data)
@@ -532,6 +529,18 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         verb_body_list= get_all_verbs(lemmatized_body_split,body_pos_split,pos_in)
         vb_positions_body=given_verb_find_positions(verb_body_list, lemmatized_body_split)
         nc4=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
+
+
+
+        logging.info(verb_head_list)
+        logging.info(vb_positions_head)
+        logging.info(nc3)
+        logging.info(verb_body_list)
+        logging.info(vb_positions_body)
+        logging.info(nc4)
+        logging.info(features)
+
+        sys.exit(1)
 
         if(set(nc3).intersection(set(nc4))==0):
             logging.info("found that verbs in both sentences have same polarity")
