@@ -501,11 +501,11 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
         #find all verbs in headline
         verb_head_list= get_all_verbs(lemmatized_headline_split,headline_pos_split,pos_in)
-        vb_positions_body=given_verb_find_positions(verb_head_list, lemmatized_headline_split)
+        vb_positions_head=given_verb_find_positions(verb_head_list, lemmatized_headline_split)
 
 
         #for each of these verbs find which all are -ves and which all are positives in head itself
-        verbs_negated_head=get_neg_list(vb_positions_body,body_deps,lemmatized_body_split)
+        verbs_negated_head=get_neg_list(vb_positions_head,head_deps,lemmatized_headline_split)
         #list of positive verbs will be the ones that are not negated
         list_of_pos_verb_h=set(verb_head_list).difference(set(verbs_negated_head))
 
@@ -551,6 +551,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
         logging.info(verb_head_list)
         logging.info(vb_positions_body)
+        logging.info(vb_positions_head)
         logging.info(nc1)
         logging.info(features)
         logging.info(nc2)
