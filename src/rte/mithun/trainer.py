@@ -558,12 +558,23 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         features = [pos_head_neg_body, neg_head_pos_body, neg_head_neg_body, pos_head_pos_body]
 
         # DEBUG
+        logging.info(head_words.data)
+        logging.info(body_words.data)
         if pos_head_neg_body > 0:
             logging.info("pos_head_neg_body>0")
-            logging.info(head_words)
-            logging.info(body_words)
             sys.exit(1)
 
+        if neg_head_pos_body > 0:
+            logging.info("neg_head_pos_body>0")
+            sys.exit(1)
+
+        if neg_head_neg_body > 0:
+            logging.info("neg_head_neg_body>0")
+            sys.exit(1)
+
+        if pos_head_pos_body > 0:
+            logging.info("pos_head_pos_body>0")
+            sys.exit(1)
 
 
 
