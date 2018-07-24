@@ -33,9 +33,9 @@ class FeverFormatter(Formatter):
 
 class FEVERGoldFormatter(FeverFormatter):
     def format_line(self,line):
-        annotation = line["label"]
-        if annotation is None:
-            annotation = line["verifiable"]
+        annotation = None
+        if "label" in line:
+            annotation = line["label"]
         pages = []
 
         if 'predicted_sentences' in line:
@@ -50,9 +50,11 @@ class FEVERGoldFormatter(FeverFormatter):
             for page,_ in pages:
                 if self.filtering({"id":page}) is None:
                     return None
-
-        return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
-
+        if annotation is not None:
+            return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":self.label_schema.get_id(annotation),"label_text":annotation}
+        else:
+            return {"claim":self.tokenize(line["claim"]), "evidence": pages, "label":None,"label_text":None}
+ 
 
 class FEVERPredictionsFormatter(FeverFormatter):
     def format_line(self,line):
