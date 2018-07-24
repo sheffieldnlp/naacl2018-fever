@@ -497,12 +497,18 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         features = [0, 0,0]
         logging.info("inside negated_verbs_count")
 
-
         #feature 1: if a verb in headline is negated in body, add that as 1
         verb_head_list= get_all_verbs(lemmatized_headline_split,headline_pos_split,pos_in)
         vb_positions_body=given_verb_find_positions(verb_head_list, lemmatized_body_split)
         nc1=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
         features[0]=nc1
+
+
+        logging.info(verb_head_list)
+        logging.info(vb_positions_body)
+        logging.info(nc1)
+        logging.info(features)
+
 
 
         #feature 2: find no of verbs in body that were negated in headline
@@ -512,7 +518,10 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         features[1]=nc2
 
 
-        logging.debug(features)
+        logging.info(verb_body_list)
+        logging.info(vb_positions_head)
+        logging.info(nc2)
+        logging.info(features)
 
 
         # if the negative status is same, add that as another feature. i.e if verb is negated in both headline and body, that is one
@@ -525,10 +534,10 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         nc4=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
 
         if(set(nc3).intersection(set(nc4))==0):
-            logging.debug("found that verbs in both sentences have same polarity")
+            logging.info("found that verbs in both sentences have same polarity")
             features[3]=1
 
-        logging.debug(features)
+        logging.info(features)
         sys.exit(1)
 
 
@@ -593,7 +602,6 @@ def given_verb_find_positions(verb_list, lemmatized_sent):
             for index,word2 in enumerate(lemmatized_sent):
                 if (vb_head==word2):
                     vb_positions_body.append(index)
-                    logging.debug("found a verb which has same verb in headline and body")
         return vb_positions_body
 
 # find  all verbs that occur in a given sentence.
