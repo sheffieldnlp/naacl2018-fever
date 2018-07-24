@@ -557,12 +557,12 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
 
         # same for positive, if the verb was not negated in headline and was not negated in body also
-
-
-        if(len(list_of_pos_verb_h)>0) and (len(list_of_pos_verb_b>0)):
-            if(set(list_of_pos_verb_h).intersection(set(list_of_pos_verb_b))==0):
-                logging.info("found that verbs in both sentences have same polarity")
-                features[4]=1
+        #
+        #
+        # if(len(list_of_pos_verb_h)>0) and (len(list_of_pos_verb_b>0)):
+        #     if(set(list_of_pos_verb_h).intersection(set(list_of_pos_verb_b))==0):
+        #         logging.info("found that verbs in both sentences have same polarity")
+        #         features[4]=1
 
 
         logging.info(features)
