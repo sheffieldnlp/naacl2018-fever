@@ -567,10 +567,17 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.info(features)
 
 
-        if neg_head_neg_body > 0:
-            logging.info("neg_head_neg_body>0")
+        if neg_head_pos_body > 0:
+            logging.info("neg_head_pos_body>0")
             sys.exit(1)
 
+        if pos_head_neg_body > 0:
+            logging.info("pos_head_neg_body>0")
+            sys.exit(1)
+
+        if   neg_head_neg_body > 0:
+            logging.info("neg_head_neg_body>0")
+            sys.exit(1)
 
 
 
@@ -776,13 +783,17 @@ outputs:
 '''
 def partition_by_polarity(vb_positions, sent_deps,lemmatized_sent_split):
         vb_count_list_negated=[]
-        vb_count_list_positive=[]
+        #vb_count_list_positive=[]
+
+
+
         # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
         if(len(vb_positions)>0):
             logging.debug(vb_positions)
             for p in vb_positions:
                 logging.debug(p)
                 for edges in sent_deps.data:
+                    #list [Dict]
                         logging.debug(edges)
                         dest = edges["destination"]
                         src = edges["source"]
@@ -799,9 +810,9 @@ def partition_by_polarity(vb_positions, sent_deps,lemmatized_sent_split):
                                 logging.debug(dest)
                                 # and find if any of the leading edges go through "neg"-add it as a feature
                                 vb_count_list_negated.append(lemmatized_sent_split[p])
-                            else:
-                                vb_count_list_positive.append(lemmatized_sent_split[p])
-
+                            # else:
+                            #   else  vb_count_list_positive.append(lemmatized_sent_split[p])
+        vb_count_list_positive = [vb for vb in lemmatized_sent_split[p] if vb not in vb_count_list_negated]
         return vb_count_list_negated, vb_count_list_positive
 
 
