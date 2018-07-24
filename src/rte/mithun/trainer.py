@@ -555,7 +555,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         # if the negative polarity status is same, add that as another feature. i.e if verb is negated in both headline and body, that is one
 
 
-        if(len(verbs_negated_head)>0) and (len(verbs_negated_body>0)):
+        if ((len(verbs_negated_head) > 0) and (len(verbs_negated_body) > 0)):
             if(set(verbs_negated_head).intersection(set(verbs_negated_body))==0):
                 logging.info("found that verbs in both sentences have same polarity")
                 features[2]=1
