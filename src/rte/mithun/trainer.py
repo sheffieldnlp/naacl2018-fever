@@ -573,7 +573,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
 
 
-        if(features[0]>0 or features[1]>0 or features[2]>0):
+        if(features[0]>0  or features[2]>0):
                 logging.info(features)
                 sys.exit(1)
 
