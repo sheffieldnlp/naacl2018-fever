@@ -494,46 +494,78 @@ def find_pos_positions(headline_pos_split,pos_in):
         # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
         '''
 def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps,body_deps,pos_in):
+        features = [0, 0,0]
         logging.info("inside negated_verbs_count")
-        h_nouns = []
-        b_nouns = []
 
 
-        id_h=head_deps.doc_id
-        id_b=body_deps.doc_id
-        e_h=head_deps.data
-        e_b = body_deps.data
+        #feature 1: if a verb in headline is negated in body, add that as 1
+        verb_head_list= get_all_verbs(lemmatized_headline_split,headline_pos_split,pos_in)
+        vb_positions_body=given_verb_find_positions(verb_head_list, lemmatized_body_split)
+        nc1=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
+        features[0]=nc1
 
 
-        # find  all verbs that occur in headline.
-        verb_head_list = []
-        for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
-            if pos.startswith(pos_in):
-                verb_head_list.append(word1)
-
-        logging.debug(verb_head_list)
-        logging.debug("verb_head_list")
-        vb_positions_body=[]
-        # then  for each of these verbs, check if this verb occurs in the body.
-        for vb_head in verb_head_list:
-            for index,word2 in enumerate(lemmatized_body_split):
-                logging.debug(word2)
-                if (vb_head==word2):
-                    # if it does then find the position of that verb in the body. then
-                    vb_positions_body.append(index)
-                    logging.debug("found a verb which has same verb in headline and body")
-                    logging.debug(index)
-                    logging.debug(vb_head)
+        #feature 2: find no of verbs in body that were negated in headline
+        verb_body_list= get_all_verbs(lemmatized_body_split,body_pos_split,pos_in)
+        vb_positions_head=given_verb_find_positions(verb_body_list, lemmatized_headline_split)
+        nc2=get_neg_count(vb_positions_head,head_deps,lemmatized_headline_split)
+        features[1]=nc2
 
 
+        logging.debug(features)
 
 
+        # if the negative status is same, add that as another feature. i.e if verb is negated in both headline and body, that is one
+
+        verb_head_list= get_all_verbs(lemmatized_headline_split,headline_pos_split,pos_in)
+        vb_positions_head=given_verb_find_positions(verb_head_list, lemmatized_headline_split)
+        nc3=get_neg_list(vb_positions_head,head_deps,lemmatized_headline_split)
+        verb_body_list= get_all_verbs(lemmatized_body_split,body_pos_split,pos_in)
+        vb_positions_body=given_verb_find_positions(verb_body_list, lemmatized_body_split)
+        nc4=get_neg_count(vb_positions_body,body_deps,lemmatized_body_split)
+
+        if(set(nc3).intersection(set(nc4))==0):
+            logging.debug("found that verbs in both sentences have same polarity")
+            features[3]=1
+
+        logging.debug(features)
+        sys.exit(1)
+
+
+
+
+
+        #proportion of verbs in headline that was negated in body and vice versa. not count, but proportion.
+
+
+
+
+
+        return features
+
+'''given positions of verbs find how many of them are negated in the given sentence
+inputs:
+array/list of verb positions int[]
+dependency parse of the sentence
+'''
+def get_neg_count(vb_positions, sent_deps, lemmatized_sent_split):
+    vb_list=get_neg_list(vb_positions, sent_deps, lemmatized_sent_split)
+    logging.debug("vb_list:"+str(vb_list))
+    return len(vb_list)
+
+
+'''given positions of verbs find which all were negated in the given sentence
+inputs:
+
+'''
+def get_neg_list(vb_positions, sent_deps,lemmatized_sent_split):
+        vb_count_list=[]
         # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
-        if(len(vb_positions_body)>0):
-            logging.debug(vb_positions_body)
-            for p in vb_positions_body:
+        if(len(vb_positions)>0):
+            logging.debug(vb_positions)
+            for p in vb_positions:
                 logging.debug(p)
-                for edges in body_deps.data:
+                for edges in sent_deps.data:
                         logging.debug(edges)
                         dest = edges["destination"]
                         src = edges["source"]
@@ -544,23 +576,37 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
 
                         if ((p==src) and (rel=="neg")):
                             logging.debug("found a verb having negative edge")
-                            logging.debug(lemmatized_headline_split)
-                            logging.debug(lemmatized_body_split)
+
                             logging.debug(src)
                             logging.debug(rel)
                             logging.debug(dest)
-                            # and find if any of the leading edges go through "neg"
-                            sys.exit(1)
+                            # and find if any of the leading edges go through "neg"-add it as a feature
+                            vb_count_list.append(lemmatized_sent_split[p])
+
+        return vb_count_list
 
 
-        features = [0, 0]
+'''given a list of verbs find all the positions if and where they occur in the given sentence'''
+def given_verb_find_positions(verb_list, lemmatized_sent):
+     vb_positions_body=[]
+        # then  for each of these verbs, check if this verb occurs in the body.
+        for vb_head in verb_list:
+            for index,word2 in enumerate(lemmatized_sent):
+                logging.debug(word2)
+                if (vb_head==word2):
+                    # if it does then find the position of that verb in the body. then
+                    vb_positions_body.append(index)
+                    logging.debug("found a verb which has same verb in headline and body")
+                    logging.debug(index)
+                    logging.debug(vb_head)
 
-
-
-
-        return features
-
-
+# find  all verbs that occur in a given sentence.
+def get_all_verbs(lemmatized_headline_split, headline_pos_split,pos_in):
+        verb_head_list = []
+        for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
+            if pos.startswith(pos_in):
+                verb_head_list.append(word1)
+        return verb_head_list
 
 #number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
 def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
@@ -651,7 +697,7 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 def read_json_deps(json_file):
     logging.debug("inside read_json_deps")
     l = []
-    counter=0
+
     py_proc_doc_list=[]
 
     with open(json_file) as f:
