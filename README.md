@@ -35,7 +35,8 @@ To train the Decomposable Attention models, it is highly recommended to use a GP
 
 
 ## Change Log
-
+ 
+* **v0.3** - Added the ability to read unlabelled data (i.e. the blind dataset for the competition). **You must update to this version to take part in the competition**
 * **v0.2** - updated the Information Retrieval component to use a modified version of DrQA that allows multi-threaded document/sentence retrieval. This yields a >10x speed-up the in IR stage of the pipeline as I/O waits are no longer blocking computation of TF*IDF vectors  
 * **v0.1** - original implementation (tagged as naacl2018)
 
