@@ -588,7 +588,7 @@ def get_neg_list(vb_positions, sent_deps,lemmatized_sent_split):
 
 '''given a list of verbs find all the positions if and where they occur in the given sentence'''
 def given_verb_find_positions(verb_list, lemmatized_sent):
-     vb_positions_body=[]
+        vb_positions_body=[]
         # then  for each of these verbs, check if this verb occurs in the body.
         for vb_head in verb_list:
             for index,word2 in enumerate(lemmatized_sent):
