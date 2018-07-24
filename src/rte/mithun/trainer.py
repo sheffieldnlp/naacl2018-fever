@@ -545,6 +545,10 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         #+ve in head -ve in body=[1,0,0]
         #-ve in head -ve in body=[0,0,1]
         # #-ve in head +ve in body=[0,1,0]
+        pos_head_neg_body=0
+        neg_head_pos_body=0
+        neg_head_neg_body=0
+        pos_head_pos_body=0
 
         logging.info("inside negated_verbs_count")
         # pos_text1_neg_text2, neg_text1_pos_text2
@@ -562,14 +566,14 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.info(body_words.data)
         logging.info(features)
 
-        if pos_head_neg_body > 0:
-            logging.info("pos_head_neg_body>0")
-            sys.exit(1)
-
+        
         if neg_head_neg_body > 0:
             logging.info("neg_head_neg_body>0")
             sys.exit(1)
 
+        if pos_head_pos_body > 0:
+            logging.info("pos_head_pos_body>0")
+            sys.exit(1)
 
 
 
