@@ -292,7 +292,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
 
-    neg_vb = negated_verbs_count(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
+    neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                  body_pos_split, head_deps, body_deps, "VB", head_words,body_words)
     neg_vb_array = np.array([neg_vb])
 
