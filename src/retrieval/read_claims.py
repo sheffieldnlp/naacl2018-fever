@@ -66,7 +66,7 @@ def print_cv(combined_vector,gold_labels_tr):
 
 
 def uofa_training(args,jlr,method,logger):
-    logger.debug("got inside uofatraining")
+    logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
     #tr_data=read_claims_annotate(args,jlr,logger,method)
@@ -75,47 +75,41 @@ def uofa_training(args,jlr,method,logger):
 
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
-
     combined_vector = read_json_create_feat_vec(load_ann_corpus,args)
 
-    logging.info("done with generating feature vectors. Model training next")
+    logging.warning("done with generating feature vectors. Model training next")
     logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
+    logging.info("shape of cv:" + str(combined_vector.shape))
+    logging.info("above two must match")
+
     do_training(combined_vector, gold_labels_tr)
-    logging.info("done with training. going to exit")
+    logging.warning("done with training. going to exit")
     sys.exit(1)
 
-def print_nonzeroes(combined_vector):
-        logging.debug(" starting: print_nonzeroes")
-        logging.debug(combined_vector)
-        ns = np.nonzero(combined_vector)
-        l=len(ns)
-        logging.debug("length of ns is:"+str(l))
-        for x in ns:
-            logging.debug(x)
-
-        sys.exit(1)
-
 def uofa_testing(args,jlr,method,logger):
-    logger.debug("got inside uofa_testing")
+    logger.warning("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
-    logging.info("number of rows in label list is is:" + str(len(gold_labels)))
+
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
+    logging.info("shape of cv:"+str(combined_vector.shape))
+    logging.info("number of rows in label list is is:" + str(len(gold_labels)))
+    logging.info("above two must match")
     trained_model=load_model()
     logging.debug("weights:")
     #logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
-    #print_nonzeroes(pred)
-    logging.debug("predicted labels:")
     logging.debug(str(pred))
-    logging.debug("and gold labels are:")
+    logging.debug("and golden labels are:")
     logging.debug(str(gold_labels))
-    logging.info("done testing. and the accuracy is:")
+    logging.warning("done testing. and the accuracy is:")
     acc=accuracy_score(gold_labels, pred)*100
     logging.warning(str(acc)+"%")
     logging.info(classification_report(gold_labels, pred))
     logging.info(confusion_matrix(gold_labels, pred))
+
+    
 
     # get number of support vectors for each class
     #logging.debug(trained_model.n_support_)
@@ -156,17 +150,18 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
 
 def get_gold_labels(args,jlr):
     labels = np.array([[]])
+
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels:"):
             label=claim_full["label"]
-            # logging.info("starting new. index is:" + str(index))
-            # logging.info("label is:"+str(label))
             if (label == "SUPPORTS"):
                 labels = np.append(labels, 0)
             else:
                 if (label == "REFUTES"):
                     labels = np.append(labels, 1)
-
+                # else:
+                #     if (label=="NOT ENOUGH INFO"):
+                #         labels = np.append(labels, 2)
 
     return labels
