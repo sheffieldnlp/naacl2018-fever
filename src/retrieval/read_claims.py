@@ -75,7 +75,7 @@ def uofa_training(args,jlr,method,logger):
 
     gold_labels_tr =None
     if(args.mode =="small"):
-        gold_labels_tr =get_gold_labels_small()
+        gold_labels_tr =get_gold_labels_small(args, jlr)
     else:
         gold_labels_tr = get_gold_labels(args, jlr)
 
