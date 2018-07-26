@@ -27,6 +27,7 @@ annotated_head_split_folder="split_head/"
 #pick based on which folder you are running from. if not on home folder:
 data_root="/work/mithunpaul/fever/my_fork/fever-baselines/"
 data_folder_train=data_root+"/data/fever-data-ann/train/"
+data_folder_train_small=data_root+"/data/fever-data-ann/train_small/"
 data_folder_dev=data_root+"/data/fever-data-ann/dev/"
 model_trained="model_trained.pkl"
 
@@ -52,6 +53,10 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         else:
             if(args.mode=="train"):
                 data_folder=data_folder_train
+            else:
+                   if(args.mode=="small"):
+                        data_folder=data_folder_train_small
+
 
         bf=data_folder+annotated_body_split_folder
         bff=bf+annotated_only_lemmas
