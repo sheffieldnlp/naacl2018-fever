@@ -560,7 +560,7 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         overlap_diff = set(h_numbers).difference(set(b_numbers))
 
 
-        features = [overlap_intersection, overlap_diff]
+        features = [len(overlap_intersection), len(overlap_diff)]
         logging.debug(str("features_ant:") + str((features)))
         if((count_headline > 0) or (count_body > 0)):
             sys.exit(1)
