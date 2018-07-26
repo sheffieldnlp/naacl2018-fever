@@ -562,8 +562,6 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
         features = [len(overlap_intersection), len(overlap_diff)]
         logging.debug(str("features_ant:") + str((features)))
-        if((len(overlap_intersection) > 0) and (len(overlap_diff) > 0)):
-            sys.exit(1)
 
 
 
