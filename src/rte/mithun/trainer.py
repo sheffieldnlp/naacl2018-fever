@@ -127,7 +127,7 @@ def print_nonzero_cv(combined_vector):
 
 
 def do_training(combined_vector,gold_labels_tr):
-    logging.debug("going to load the classifier:")
+    logging.debug("going to train the classifier:")
     clf=svm.NuSVC()
     clf.fit(combined_vector, gold_labels_tr.ravel())
 
@@ -158,6 +158,8 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
+    ant_noun_overlap_matrix = np.empty((0, 2), float)
+    ant_adj_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
     neg_vb_matrix = np.empty((0, 4), float)
     hedging_headline_matrix = np.empty((0, 30), int)
@@ -170,7 +172,7 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array = add_vectors(
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -188,6 +190,9 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
         hedging_headline_matrix = np.vstack([hedging_headline_matrix, hedge_headline_array])
         num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
         neg_vb_matrix= np.vstack([neg_vb_matrix, neg_vb_array])
+        ant_adj_overlap_matrix = np.vstack([ant_adj_overlap_matrix, antonym_adj_overlap_array])
+        ant_noun_overlap_matrix = np.vstack([ant_noun_overlap_matrix, antonym_overlap_array])
+
 
 
 
@@ -218,7 +223,7 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
 
     
     combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,neg_vb_matrix])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,neg_vb_matrix,ant_noun_overlap_matrix,ant_adj_overlap_matrix])
 
     return combined_vector
 
@@ -309,10 +314,13 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     num_overlap_array = np.array([num_overlap])
 
 
-    antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+    antonym_adj_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "NN")
-    antonym_overlap_array = np.array([antonym_overlap])
+    antonym_adj_overlap_array = np.array([antonym_adj_overlap])
 
+    antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                               body_pos_split, "JJ")
+    antonym_overlap_array = np.array([antonym_overlap])
 
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     word_overlap_array = np.array([word_overlap])
@@ -338,7 +346,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -793,7 +801,6 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
                 logging.info("found overlap2")
                 logging.info(overlap2)
                 overlap_dir2 = len(overlap2)
-
 
 
         features = [overlap_dir1, overlap_dir2]
