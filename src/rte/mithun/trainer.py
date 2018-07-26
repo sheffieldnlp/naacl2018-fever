@@ -230,9 +230,9 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
 
 
     logging.info("\ndone with all headline body.:")
-    logging.info("overall number count is:" + str(o))
-    logging.info("headlines that have numbers is:" + str(h))
-    logging.info("body that has numbers is:" + str(b))
+    logging.info("overall number count is:" + str(num_o))
+    logging.info("headlines that have numbers is:" + str(num_h))
+    logging.info("body that has numbers is:" + str(num_b))
 
     sys.exit(1)
 
@@ -900,7 +900,9 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         b_numbers = []
         h_nouns_antonyms=[]
         b_nouns_antonyms = []
-        overall,hc,bc=False
+        overall=False
+        hc=False
+        bc=False
 
         count_headline = 0
         for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
