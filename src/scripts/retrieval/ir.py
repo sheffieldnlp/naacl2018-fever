@@ -65,11 +65,13 @@ if __name__ == "__main__":
 
 
     processed = dict()
-    if(args.mode=="train"):
+    if(args.mode=="train") or(args.mode=="small"):
         uofa_training(args,jlr,method,logger)
     else:
         if(args.mode=="test"):
             uofa_testing(args,jlr,method,logger)
+
+
     with ThreadPool() as p:
         for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line), all_claims), total=len(all_claims)):
             processed[line["id"]] = line
