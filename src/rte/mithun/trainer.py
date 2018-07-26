@@ -160,6 +160,8 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
     neg_vb_matrix = np.empty((0, 4), float)
+    hedging_headline_matrix = np.empty((0, 30), int)
+    num_overlap_matrix = np.empty((0, 2), float)
 
 
     counter=0
@@ -167,8 +169,9 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
             in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array,antonym_overlap_array,\
-        neg_vb_array  = add_vectors(lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps,body_deps,heads_words, bodies_words)
+        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array = add_vectors(
+            lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
         logging.info(verb_overlap_array)
@@ -182,16 +185,20 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
+        hedging_headline_matrix = np.vstack([hedging_headline_matrix, hedge_headline_array])
+        num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
         neg_vb_matrix= np.vstack([neg_vb_matrix, neg_vb_array])
 
 
-        logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
-        logging.info("refuting_value_matrix" + str(refuting_value_matrix))
 
-        logging.info("noun_overlap_matrix is =" + str(noun_overlap_matrix))
-        logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
-        logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
-        logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+        logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
+        logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
+        logging.debug("noun_overlap_matrix is =" + str(noun_overlap_matrix))
+        logging.debug("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+        logging.debug("vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.debug("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+        logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
+        logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
         counter=counter+1
 
@@ -207,12 +214,11 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     logging.info("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
     logging.info("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+    logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
-    # combined_vector= np.hstack(
-    #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
-
+    
     combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,neg_vb_matrix])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,neg_vb_matrix])
 
     return combined_vector
 
@@ -296,6 +302,13 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
                                  body_pos_split, head_deps, body_deps, "VB", head_words,body_words)
     neg_vb_array = np.array([neg_vb])
 
+
+
+    num_overlap = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                      body_pos_split, "CD")
+    num_overlap_array = np.array([num_overlap])
+
+
     antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "NN")
     antonym_overlap_array = np.array([antonym_overlap])
@@ -306,6 +319,11 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
     hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
+
+    hedge_headline = hedging_features_headline(lemmatized_headline_split)
+    hedge_headline_array = np.array([hedge_headline])
+
+
 
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
@@ -320,8 +338,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,\
-           antonym_overlap_array,neg_vb_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -381,6 +398,53 @@ def hedging_features(clean_headline, clean_body):
 
 
     return hedging_body_vector
+
+def hedging_features_headline(clean_headline):
+
+    hedging_words = [
+        'allegedly',
+        'reportedly',
+      'argue',
+      'argument',
+      'believe',
+      'belief',
+      'conjecture',
+      'consider',
+      'hint',
+      'hypothesis',
+      'hypotheses',
+      'hypothesize',
+      'implication',
+      'imply',
+      'indicate',
+      'predict',
+      'prediction',
+      'previous',
+      'previously',
+      'proposal',
+      'propose',
+      'question',
+      'speculate',
+      'speculation',
+      'suggest',
+      'suspect',
+      'theorize',
+      'theory',
+      'think',
+      'whether'
+    ]
+
+    length_hedge=len(hedging_words)
+    hedging_h_vector = [0] * length_hedge
+
+
+    for word in clean_headline:
+        if word in hedging_words:
+            index=hedging_words.index(word)
+            hedging_h_vector[index]=1
+
+    return hedging_h_vector
+
 
 def refuting_features_mithun(clean_headline, clean_body):
     # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
@@ -738,6 +802,7 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
         return features
 
+
 def read_json_deps(json_file):
     logging.debug("inside read_json_deps")
     l = []
@@ -793,6 +858,50 @@ def read_json(json_file,logging):
             counter = counter + 1
     return l
 
+#Of all the numbers/digits are mentioned in headline. how many are mentioned in body
+def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
+
+        logging.info("inside " + pos_in + " features")
+        logging.info("lemmatized_headline_split " +str(lemmatized_headline_split))
+        logging.info("lemmatized_headline_split " + str(lemmatized_body_split))
+        h_numbers = []
+        b_numbers = []
+        h_nouns_antonyms=[]
+        b_nouns_antonyms = []
+
+        count_headline = 0
+        for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:")  + str((word1)))
+            if pos.startswith(pos_in):
+                logging.debug("pos.startswith:"+str(pos_in))
+                count_headline = count_headline + 1
+                h_numbers.append(word1)
+
+
+        count_body = 0
+        for word2, pos in zip(lemmatized_body_split, body_pos_split):
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:") + str((word2)))
+            if pos.startswith(pos_in):
+                count_body = count_body + 1
+                b_numbers.append(word2)
+
+
+
+
+        overlap_intersection = set(h_numbers).intersection(set(b_numbers))
+        overlap_diff = set(h_numbers).difference(set(b_numbers))
+
+
+        features = [len(overlap_intersection), len(overlap_diff)]
+        logging.debug(str("features_ant:") + str((features)))
+
+
+
+        return features
+
+
 
 def get_ant(word):
     antonyms = []
@@ -803,4 +912,3 @@ def get_ant(word):
                 antonyms.append(l.antonyms()[0].name())
 
     return antonyms
-
