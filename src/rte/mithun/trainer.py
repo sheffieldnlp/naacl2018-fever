@@ -161,7 +161,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
     hedging_headline_matrix = np.empty((0, 30), int)
-
+    num_overlap_matrix = np.empty((0, 2), float)
 
 
     counter=0
@@ -177,7 +177,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         #todo: remove stop words-bring in nltk list of stop words...and punctuation.
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,hedge_headline_array = add_vectors(
+        antonym_overlap_array,num_overlap_array,hedge_headline_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -193,15 +193,18 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
         hedging_headline_matrix = np.vstack([hedging_headline_matrix, hedge_headline_array])
+        num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
 
 
-        logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
-        logging.info("refuting_value_matrix" + str(refuting_value_matrix))
 
-        logging.info("noun_overlap_matrix is =" + str(noun_overlap_matrix))
-        logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
-        logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
-        logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+        logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
+        logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
+        logging.debug("noun_overlap_matrix is =" + str(noun_overlap_matrix))
+        logging.debug("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+        logging.debug("vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.debug("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+        logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
+        logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
         counter=counter+1
 
@@ -217,6 +220,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     logging.info("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
     logging.info("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+    logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
     # combined_vector= np.hstack(
     #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
@@ -239,6 +243,13 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
     headline_pos_split = tagged_headline.split(" ")
     lemmatized_body_split = lemmatized_body.split(" ")
     body_pos_split = tagged_body.split(" ")
+
+
+
+    num_overlap = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                      body_pos_split, "CD")
+    num_overlap_array = np.array([num_overlap])
+
 
     antonym_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "NN")
@@ -269,8 +280,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,\
-           vb_overlap_array,antonym_overlap_array,hedge_headline_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array,num_overlap_array,hedge_headline_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -564,6 +574,49 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
         features = [overlap_dir1, overlap_dir2]
         logging.debug(str("features_ant:") + str((features)))
+
+
+        return features
+
+#Of all the numbers/digits are mentioned in headline. how many are mentioned in body
+def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
+
+        logging.info("inside " + pos_in + " features")
+        logging.info("lemmatized_headline_split " +str(lemmatized_headline_split))
+        logging.info("lemmatized_headline_split " + str(lemmatized_body_split))
+        h_numbers = []
+        b_numbers = []
+        h_nouns_antonyms=[]
+        b_nouns_antonyms = []
+
+        count_headline = 0
+        for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:")  + str((word1)))
+            if pos.startswith(pos_in):
+                logging.debug("pos.startswith:"+str(pos_in))
+                count_headline = count_headline + 1
+                h_numbers.append(word1)
+
+
+        count_body = 0
+        for word2, pos in zip(lemmatized_body_split, body_pos_split):
+            logging.debug(str("pos:") + str((pos)))
+            logging.debug(str("word:") + str((word2)))
+            if pos.startswith(pos_in):
+                count_body = count_body + 1
+                b_numbers.append(word2)
+
+
+
+
+        overlap_intersection = set(h_numbers).intersection(set(b_numbers))
+        overlap_diff = set(h_numbers).difference(set(b_numbers))
+
+
+        features = [len(overlap_intersection), len(overlap_diff)]
+        logging.debug(str("features_ant:") + str((features)))
+
 
 
         return features
