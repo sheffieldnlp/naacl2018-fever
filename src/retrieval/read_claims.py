@@ -83,7 +83,7 @@ def uofa_training(args,jlr,method,logger):
     combined_vector = read_json_create_feat_vec(load_ann_corpus,args)
 
     logging.warning("done with generating feature vectors. Model training next")
-    logging.info("gold_labels_tr is:" + str((gold_labels_tr)))
+    logging.info("gold_labels_tr is:" + str(len(gold_labels_tr)))
     logging.info("shape of cv:" + str(combined_vector.shape))
     logging.info("above two must match")
 
