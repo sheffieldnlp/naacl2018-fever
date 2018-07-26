@@ -172,15 +172,22 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
 
 
     counter=0
+    #debug:find total number of sentences which had numbers, either in headline, body or both
+    num_o,num_h,num_b=0
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) \
             in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array = add_vectors\
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,o,h,b = add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words)
 
-
+        if(o):
+            num_o+=1
+        if(h):
+            num_h+=1
+        if(b):
+            num_b+=1
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
         logging.info(verb_overlap_array)
@@ -221,6 +228,12 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
 
 
     logging.info("\ndone with all headline body.:")
+    logging.info("overall number count is:" + str(o))
+    logging.info("headlines that have numbers is:" + str(h))
+    logging.info("body that has numbers is:" + str(b))
+
+    sys.exit(1)
+
     logging.info("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
     logging.info("shape of  hedging_words_vector is:" + str(hedging_words_vector.shape))
     logging.info("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
@@ -316,7 +329,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
 
-    num_overlap = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+    num_overlap,overall,hc,bc = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "CD")
     num_overlap_array = np.array([num_overlap])
 
@@ -355,7 +368,8 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array\
+        ,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,overall,hc,bc
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -884,12 +898,15 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         b_numbers = []
         h_nouns_antonyms=[]
         b_nouns_antonyms = []
+        overall,hc,bc=False
 
         count_headline = 0
         for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
             logging.debug(str("pos:") + str((pos)))
             logging.debug(str("word:")  + str((word1)))
             if pos.startswith(pos_in):
+                overall=True
+                hc=True
                 logging.debug("pos.startswith:"+str(pos_in))
                 count_headline = count_headline + 1
                 h_numbers.append(word1)
@@ -900,6 +917,8 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
             logging.debug(str("pos:") + str((pos)))
             logging.debug(str("word:") + str((word2)))
             if pos.startswith(pos_in):
+                overall=True
+                bc=True
                 count_body = count_body + 1
                 b_numbers.append(word2)
 
@@ -915,7 +934,7 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
 
 
-        return features
+        return features,overall,hc,bc
 
 
 
