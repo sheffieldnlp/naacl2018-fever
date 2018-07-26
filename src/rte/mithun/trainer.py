@@ -5,15 +5,12 @@ import tqdm
 import os
 import numpy as np
 from tqdm import tqdm
-import time
 from sklearn.externals import joblib
 from processors import ProcessorsBaseAPI
-from processors import Document
-from sklearn import linear_model
 import json
-import nltk
 from nltk.corpus import wordnet
 import itertools
+from .proc_data import PyProcDoc
 
 
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
@@ -23,6 +20,8 @@ LABELS = ['SUPPORTS', 'REFUTES', 'NOT ENOUGH INFO']
 RELATED = LABELS[0:3]
 annotated_only_lemmas="ann_lemmas.json"
 annotated_only_tags="ann_tags.json"
+annotated_only_dep="ann_deps.json"
+annotated_words="ann_words.json"
 annotated_body_split_folder="split_body/"
 annotated_head_split_folder="split_head/"
 #pick based on which folder you are running from. if not on home folder:
@@ -33,6 +32,7 @@ model_trained="model_trained.pkl"
 
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
+
 
 def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
@@ -56,33 +56,47 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         bf=data_folder+annotated_body_split_folder
         bff=bf+annotated_only_lemmas
         bft=bf+annotated_only_tags
+        bfd = bf + annotated_only_dep
+        bfw=bf+annotated_words
 
         hf=data_folder+annotated_head_split_folder
         hff=hf+annotated_only_lemmas
         hft=hf+annotated_only_tags
+        hfd=hf+annotated_only_dep
+        hfw=hf+annotated_words
 
 
         logging.debug("hff:" + str(hff))
         logging.debug("bff:" + str(bff))
         logging.info("going to read heads_lemmas from disk:")
 
-        heads_lemmas = read_json(hff,logging)
-        bodies_lemmas = read_json(bff,logging)
-        heads_tags = read_json(hft,logging)
-        bodies_tags = read_json(bft,logging)
+        heads_lemmas= read_json_with_id(hff)
+        bodies_lemmas = read_json_with_id(bff)
+
+        heads_tags= read_json_with_id(hft)
+        bodies_tags = read_json_with_id(bft)
+
+        heads_deps = read_json_deps(hfd)
+        bodies_deps = read_json_deps(bfd)
 
 
-        logging.debug("size of heads_lemmas is: " + str(len(heads_lemmas)))
-        logging.debug("size of bodies_lemmas is: " + str(len(bodies_lemmas)))
+        heads_words = read_json_with_id(hfw)
+        bodies_words = read_json_with_id(bfw)
+
+        logging.debug("type of heads_deps is: " + str(type(heads_deps)))
+        logging.debug("size of heads_deps is: " + str(len(heads_deps)))
+        logging.debug("type of bodies_deps is: " + str(type(bodies_deps)))
+        logging.debug("size of bodies_deps is: " + str(len(bodies_deps)))
 
 
-        if not (len(heads_lemmas) == len(bodies_lemmas)):
-            logging.debug("size of heads_lemmas and bodies_lemmas dont match")
+        if not ((len(heads_lemmas) == len(bodies_lemmas))or (len(heads_tags) == len(bodies_tags)) or
+                    (len(heads_deps) == len(bodies_deps)) ):
+            logging.debug("size of heads_lemmas and bodies_lemmas dont match. going to quit")
             sys.exit(1)
 
 
         combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,logging)
+                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words)
 
         joblib.dump(combined_vector, combined_vector_training)
         logging.info("done generating feature vectors.")
@@ -133,51 +147,30 @@ def do_testing(combined_vector,svm):
     logging.debug("done with predictions")
     return p
 
-def read_json(json_file,logging):
-    logging.debug("inside read_json")
-    l = []
-    counter=0
-
-    with open(json_file) as f:
-        for eachline in (f):
-            d = json.loads(eachline)
-            a=d["data"]
-            just_lemmas=' '.join(str(r) for v in a for r in v)
-            l.append(just_lemmas)
-            counter = counter + 1
-    return l
-
 
 def normalize_dummy(text):
     x = text.lower().translate(remove_punctuation_map)
     return x.split(" ")
 
-def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags_related,logging):
-    #todo: dont hardcode. create this after u know the size
+def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
+    neg_vb_matrix = np.empty((0, 4), float)
     hedging_headline_matrix = np.empty((0, 30), int)
     num_overlap_matrix = np.empty((0, 2), float)
 
 
     counter=0
-    for  head_lemmas, body_lemmas,head_tags_related,body_tags_related in tqdm((zip(heads_lemmas, bodies_lemmas,heads_tags_related,bodies_tags_related)),
-                           total=len(bodies_tags_related), desc="feat_gen:"):
-
-        lemmatized_headline = head_lemmas
-        lemmatized_body=body_lemmas
-        tagged_headline=head_tags_related
-        tagged_body=body_tags_related
-
-
-        #todo: remove stop words-bring in nltk list of stop words...and punctuation.
+    for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,heads_words, bodies_words) \
+            in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
+                        bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array = add_vectors(
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array = add_vectors(
             lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,logging)
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -194,6 +187,7 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
         hedging_headline_matrix = np.vstack([hedging_headline_matrix, hedge_headline_array])
         num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
+        neg_vb_matrix= np.vstack([neg_vb_matrix, neg_vb_array])
 
 
 
@@ -222,27 +216,91 @@ def create_feature_vec(heads_lemmas,bodies_lemmas,heads_tags_related,bodies_tags
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
     logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
-    # combined_vector= np.hstack(
-    #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,vb_overlap_matrix])
-
+    
     combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,neg_vb_matrix])
 
     return combined_vector
 
 
-def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,logging):
+def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps, head_words, body_words):
 
+
+
+    lemmatized_headline_data = lemmatized_headline_obj.data
+    lemmatized_body_data= lemmatized_body_obj.data
 
     #split everywhere based on space-i.e for word overlap etc etc..
+    lemmatized_headline_data = lemmatized_headline_data.lower()
+    lemmatized_body_data = lemmatized_body_data.lower()
 
-    lemmatized_headline = lemmatized_headline.lower()
-    lemmatized_body = lemmatized_body.lower()
+    doc_id_hl=lemmatized_headline_obj.doc_id
+    doc_id_bl=lemmatized_body_obj.doc_id
+    doc_id_ht=tagged_headline.doc_id
+    doc_id_bt=tagged_body.doc_id
+    doc_id_hd=head_deps.doc_id
+    doc_id_bd=body_deps.doc_id
+    doc_id_hw=head_words.doc_id
+    doc_id_bw=body_words.doc_id
 
-    lemmatized_headline_split = lemmatized_headline.split(" ")
-    headline_pos_split = tagged_headline.split(" ")
-    lemmatized_body_split = lemmatized_body.split(" ")
-    body_pos_split = tagged_body.split(" ")
+    lemmatized_headline_split = lemmatized_headline_data.split(" ")
+    lemmatized_body_split = lemmatized_body_data.split(" ")
+    headline_pos_split = tagged_headline.data.split(" ")
+    body_pos_split = tagged_body.data.split(" ")
+
+    logging.debug(doc_id_hl)
+    logging.debug(doc_id_bl)
+    logging.debug(doc_id_ht)
+    logging.debug(doc_id_bt)
+    logging.debug(doc_id_hd)
+    logging.debug(doc_id_bd)
+    logging.debug(doc_id_hw)
+    logging.debug(doc_id_bw)
+
+    if not (doc_id_hl == doc_id_bl == doc_id_ht == doc_id_bt == doc_id_hd == doc_id_bd == doc_id_hw == doc_id_bw):
+        logging.error("all doc ids dont match going to quit")
+        sys.exit(1)
+
+    logging.info(lemmatized_headline_data)
+    logging.info(lemmatized_body_data)
+    logging.debug(tagged_headline.data)
+    logging.debug(tagged_body.data)
+    logging.debug(head_deps.data)
+    logging.debug(body_deps.data)
+    logging.debug(head_words.data)
+    logging.debug(body_words.data)
+
+    logging.debug(tagged_headline)
+    logging.debug(tagged_body)
+    logging.debug(headline_pos_split)
+    logging.debug(body_pos_split)
+
+
+        #remove stop words
+    stop_words = {'some', 'didn', 'itself', 'how', 'an', 'in', 'about', 'to', 'a', 'through', 've', 'ours', 'wouldn',
+                  'y', 'from',
+      'weren', "you've", 'yourselves', 'ain', 'or', 'mustn', 'so', 'that', 'them', 'such', 'being', 'her', 'doesn',
+      'if', 'of', 'by', 'for', 'shouldn', 'll', 'are', 'any', 'doing', 'my', 'just', 'hers', 'its', 'i', 'further',
+      'myself', 'then', 'yours', 'the', 'there', "you're", 'can', 'ourselves', "you'll", 'with', 'as', 'him', "shan't",
+      'own', 'than', 'aren', 'nor', 'you', 'at', 'mightn', 'hasn', 'am', 'shan', 'needn', 'this', 'having', 'hadn',
+      'yourself', 'themselves', 'too', 'couldn', 'will', "aren't", "you'd", 'more', 'few', 'our', 'most', 'very', 'me',
+      'into', 'their', 'those', 'wasn', 'all', 'here', 'been', 'your', 'on','isn','these', 'until', 'haven', 'we',
+        'theirs', 'be', 'what', 'while', 'why', 'where', 'which', 'when', 'who','whom', 'his', 'they', 'she', 'himself',
+                  'herself', 'has', 'have', 'do','and','is' , "weren't",'were', 'did', "did n't", 'it', "won't", "doesn't",
+                  'had', "needn't", "wouldn't","that'll", "mightn't","hadn't","mustn't",'he',"don't","she's", "isn't","should've",
+                  'should', "shouldn't",'does',"couldn't","wasn't","haven't","hasn't",'was', "it's"}
+
+    logging.debug(stop_words)
+
+    lemmatized_headline_split_sw = [w for w in lemmatized_headline_split if not w in stop_words]
+    lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
+
+
+
+
+    neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                 body_pos_split, head_deps, body_deps, "VB", head_words,body_words)
+    neg_vb_array = np.array([neg_vb])
 
 
 
@@ -280,7 +338,7 @@ def add_vectors(lemmatized_headline,lemmatized_body,tagged_headline,tagged_body,
 
 
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array,num_overlap_array,hedge_headline_array
+    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -490,9 +548,175 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
         return features
 
-#number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
-#todo ask if we should do this for adjectives also
+#find positions where all verbs occur in headline.
+def find_pos_positions(headline_pos_split,pos_in):
+    positions=[]
+    for index, pos in enumerate(headline_pos_split):
+        if pos.startswith(pos_in):
+            logging.debug("pos.startswith:" + str(pos_in))
+            positions.append(index)
 
+    return positions
+
+
+
+
+# Finds count of verbs (or another POS) which are positive in text1 and negated in text2
+def count_different_polarity(text1_lemmas, text1_pos, text1_deps, text2_lemmas, text2_pos, text2_deps, pos_in):
+        #find all  verbs in headline
+        text1_list= get_all_verbs(text1_lemmas,text1_pos,pos_in)
+        text2_list= get_all_verbs(text2_lemmas,text2_pos,pos_in)
+        positions_text1=given_verb_find_positions(text1_list, text1_lemmas)
+        positions_text2=given_verb_find_positions(text2_list, text2_lemmas)
+
+        #for each of these verbs find which all are -ves and which all are positives in head itself
+        [verbs_negated_text1, verbs_positive_text1]=partition_by_polarity(positions_text1,text1_deps,text1_lemmas)
+        [verbs_negated_text2, verbs_positive_text2]=partition_by_polarity(positions_text2,text2_deps,text2_lemmas)
+
+        pos_text1_neg_text2 = len(set(verbs_positive_text1).intersection(set(verbs_negated_text2)))
+        neg_text1_pos_text2 = len(set(verbs_negated_text1).intersection(set(verbs_positive_text2)))
+
+        return [pos_text1_neg_text2, neg_text1_pos_text2]
+
+
+
+def count_same_polarity_both_texts(text1_lemmas, text1_pos, text1_deps, text2_lemmas, text2_pos, text2_deps, pos_in):
+        #for each -ve verb in head, find how many were negated in body also. if all were negated the feature denoting same polarity==0
+        text1_list= get_all_verbs(text1_lemmas,text1_pos,pos_in)
+        text2_list = get_all_verbs(text2_lemmas, text2_pos, pos_in)
+        positions_text1=given_verb_find_positions(text1_list, text1_lemmas)
+        positions_text2=given_verb_find_positions(text2_list, text2_lemmas)
+
+        #for each of these verbs find which all are -ves and which all are positives in head itself
+        [verbs_negated_text1, verbs_positive_text1]=partition_by_polarity(positions_text1,text1_deps,text1_lemmas)
+        [verbs_negated_text2, verbs_positive_text2]=partition_by_polarity(positions_text2,text2_deps,text2_lemmas)
+
+        neg_text1_neg_text2 = len(set(verbs_negated_text1).intersection(set(verbs_negated_text2)))
+        pos_text1_pos_text2 = len(set(verbs_positive_text1).intersection(set(verbs_positive_text2)))
+        return [neg_text1_neg_text2, pos_text1_pos_text2]
+
+
+'''number of verbs in sentence one that were negated in sentence 2
+#find  all verbs that occur in headline.
+        # then  for each of these verbs, check if this verb occurs in the body.
+        # if it does then find the position of that verb in the body. then
+        # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
+        '''
+def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps,body_deps,pos_in,head_words,body_words):
+        #+ve in head -ve in body=[1,0,0]
+        #-ve in head -ve in body=[0,0,1]
+        # #-ve in head +ve in body=[0,1,0]
+        pos_head_neg_body=0
+        neg_head_pos_body=0
+        neg_head_neg_body=0
+        pos_head_pos_body=0
+
+        logging.info("inside negated_verbs_count")
+        # pos_text1_neg_text2, neg_text1_pos_text2
+        [pos_head_neg_body, neg_head_pos_body] = count_different_polarity(lemmatized_headline_split, headline_pos_split, head_deps,
+                                                                          lemmatized_body_split, body_pos_split, body_deps, pos_in="VB")
+
+        [neg_head_neg_body, pos_head_pos_body] = count_same_polarity_both_texts(lemmatized_headline_split, headline_pos_split, head_deps,
+                                                                                lemmatized_body_split, body_pos_split, body_deps, pos_in="VB")
+
+        # first two are different poalrity counts, second two are same polarity counts
+        features = [pos_head_neg_body, neg_head_pos_body, neg_head_neg_body, pos_head_pos_body]
+
+        # DEBUG
+        logging.info(head_words.data)
+        logging.info(body_words.data)
+        logging.info(lemmatized_headline_split)
+        logging.info(lemmatized_body_split)
+        logging.info(features)
+
+
+        # if pos_head_pos_body > 0:
+        #     logging.info("pos_head_pos_body>0")
+        #     sys.exit(1)
+
+
+        # if neg_head_pos_body > 0:
+        #     logging.info("neg_head_pos_body>0")
+        #     sys.exit(1)
+        #
+        # if pos_head_neg_body > 0:
+        #     logging.info("pos_head_neg_body>0")
+        #     sys.exit(1)
+
+        # if   neg_head_neg_body > 0:
+        #     logging.info("neg_head_neg_body>0")
+        #     sys.exit(1)
+
+
+
+
+
+        return features
+
+
+'''given positions of verbs find how many of them are negated in the given sentence
+inputs:
+array/list of verb positions int[]
+dependency parse of the sentence
+'''
+def get_neg_count(vb_positions, sent_deps, lemmatized_sent_split):
+    vb_list=get_neg_list(vb_positions, sent_deps, lemmatized_sent_split)
+    logging.debug("vb_list:"+str(vb_list))
+    return len(vb_list)
+
+
+'''given positions of verbs find which all were negated in the given sentence
+inputs:
+outputs:
+    return two lists, the verbs that are negated and those that are not
+'''
+def partition_by_polarity(vb_positions, sent_deps,lemmatized_sent_split):
+        vb_count_list_negated=[]
+        # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
+        if(len(vb_positions)>0):
+            logging.debug(vb_positions)
+            for p in vb_positions:
+                logging.debug(p)
+                for edges in sent_deps.data:
+                    #list [Dict]
+                        logging.debug(edges)
+                        dest = edges["destination"]
+                        src = edges["source"]
+                        rel = edges["relation"]
+                        logging.debug(src)
+                        logging.debug(rel)
+                        logging.debug(dest)
+
+                        if (p==src):
+                            if (rel=="neg"):
+                                logging.debug("found a verb having negative edge")
+                                logging.debug(src)
+                                logging.debug(rel)
+                                logging.debug(dest)
+                                # and find if any of the leading edges go through "neg"-add it as a feature
+                                vb_count_list_negated.append(lemmatized_sent_split[p])
+        vb_count_list_positive = [lemmatized_sent_split[p] for p in vb_positions if lemmatized_sent_split[p] not in vb_count_list_negated]
+        return vb_count_list_negated, vb_count_list_positive
+
+
+'''given a list of verbs find all the positions if and where they occur in the given sentence'''
+def given_verb_find_positions(verb_list, lemmatized_sent):
+        vb_positions_body=[]
+        for vb_head in verb_list:
+            for index,word2 in enumerate(lemmatized_sent):
+                if (vb_head==word2):
+                    vb_positions_body.append(index)
+        return vb_positions_body
+
+# find  all verbs that occur in a given sentence.
+def get_all_verbs(lemmatized_headline_split, headline_pos_split,pos_in):
+        verb_head_list = []
+        for word1, pos in zip(lemmatized_headline_split, headline_pos_split):
+            if pos.startswith(pos_in):
+                verb_head_list.append(word1)
+        return verb_head_list
+
+#number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
 def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
 
         logging.info("inside " + pos_in + " antonyms")
@@ -578,6 +802,62 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
 
         return features
 
+
+def read_json_deps(json_file):
+    logging.debug("inside read_json_deps")
+    l = []
+
+    py_proc_doc_list=[]
+
+    with open(json_file) as f:
+        for eachline in (f):
+            obj_doc=PyProcDoc()
+            d = json.loads(eachline)
+            a=d["data"]
+            b = d["doc_id"]
+            obj_doc.doc_id=b
+            for e in a:
+                edges=e["edges"]
+                obj_doc.data=edges
+
+            py_proc_doc_list.append(obj_doc)
+
+    return py_proc_doc_list
+
+
+def read_json_with_id(json_file):
+    logging.debug("inside read_json_deps")
+
+    py_proc_doc_list=[]
+
+    with open(json_file) as f:
+        for eachline in (f):
+            obj_doc=PyProcDoc()
+            d = json.loads(eachline)
+            a=d["data"]
+            just_lemmas=' '.join(str(r) for v in a for r in v)
+            obj_doc.data=just_lemmas
+            b = d["doc_id"]
+            obj_doc.doc_id=b
+            py_proc_doc_list.append(obj_doc)
+
+    return py_proc_doc_list
+
+
+def read_json(json_file,logging):
+    logging.debug("inside read_json")
+    l = []
+    counter=0
+
+    with open(json_file) as f:
+        for eachline in (f):
+            d = json.loads(eachline)
+            a=d["data"]
+            just_lemmas=' '.join(str(r) for v in a for r in v)
+            l.append(just_lemmas)
+            counter = counter + 1
+    return l
+
 #Of all the numbers/digits are mentioned in headline. how many are mentioned in body
 def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
 
@@ -620,6 +900,7 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
 
         return features
+
 
 
 def get_ant(word):
