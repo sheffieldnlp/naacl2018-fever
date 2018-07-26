@@ -174,9 +174,11 @@ def get_gold_labels(args,jlr):
 def get_gold_labels_small(args,jlr):
     labels = np.array([[]])
 
+    counter=0
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels:"):
+            counter+=1
             label=claim_full["label"]
             if (label == "SUPPORTS"):
                 labels = np.append(labels, 0)
@@ -187,6 +189,6 @@ def get_gold_labels_small(args,jlr):
                     if (label=="NOT ENOUGH INFO"):
                         labels = np.append(labels, 2)
             logging.debug(index)
-            if (index > 10):
+            if (counter==10):
                 return labels
     return labels
