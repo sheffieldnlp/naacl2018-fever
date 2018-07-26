@@ -313,6 +313,10 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
                                       body_pos_split, "CD")
     num_overlap_array = np.array([num_overlap])
 
+    
+    antonym_noun_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
+                                      body_pos_split, "NN")
+    antonym_noun_overlap_array = np.array([antonym_noun_overlap])
 
     antonym_adj_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "NN")
@@ -322,7 +326,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
                                                body_pos_split, "JJ")
     antonym_overlap_array = np.array([antonym_overlap])
 
-    word_overlap = word_overlap_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+    word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
 
     hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
@@ -330,8 +334,6 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
     hedge_headline = hedging_features_headline(lemmatized_headline_split)
     hedge_headline_array = np.array([hedge_headline])
-
-
 
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
