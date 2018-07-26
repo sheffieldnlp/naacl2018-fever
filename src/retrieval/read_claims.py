@@ -73,6 +73,7 @@ def uofa_training(args,jlr,method,logger):
     # logger.info(
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
+
     gold_labels_tr = get_gold_labels(args, jlr)
     logging.info("number of rows in label list is is:" + str(len(gold_labels_tr)))
     combined_vector = read_json_create_feat_vec(load_ann_corpus,args)
@@ -163,5 +164,6 @@ def get_gold_labels(args,jlr):
                 # else:
                 #     if (label=="NOT ENOUGH INFO"):
                 #         labels = np.append(labels, 2)
-
+        if ((index>10) and (args.mode=="small")):
+            return labels
     return labels
