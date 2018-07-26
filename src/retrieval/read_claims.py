@@ -164,6 +164,6 @@ def get_gold_labels(args,jlr):
                 # else:
                 #     if (label=="NOT ENOUGH INFO"):
                 #         labels = np.append(labels, 2)
-        if ((index>10) and (args.mode=="small")):
-            return labels
+            if ((index>10) and (args.mode=="small")):
+                return labels
     return labels
