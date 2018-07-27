@@ -103,16 +103,11 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         #if we are doing dynamic cv addition.make sure load cv is true and load that cv
         if (args.dynamic_cv==True):
-            if (args.load_feat_vec==True):
                 logging.info("going to load combined vector from disk")
                 logging.info("dynamic_cv=true, load_feat vec=true ")
                 combined_vector_old = joblib.load(combined_vector_training)
                 combined_vector = create_feature_vec_one_feature(heads_lemmas, bodies_lemmas, heads_tags,
                                              bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,combined_vector_old)
-
-            else:
-                logging.error("Error:args.dynamic_cv is true but args.load_feat_vec is false")
-                sys.exit(1)
 
         else:
             combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
