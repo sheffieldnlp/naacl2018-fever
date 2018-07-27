@@ -54,6 +54,7 @@ if __name__ == "__main__":
     parser.add_argument('--mode', type=str, help='do training or testing' )
     parser.add_argument('--load_feat_vec', type=str2bool,default=False)
     parser.add_argument('--pred_file', type=str, help='path to save predictions',default="predictions.jsonl")
+    parser.add_argument('--dynamic_cv',type=str2bool,default=False)
 
 
     args = parser.parse_args()
@@ -67,7 +68,7 @@ if __name__ == "__main__":
 
     processed = dict()
 
-    if(args.mode=="train"):
+    if(args.mode=="train" or args.mode=="small"):
         uofa_training(args,jlr,method,logger)
     else:
         if(args.mode=="dev"):
@@ -75,7 +76,7 @@ if __name__ == "__main__":
             logger.info("Done, testing ")
 
         else:
-            if(args.mode=="test" or args.mode=="small"):
+            if(args.mode=="test" ):
                 uofa_testing(args,jlr,method,logger)
                 logger.info("Done, testing ")
 

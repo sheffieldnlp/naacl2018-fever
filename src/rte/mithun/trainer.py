@@ -37,10 +37,12 @@ combined_vector_training="combined_vector_testing_phase2.pkl"
 
 def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
+    #just load feature vector alone. No dynamically adding new features
     if (args.load_feat_vec==True):
-
         logging.info("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_training)
+
+
 
     else:
         logging.debug("load_feat_vec is falsse. going to generate features")
@@ -99,8 +101,20 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
             logging.debug("size of heads_lemmas and bodies_lemmas dont match. going to quit")
             sys.exit(1)
 
+        #if we are doing dynamic cv addition.make sure load cv is true and load that cv
+        if (args.dynamic_cv==True):
+            if (args.load_feat_vec==True):
+                logging.info("going to load combined vector from disk")
+                combined_vector_old = joblib.load(combined_vector_training)
+                combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
+                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,combined_vector_old)
 
-        combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
+            else:
+                logging.error("Error:args.dynamic_cv is true but args.load_feat_vec is false")
+                sys.exit(1)
+
+        else:
+            combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
                                              bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words)
 
         joblib.dump(combined_vector, combined_vector_training)
@@ -249,6 +263,129 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     return combined_vector
 
 
+'''Overloaded version for: if and when you add a new feature, you won't have to go through feature creation of the previously existing features. Just load old ones, and
+attach just the new one alone. Time saven.'''
+def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list,combined_vector):
+    logging.info("inside create_feature_vec overloaded")
+
+    num_overlap_matrix = np.empty((0, 2), float)
+    counter=0
+
+    for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
+
+
+        num_overlap_array= add_vectors (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,"")
+
+        num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
+
+
+        logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
+        logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
+
+        counter=counter+1
+
+
+
+
+    logging.info("\ndone with all headline body.:")
+
+
+    logging.info("shape  combined_vector before stacking is:" + str(combined_vector.shape))
+
+
+    combined_vector = np.hstack([combined_vector, num_overlap_matrix])
+    logging.info("shape  combined_vector after stacking is:" + str(combined_vector.shape))
+
+    return combined_vector
+
+
+'''overloaded version that will be used for generarting one feature at a time'''
+def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps, head_words, body_words,combined_vector):
+    logging.info("inside add_vectors overloaded")
+
+
+    lemmatized_headline_data = lemmatized_headline_obj.data
+    lemmatized_body_data= lemmatized_body_obj.data
+
+    #split everywhere based on space-i.e for word overlap etc etc..
+    lemmatized_headline_data = lemmatized_headline_data.lower()
+    lemmatized_body_data = lemmatized_body_data.lower()
+
+    doc_id_hl=lemmatized_headline_obj.doc_id
+    doc_id_bl=lemmatized_body_obj.doc_id
+    doc_id_ht=tagged_headline.doc_id
+    doc_id_bt=tagged_body.doc_id
+    doc_id_hd=head_deps.doc_id
+    doc_id_bd=body_deps.doc_id
+    doc_id_hw=head_words.doc_id
+    doc_id_bw=body_words.doc_id
+
+    lemmatized_headline_split = lemmatized_headline_data.split(" ")
+    lemmatized_body_split = lemmatized_body_data.split(" ")
+    headline_pos_split = tagged_headline.data.split(" ")
+    body_pos_split = tagged_body.data.split(" ")
+
+    logging.debug(doc_id_hl)
+    logging.debug(doc_id_bl)
+    logging.debug(doc_id_ht)
+    logging.debug(doc_id_bt)
+    logging.debug(doc_id_hd)
+    logging.debug(doc_id_bd)
+    logging.debug(doc_id_hw)
+    logging.debug(doc_id_bw)
+
+    if not (doc_id_hl == doc_id_bl == doc_id_ht == doc_id_bt == doc_id_hd == doc_id_bd == doc_id_hw == doc_id_bw):
+        logging.error("all doc ids dont match going to quit")
+        sys.exit(1)
+
+    logging.info(lemmatized_headline_data)
+    logging.info(lemmatized_body_data)
+    logging.debug(tagged_headline.data)
+    logging.debug(tagged_body.data)
+    logging.debug(head_deps.data)
+    logging.debug(body_deps.data)
+    logging.debug(head_words.data)
+    logging.debug(body_words.data)
+
+    logging.debug(tagged_headline)
+    logging.debug(tagged_body)
+    logging.debug(headline_pos_split)
+    logging.debug(body_pos_split)
+
+
+        #remove stop words
+    stop_words = {'some', 'didn', 'itself', 'how', 'an', 'in', 'about', 'to', 'a', 'through', 've', 'ours', 'wouldn',
+                  'y', 'from',
+      'weren', "you've", 'yourselves', 'ain', 'or', 'mustn', 'so', 'that', 'them', 'such', 'being', 'her', 'doesn',
+      'if', 'of', 'by', 'for', 'shouldn', 'll', 'are', 'any', 'doing', 'my', 'just', 'hers', 'its', 'i', 'further',
+      'myself', 'then', 'yours', 'the', 'there', "you're", 'can', 'ourselves', "you'll", 'with', 'as', 'him', "shan't",
+      'own', 'than', 'aren', 'nor', 'you', 'at', 'mightn', 'hasn', 'am', 'shan', 'needn', 'this', 'having', 'hadn',
+      'yourself', 'themselves', 'too', 'couldn', 'will', "aren't", "you'd", 'more', 'few', 'our', 'most', 'very', 'me',
+      'into', 'their', 'those', 'wasn', 'all', 'here', 'been', 'your', 'on','isn','these', 'until', 'haven', 'we',
+        'theirs', 'be', 'what', 'while', 'why', 'where', 'which', 'when', 'who','whom', 'his', 'they', 'she', 'himself',
+                  'herself', 'has', 'have', 'do','and','is' , "weren't",'were', 'did', "did n't", 'it', "won't", "doesn't",
+                  'had', "needn't", "wouldn't","that'll", "mightn't","hadn't","mustn't",'he',"don't","she's", "isn't","should've",
+                  'should', "shouldn't",'does',"couldn't","wasn't","haven't","hasn't",'was', "it's"}
+
+    logging.debug(stop_words)
+
+    lemmatized_headline_split_sw = [w for w in lemmatized_headline_split if not w in stop_words]
+    lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
+
+
+
+    num_overlap = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                                      body_pos_split, "CD")
+    num_overlap_array = np.array([num_overlap])
+
+
+
+
+
+    return num_overlap_array
+
+
+
 def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps, head_words, body_words):
 
 
@@ -334,7 +471,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
                                       body_pos_split, "CD")
     num_overlap_array = np.array([num_overlap])
 
-    
+
     antonym_noun_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
                                       body_pos_split, "NN")
     antonym_noun_overlap_array = np.array([antonym_noun_overlap])
@@ -937,7 +1074,7 @@ def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
 
 
 
-        return features,overall,hc,bc
+        return features
 
 
 
@@ -950,3 +1087,6 @@ def get_ant(word):
                 antonyms.append(l.antonyms()[0].name())
 
     return antonyms
+
+#load existing combined vector, parse only for a given new feature. attach it to existing vector
+def dynamicCV():
