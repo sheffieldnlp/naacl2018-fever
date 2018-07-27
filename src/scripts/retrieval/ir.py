@@ -65,11 +65,20 @@ if __name__ == "__main__":
 
 
     processed = dict()
-    if(args.mode=="train") or(args.mode=="small"):
+
+    if(args.mode=="train"):
         uofa_training(args,jlr,method,logger)
     else:
-        if(args.mode=="test"):
-            uofa_testing(args,jlr,method,logger)
+        if(args.mode=="dev"):
+            uofa_dev(args,jlr,method,logger)
+            logger.info("Done, testing ")
+
+        else:
+            if(args.mode=="test" or args.mode=="small"):
+                uofa_testing(args,jlr,method,logger)
+                logger.info("Done, testing ")
+
+
 
 
     with ThreadPool() as p:
