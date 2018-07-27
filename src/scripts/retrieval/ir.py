@@ -11,7 +11,7 @@ from retrieval.top_n import TopNDocsTopNSents
 from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
-from retrieval.read_claims import uofa_training,uofa_testing
+from retrieval.read_claims import uofa_training,uofa_testing,uofa_dev
 from rte.mithun.log import setup_custom_logger
 
 
