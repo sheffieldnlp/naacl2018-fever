@@ -94,6 +94,7 @@ def uofa_training(args,jlr,method,logger):
 def uofa_testing(args,jlr,method,logger):
     logger.warning("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
+    label_ev=get_gold_labels_evidence(args, jlr)
 
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
@@ -105,6 +106,9 @@ def uofa_testing(args,jlr,method,logger):
     logging.debug("weights:")
     #logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
+
+
+
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
     logging.debug(str(gold_labels))
@@ -119,6 +123,8 @@ def uofa_testing(args,jlr,method,logger):
     # get number of support vectors for each class
     #logging.debug(trained_model.n_support_)
     logging.info("done with testing. going to exit")
+    final_predictions=write_pred_str_disk(args,jlr,pred)
+    fever_score(final_predictions,label_ev)
     sys.exit(1)
 
 def annotate_save_quit(test_data,logger):
@@ -129,6 +135,42 @@ def annotate_save_quit(test_data,logger):
 
     sys.exit(1)
 
+
+#load predictions, convert it based on label and write it as string.
+def write_pred_str_disk(args,jlr,pred):
+    logging.debug("here1"+str(args.out_file))
+    final_predictions=[]
+    #pred=joblib.load(predicted_results)
+    with open(args.out_file,"r") as f:
+        ir = jlr.process(f)
+        logging.debug("here2"+str(len(ir)))
+
+        for index,(p,q) in enumerate(zip(pred,ir)):
+            line=dict()
+            label="not enough info"
+            if(p==0):
+                label="supports"
+            else:
+                if(p==1):
+                    label="refutes"
+
+            line["id"]=q["id"]
+            line["predicted_label"]=label
+            line["predicted_evidence"]=q["predicted_sentences"]
+            logging.debug(q["id"])
+            logging.debug(label)
+            logging.debug(q["predicted_sentences"])
+            logging.debug(index)
+
+            final_predictions.append(line)
+
+    logging.info(len(final_predictions))
+
+    with open(args.pred_file, "w+") as out_file:
+        for x in final_predictions:
+
+            out_file.write(json.dumps(x)+"\n")
+    return final_predictions
 
 
 def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_headline,json_file_tr_annotated_body,
@@ -170,6 +212,21 @@ def get_gold_labels(args,jlr):
                 #         labels = np.append(labels, 2)
 
     return labels
+
+def get_gold_labels_evidence(args,jlr):
+    evidences=[]
+    with open(args.in_file,"r") as f
+        all_claims = jlr.process(f)
+        gold=dict()
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels:"):
+            label=claim_full["label"]
+            if not (label.lower()=="NOT ENOUGH INFO"):
+                gold["label"]=label
+                gold["evidence"]=claim_full["evidence"]
+                evidences.append(gold)
+
+    return evidences
+
 
 def get_gold_labels_small(args,jlr):
     labels = np.array([[]])
