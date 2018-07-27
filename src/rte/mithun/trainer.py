@@ -105,8 +105,9 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         if (args.dynamic_cv==True):
             if (args.load_feat_vec==True):
                 logging.info("going to load combined vector from disk")
+                logging.info("dynamic_cv=true, load_feat vec=true ")
                 combined_vector_old = joblib.load(combined_vector_training)
-                combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
+                combined_vector = create_feature_vec_one_feature(heads_lemmas, bodies_lemmas, heads_tags,
                                              bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,combined_vector_old)
 
             else:
@@ -171,7 +172,7 @@ def normalize_dummy(text):
     x = text.lower().translate(remove_punctuation_map)
     return x.split(" ")
 
-def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list):
+def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
@@ -265,7 +266,7 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
 
 '''Overloaded version for: if and when you add a new feature, you won't have to go through feature creation of the previously existing features. Just load old ones, and
 attach just the new one alone. Time saven.'''
-def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list,combined_vector):
+def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list,combined_vector):
     logging.info("inside create_feature_vec overloaded")
 
     num_overlap_matrix = np.empty((0, 2), float)
