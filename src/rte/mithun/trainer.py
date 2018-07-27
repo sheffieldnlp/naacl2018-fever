@@ -1088,5 +1088,3 @@ def get_ant(word):
 
     return antonyms
 
-#load existing combined vector, parse only for a given new feature. attach it to existing vector
-def dynamicCV():
