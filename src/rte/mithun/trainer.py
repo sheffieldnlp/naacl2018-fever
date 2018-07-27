@@ -234,8 +234,7 @@ def create_feature_vec(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags
     logging.info("headlines that have numbers is:" + str(num_h))
     logging.info("body that has numbers is:" + str(num_b))
 
-    sys.exit(1)
-
+    
     logging.info("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
     logging.info("shape of  hedging_words_vector is:" + str(hedging_words_vector.shape))
     logging.info("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
