@@ -16,6 +16,7 @@ logger=None
 load_ann_corpus=True
 #load_combined_vector=True
 from scorer.src.fever.scorer import fever_score
+import json
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -141,7 +142,7 @@ def write_pred_str_disk(args,jlr,pred):
     logging.debug("here1"+str(args.out_file))
     final_predictions=[]
     #pred=joblib.load(predicted_results)
-    with open(args.out_file,"r") as f:
+    with open(args.in_file,"r") as f:
         ir = jlr.process(f)
         logging.debug("here2"+str(len(ir)))
 
@@ -168,7 +169,6 @@ def write_pred_str_disk(args,jlr,pred):
 
     with open(args.pred_file, "w+") as out_file:
         for x in final_predictions:
-
             out_file.write(json.dumps(x)+"\n")
     return final_predictions
 
@@ -218,7 +218,7 @@ def get_gold_labels_evidence(args,jlr):
     with open(args.in_file,"r") as f:
         all_claims = jlr.process(f)
         gold=dict()
-        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels:"):
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels_ev:"):
             label=claim_full["label"]
             if not (label.lower()=="NOT ENOUGH INFO"):
                 gold["label"]=label
