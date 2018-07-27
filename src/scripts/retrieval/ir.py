@@ -53,6 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('--parallel',type=str2bool,default=True)
     parser.add_argument('--mode', type=str, help='do training or testing' )
     parser.add_argument('--load_feat_vec', type=str2bool,default=False)
+    parser.add_argument('--pred_file', type=str, help='path to save predictions',default="predictions.jsonl")
 
 
     args = parser.parse_args()
