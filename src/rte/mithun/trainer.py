@@ -503,7 +503,8 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array\
-        ,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,overall,hc,bc
+        ,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,\
+           antonym_adj_overlap_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
