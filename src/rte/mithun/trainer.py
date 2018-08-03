@@ -167,10 +167,10 @@ def do_testing(combined_vector,svm):
     logging.debug("done with predictions")
     return p
 
-
-def normalize_dummy(text):
-    x = text.lower().translate(remove_punctuation_map)
-    return x.split(" ")
+#
+# def normalize_dummy(text):
+#     x = text.lower().translate(remove_punctuation_map)
+#     return x.split(" ")
 
 def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list):
     word_overlap_vector = np.empty((0, 1), float)
@@ -196,15 +196,8 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,o,h,b = add_vectors\
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array= add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words)
-
-        if(o):
-            num_o+=1
-        if(h):
-            num_h+=1
-        if(b):
-            num_b+=1
 
         logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
         logging.info(verb_overlap_array)
@@ -470,9 +463,9 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
 
-    num_overlap,overall,hc,bc = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+    num_overlap = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "CD")
-    num_overlap_array = np.array([num_overlap])
+    num_overlap_array = np.([num_overlap])
 
 
     antonym_noun_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
@@ -831,10 +824,10 @@ inputs:
 array/list of verb positions int[]
 dependency parse of the sentence
 '''
-def get_neg_count(vb_positions, sent_deps, lemmatized_sent_split):
-    vb_list=get_neg_list(vb_positions, sent_deps, lemmatized_sent_split)
-    logging.debug("vb_list:"+str(vb_list))
-    return len(vb_list)
+# def get_neg_count(vb_positions, sent_deps, lemmatized_sent_split):
+#     vb_list=get_neg_list(vb_positions, sent_deps, lemmatized_sent_split)
+#     logging.debug("vb_list:"+str(vb_list))
+#     return len(vb_list)
 
 
 '''given positions of verbs find which all were negated in the given sentence
