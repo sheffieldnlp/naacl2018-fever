@@ -465,7 +465,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
     num_overlap = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "CD")
-    num_overlap_array = np.([num_overlap])
+    num_overlap_array = np.array([num_overlap])
 
 
     antonym_noun_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
