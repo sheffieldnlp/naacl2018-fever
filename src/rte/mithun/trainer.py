@@ -11,10 +11,10 @@ import json
 from nltk.corpus import wordnet
 import itertools
 from .proc_data import PyProcDoc
+import torchwordemb
 
 
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
-my_out_dir = "poop-out"
 n_cores = 2
 LABELS = ['SUPPORTS', 'REFUTES', 'NOT ENOUGH INFO']
 RELATED = LABELS[0:3]
@@ -270,7 +270,8 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
                 , heads_deps_obj_list,bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
 
-        num_overlap_array= add_vectors_one_feature (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,"")
+        num_overlap_array= add_vectors_one_feature (lemmatized_headline, lemmatized_body,
+                                                    tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,"")
 
         num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
 
@@ -370,15 +371,14 @@ def add_vectors_one_feature(lemmatized_headline_obj, lemmatized_body_obj, tagged
 
 
 
-    num_overlap = num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
-                                      body_pos_split, "CD")
-    num_overlap_array = np.array([num_overlap])
+    emb_overlap = embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw)
+    emb_overlap_array = np.array([emb_overlap])
 
 
 
 
 
-    return num_overlap_array
+    return emb_overlap_array
 
 
 
@@ -1022,6 +1022,27 @@ def read_json(json_file,logging):
             l.append(just_lemmas)
             counter = counter + 1
     return l
+
+def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw):
+
+
+    # get the glove embeddings for this adjective
+    vocab, vec = torchwordemb.load_glove_text("/data/nlp/corpora/glove/6B/glove.6B.300d.txt")
+
+    # for each unique adjective in teh training data, get its embedding and add it to another vector file
+
+    word_emb = {}
+    logging.debug("size of adj_lexicon")
+    for index, x in enumerate(lemmatized_headline_split_sw):
+        emb = vec[vocab[x]]
+        word_emb[x] = emb
+        logging.debug("embedding of the word"+x)
+        logging.debug(str(emb))
+        sys.exit(1)
+
+    features=[0,0]
+    return features
+
 
 #Of all the numbers/digits are mentioned in headline. how many are mentioned in body
 def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
