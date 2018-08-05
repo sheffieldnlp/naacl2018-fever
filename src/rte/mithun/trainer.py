@@ -1044,7 +1044,12 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
             else:
                 logging.debug("size of all_emb_vector before")
                 logging.debug(str(all_emb_vector.shape))
-                all_emb_vector=np.hstack([all_emb_vector,q])
+                all_emb_vector=np.vstack([all_emb_vector,q])
+                sum=np.sum(all_emb_vector,axis=0)
+                logging.debug("actual vector:")
+                logging.debug(str(all_emb_vector))
+                logging.debug("sum:"+str(sum))
+                logging.debug(str(all_emb_vector.shape))
                 logging.debug("size of all_emb_vector after")
                 logging.debug(str(all_emb_vector.shape))
                 sys.exit(1)
