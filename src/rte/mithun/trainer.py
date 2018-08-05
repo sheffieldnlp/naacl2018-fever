@@ -1038,7 +1038,7 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
         logging.debug(str(q.shape))
 
         logging.debug("index:" +str(index))
-        if(index==1):
+        if(index==0):
             all_emb_vector=q
         else:
             logging.debug("size of all_emb_vector before")
