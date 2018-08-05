@@ -11,7 +11,7 @@ from retrieval.top_n import TopNDocsTopNSents
 from retrieval.fever_doc_db import FeverDocDB
 from common.dataset.reader import JSONLineReader
 from rte.riedel.data import FEVERGoldFormatter, FEVERLabelSchema
-from retrieval.read_claims import uofa_training,uofa_testing
+from retrieval.read_claims import uofa_training,uofa_testing,uofa_dev
 from rte.mithun.log import setup_custom_logger
 
 
@@ -53,6 +53,8 @@ if __name__ == "__main__":
     parser.add_argument('--parallel',type=str2bool,default=True)
     parser.add_argument('--mode', type=str, help='do training or testing' )
     parser.add_argument('--load_feat_vec', type=str2bool,default=False)
+    parser.add_argument('--pred_file', type=str, help='path to save predictions',default="predictions.jsonl")
+    parser.add_argument('--dynamic_cv',type=str2bool,default=False)
 
 
     args = parser.parse_args()
@@ -65,11 +67,22 @@ if __name__ == "__main__":
 
 
     processed = dict()
-    if(args.mode=="train"):
+
+    if(args.mode=="train" or args.mode=="small"):
         uofa_training(args,jlr,method,logger)
     else:
-        if(args.mode=="test"):
-            uofa_testing(args,jlr,method,logger)
+        if(args.mode=="dev"):
+            uofa_dev(args,jlr,method,logger)
+            logger.info("Done, testing ")
+
+        else:
+            if(args.mode=="test" ):
+                uofa_testing(args,jlr,method,logger)
+                logger.info("Done, testing ")
+
+
+
+
     with ThreadPool() as p:
         for line in tqdm(get_map_function(args.parallel)(lambda line: process_line(method,line), all_claims), total=len(all_claims)):
             processed[line["id"]] = line
