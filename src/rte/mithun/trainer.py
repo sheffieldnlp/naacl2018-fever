@@ -1044,12 +1044,11 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
         q=emb.numpy()
         logging.debug("size of q")
         logging.debug(str(q.shape))
-        all_emb_vector=np.hstack(all_emb_vector,q)
+        all_emb_vector=np.hstack([all_emb_vector,q])
 
-
-    logging.debug("size of all_emb_vector")
-    logging.debug(str(all_emb_vector.shape))
-    sys.exit(1)
+        logging.debug("size of all_emb_vector")
+        logging.debug(str(all_emb_vector.shape))
+        sys.exit(1)
 
     features=[0,0]
     return features
