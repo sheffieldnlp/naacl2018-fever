@@ -1032,9 +1032,8 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     # for each unique adjective in teh training data, get its embedding and add it to another vector file
 
     word_emb = {}
-    logging.debug("size of adj_lexicon")
 
-    all_emb_vector = np.empty((200, 1), float)
+    all_emb_vector = np.empty((300, 1), float)
 
 
     for index, x in enumerate(lemmatized_headline_split_sw):
@@ -1044,6 +1043,8 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
         q=emb.numpy()
         logging.debug("size of q")
         logging.debug(str(q.shape))
+        logging.debug("size of all_emb_vector")
+        logging.debug(str(all_emb_vector.shape))
         all_emb_vector=np.hstack([all_emb_vector,q])
 
         logging.debug("size of all_emb_vector")
