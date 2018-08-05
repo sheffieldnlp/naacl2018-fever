@@ -1026,15 +1026,8 @@ def read_json(json_file,logging):
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw):
 
 
-    # get the glove embeddings for this adjective
     vocab, vec = torchwordemb.load_glove_text("/data/nlp/corpora/glove/6B/glove.6B.300d.txt")
-
-    # for each unique adjective in teh training data, get its embedding and add it to another vector file
-
-    word_emb = {}
-
-    all_emb_vector = np.empty((300, 1), float)
-
+    all_emb_vector = None
 
     for index, x in enumerate(lemmatized_headline_split_sw):
         emb = vec[vocab[x]]
@@ -1045,11 +1038,15 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
         logging.debug(str(q.shape))
         logging.debug("size of all_emb_vector")
         logging.debug(str(all_emb_vector.shape))
-        all_emb_vector=np.hstack([all_emb_vector,q])
+        logging.debug("index:" +str(index))
+        if(index==1):
+            all_emb_vector=q
+        else:
+            all_emb_vector=np.hstack([all_emb_vector,q])
 
-        logging.debug("size of all_emb_vector")
-        logging.debug(str(all_emb_vector.shape))
-        sys.exit(1)
+            logging.debug("size of all_emb_vector")
+            logging.debug(str(all_emb_vector.shape))
+            sys.exit(1)
 
     features=[0,0]
     return features
