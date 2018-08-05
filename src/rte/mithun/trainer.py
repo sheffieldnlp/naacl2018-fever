@@ -1036,15 +1036,15 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
         q=emb.numpy()
         logging.debug("size of q")
         logging.debug(str(q.shape))
-        logging.debug("size of all_emb_vector")
-        logging.debug(str(all_emb_vector.shape))
+
         logging.debug("index:" +str(index))
         if(index==1):
             all_emb_vector=q
         else:
+            logging.debug("size of all_emb_vector before")
+            logging.debug(str(all_emb_vector.shape))
             all_emb_vector=np.hstack([all_emb_vector,q])
-
-            logging.debug("size of all_emb_vector")
+            logging.debug("size of all_emb_vector after")
             logging.debug(str(all_emb_vector.shape))
             sys.exit(1)
 
