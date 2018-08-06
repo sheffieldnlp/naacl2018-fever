@@ -1042,17 +1042,17 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
             if(index==0):
                 all_emb_vector=q
             else:
-                logging.debug("size of all_emb_vector before")
-                logging.debug(str(all_emb_vector.shape))
+                # logging.debug("size of all_emb_vector before")
+                # logging.debug(str(all_emb_vector.shape))
                 all_emb_vector=np.column_stack([all_emb_vector,q])
                 sum=np.sum(all_emb_vector,axis=1)
-                logging.debug("actual vector:")
-                logging.debug(str(all_emb_vector))
-                logging.debug("sum:"+str(sum))
-                logging.debug(str(all_emb_vector.shape))
-                logging.debug("size of all_emb_vector after")
-                logging.debug(str(all_emb_vector.shape))
-                sys.exit(1)
+
+
+        # logging.debug("actual vector:")
+        # logging.debug(str(all_emb_vector))
+        logging.debug("sum:"+str(sum))
+        logging.debug("size of all_emb_vector after")
+        logging.debug(str(all_emb_vector.shape))
 
     features=[0,0]
     return features
