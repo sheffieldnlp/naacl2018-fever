@@ -1051,11 +1051,15 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
                     sum2=sum[index2]+y
                     sum[index2]=sum2
 
-            logging.debug("value of sum ")
-            logging.debug(str(sum))
-            logging.debug("size of sum ")
-            logging.debug(str(len(sum)))
-            if (index==1):
+
+
+            if index > 1:
+                logging.debug("first value of sum ")
+                logging.debug(str(sum[0]))
+                logging.debug("last value of sum ")
+                logging.debug(str(sum[299]))
+                logging.debug("size of sum ")
+                logging.debug(str(len(sum)))
                 sys.exit(1)
 
     # logging.debug("actual vector:")
