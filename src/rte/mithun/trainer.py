@@ -1050,11 +1050,7 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
                     # go through each of the 300 entries, and sum it up
                     sum2=sum[index2]+y
                     sum[index2]=sum2
-                    logging.debug("size of sum ")
-                    logging.debug(str(len(sum)))
 
-            assert q[0] == sum[0],"q values dont match"
-            assert q[299] == sum[299],"q values dont match"
             logging.debug("value of sum ")
             logging.debug(str(sum))
             logging.debug("size of sum ")
