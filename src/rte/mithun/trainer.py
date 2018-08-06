@@ -1,6 +1,7 @@
 from __future__ import division
 import sys,logging
 from sklearn import svm
+from sklearn.metrics.pairwise import cosine_similarity
 import tqdm
 import os
 import numpy as np
@@ -31,6 +32,7 @@ data_folder_train_small=data_root+"/data/fever-data-ann/train_small/"
 data_folder_dev=data_root+"/data/fever-data-ann/dev/"
 data_folder_test=data_root+"/data/fever-data-ann/test/"
 model_trained="model_trained.pkl"
+path_glove_server="/data/nlp/corpora/glove/6B/glove.6B.300d.txt"
 
 predicted_results="predicted_results.pkl"
 combined_vector_training="combined_vector_testing_phase2.pkl"
@@ -1046,7 +1048,7 @@ def get_sum_vector_embedding(vocab,vec, sent):
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw):
 
 
-    vocab, vec = torchwordemb.load_glove_text("/data/nlp/corpora/glove/6B/glove.6B.300d.txt")
+    vocab, vec = torchwordemb.load_glove_text(path_glove_server)
 
     sum_h=get_sum_vector_embedding(vocab,vec,lemmatized_headline_split_sw)
     sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
@@ -1057,10 +1059,13 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     logging.debug(str((sum_h)))
     logging.debug(" sum vector for body is ")
     logging.debug(str((sum_b)))
+
+    c=cosine_similarity(sum_h,sum_b)
+    logging.debug(" cosine:"+str(c))
     sys.exit(1)
 
 
-    features=[0,0]
+    features=[c]
     return features
 
 
