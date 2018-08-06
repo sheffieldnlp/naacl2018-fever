@@ -1023,41 +1023,40 @@ def read_json(json_file,logging):
             counter = counter + 1
     return l
 
+def get_sum_vector_embedding(vocab,vec, sent):
+    sum = []
+
+    for index, x in enumerate(sent):
+
+        if (x in vocab):
+            logging.debug(x)
+            emb = vec[vocab[x]]
+            q = emb.numpy()
+
+            for index2, y in enumerate(q):
+
+                if (index == 0):
+                    sum.append(y)
+                else:
+                    # go through each of the 300 entries, and sum it up
+                    sum2 = sum[index2] + y
+                    sum[index2] = sum2
+    return sum
+
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw):
 
 
     vocab, vec = torchwordemb.load_glove_text("/data/nlp/corpora/glove/6B/glove.6B.300d.txt")
 
-    sum=[]
-
-    for index, x in enumerate(lemmatized_headline_split_sw):
-
-        if(x in vocab):
-            logging.debug(x)
-            emb = vec[vocab[x]]
-            q=emb.numpy()
-
-            for index2,y in enumerate(q):
-
-                if(index==0):
-                    sum.append(y)
-                else:
-                    # go through each of the 300 entries, and sum it up
-                    sum2=sum[index2]+y
-                    sum[index2]=sum2
+    sum_h=get_sum_vector_embedding(vocab,vec,lemmatized_headline_split_sw)
+    sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
 
 
 
-
-
-    # logging.debug("actual vector:")
-    # logging.debug(str(all_emb_vector))
-
-    logging.debug("size of sum ")
-    logging.debug(str(len(sum)))
     logging.debug(" sum vector for headline is ")
-    logging.debug(str((sum)))
-    logging.debug("index:"+str(index))
+    logging.debug(str((sum_h)))
+    logging.debug(" sum vector for body is ")
+    logging.debug(str((sum_b)))
     sys.exit(1)
 
 
