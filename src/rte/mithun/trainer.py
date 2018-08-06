@@ -1031,7 +1031,9 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     sum=[]
 
     for index, x in enumerate(lemmatized_headline_split_sw):
+
         if(x in vocab):
+            logging.debug(x)
             emb = vec[vocab[x]]
             q=emb.numpy()
 
@@ -1055,6 +1057,7 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     logging.debug(str(len(sum)))
     logging.debug(" sum vector for headline is ")
     logging.debug(str((sum)))
+    logging.debug("index:"+str(index))
     sys.exit(1)
 
 
