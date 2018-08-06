@@ -1053,10 +1053,13 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
                     logging.debug("size of sum ")
                     logging.debug(str(sum.shape))
 
+            assert((q[0] == sum[0]),"q values dont match")
+            assert ((q[299] == sum[299]),"q values dont match")
             logging.debug("value of sum ")
             logging.debug(str(sum))
             logging.debug("size of sum ")
-            logging.debug(str(sum.shape))
+            logging.debug(str(len(sum)))
+            sys.exit(1)
 
     # logging.debug("actual vector:")
     # logging.debug(str(all_emb_vector))
