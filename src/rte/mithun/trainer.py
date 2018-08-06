@@ -1027,7 +1027,6 @@ def read_json(json_file,logging):
 
 def get_sum_vector_embedding(vocab,vec, sent):
     sum = np.empty((300,0),float)
-    #word_overlap_vector = np.empty((0, 1), float)
 
     for index, x in enumerate(sent):
 
@@ -1035,12 +1034,10 @@ def get_sum_vector_embedding(vocab,vec, sent):
             logging.debug(x)
             emb = vec[vocab[x]]
             q = emb.numpy()
-
-            for index2, y in enumerate(q):
-
-                if (index == 0):
-                    sum.append(y)
-                else:
+            if (index == 0):
+                sum=q
+            else:
+                for index2, y in enumerate(q):
                     # go through each of the 300 entries, and sum it up
                     sum2 = sum[index2] + y
                     sum[index2] = sum2
