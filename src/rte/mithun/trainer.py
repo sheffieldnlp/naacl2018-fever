@@ -1028,8 +1028,7 @@ def read_json(json_file,logging):
 def get_sum_vector_embedding(vocab,vec, sent):
     sum = np.empty((300,0),float)
 
-    for index, x in enumerate(sent):
-
+    for index, x in tqdm(enumerate(sent), total=len(sent),desc="load_embed"):
         if (x in vocab):
             logging.debug(x)
             emb = vec[vocab[x]]
@@ -1037,10 +1036,13 @@ def get_sum_vector_embedding(vocab,vec, sent):
             if (index == 0):
                 sum=q
             else:
-                for index2, y in enumerate(q):
-                    # go through each of the 300 entries, and sum it up
-                    sum2 = sum[index2] + y
-                    sum[index2] = sum2
+                sum = sum + q
+                #
+                # # go through each of the 300 entries, and sum it up to that of the previous word
+                # for index2, y in enumerate(q):
+                #
+                #     sum2 = sum[index2] + y
+                #     sum[index2] = sum2
     return sum
 
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw):
@@ -1051,17 +1053,18 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     sum_h=get_sum_vector_embedding(vocab,vec,lemmatized_headline_split_sw)
     sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
 
-
-
     logging.debug(" size of sum vector for headline is ")
     logging.debug(str(len(sum_h)))
     logging.debug(" size vector for body is ")
     logging.debug(str(len(sum_b)))
 
+    logging.debug(" sum vector for headline is ")
+    logging.debug(str((sum_h)))
+    logging.debug(" sum vector for body is ")
+    logging.debug(str((sum_b)))
+
     sum_h_r= sum_h.reshape(-1,1)
     sum_b_r = sum_b.reshape(-1, 1)
-
-
 
     c=cosine_similarity(sum_h_r,sum_b_r)
     logging.debug(" cosine:"+str(c))
