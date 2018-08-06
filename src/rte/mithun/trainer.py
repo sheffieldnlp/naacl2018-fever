@@ -1026,7 +1026,8 @@ def read_json(json_file,logging):
     return l
 
 def get_sum_vector_embedding(vocab,vec, sent):
-    sum = []
+    sum = np.empty((300,0),float)
+    #word_overlap_vector = np.empty((0, 1), float)
 
     for index, x in enumerate(sent):
 
