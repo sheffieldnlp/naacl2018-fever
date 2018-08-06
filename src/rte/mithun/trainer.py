@@ -1027,7 +1027,8 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
 
 
     vocab, vec = torchwordemb.load_glove_text("/data/nlp/corpora/glove/6B/glove.6B.300d.txt")
-    all_emb_vector = None
+
+    sum=[]
 
     for index, x in enumerate(lemmatized_headline_split_sw):
         if(x in vocab):
@@ -1037,19 +1038,29 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
             q=emb.numpy()
             logging.debug("size of q")
             logging.debug(str(q.shape))
+            logging.debug("index:" + str(index))
+            logging.debug("first value of q:" + str(q[0]))
+            logging.debug("last value of q:" + str(q[299]))
 
-            logging.debug("index:" +str(index))
-            if(index==0):
-                all_emb_vector=q
-            else:
-                logging.debug("size of all_emb_vector before")
-                logging.debug(str(all_emb_vector.shape))
-                all_emb_vector=np.column_stack([all_emb_vector,q])
+            for y in q:
 
-    sum=np.sum(all_emb_vector,axis=1)
+                if(index==0):
+                    sum.append(y)
+                else:
+                    # go through each of the 300 entries, and sum it up
+                    sum2=sum[y]+y
+                    sum[y]=sum2
+                    logging.debug("size of sum ")
+                    logging.debug(str(sum.shape))
+
+            logging.debug("value of sum ")
+            logging.debug(str(sum))
+            logging.debug("size of sum ")
+            logging.debug(str(sum.shape))
+
     # logging.debug("actual vector:")
     # logging.debug(str(all_emb_vector))
-    logging.debug("sum:"+str(sum))
+
     logging.debug("size of all_emb_vector after")
     logging.debug(str(all_emb_vector.shape))
 
