@@ -1059,7 +1059,8 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
             logging.debug(str(sum))
             logging.debug("size of sum ")
             logging.debug(str(len(sum)))
-            sys.exit(1)
+            if (index==1):
+                sys.exit(1)
 
     # logging.debug("actual vector:")
     # logging.debug(str(all_emb_vector))
