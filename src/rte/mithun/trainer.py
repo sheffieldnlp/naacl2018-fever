@@ -1033,14 +1033,7 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     for index, x in enumerate(lemmatized_headline_split_sw):
         if(x in vocab):
             emb = vec[vocab[x]]
-            logging.debug("size of emb")
-            logging.debug(str(emb.shape))
             q=emb.numpy()
-            logging.debug("size of q")
-            logging.debug(str(q.shape))
-            logging.debug("index:" + str(index))
-            logging.debug("first value of q:" + str(q[0]))
-            logging.debug("last value of q:" + str(q[299]))
 
             for index2,y in enumerate(q):
 
@@ -1053,20 +1046,17 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
 
 
 
-            if index > 1:
-                logging.debug("first value of sum ")
-                logging.debug(str(sum[0]))
-                logging.debug("last value of sum ")
-                logging.debug(str(sum[299]))
-                logging.debug("size of sum ")
-                logging.debug(str(len(sum)))
-                sys.exit(1)
+
 
     # logging.debug("actual vector:")
     # logging.debug(str(all_emb_vector))
 
-    logging.debug("size of all_emb_vector after")
-    logging.debug(str(all_emb_vector.shape))
+    logging.debug("size of sum ")
+    logging.debug(str(len(sum)))
+    logging.debug(" sum vector for headline is ")
+    logging.debug(str((sum)))
+    sys.exit(1)
+
 
     features=[0,0]
     return features
