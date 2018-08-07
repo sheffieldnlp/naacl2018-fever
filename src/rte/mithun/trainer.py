@@ -1046,7 +1046,6 @@ def get_sum_vector_embedding(vocab,vec, sent):
             else:
                 sum = sum + q
                 logging.info(sum.shape)
-                sys.exit(1)
 
     return sum
 
