@@ -264,22 +264,21 @@ attach just the new one alone. Time saven.'''
 def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list,combined_vector):
     logging.info("inside create_feature_vec overloaded")
 
-    num_overlap_matrix = np.empty((0, 2), float)
+    new_feature_matrix = np.empty((0, 1), float)
     counter=0
 
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) in \
             tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list
                 , heads_deps_obj_list,bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
-
-        num_overlap_array= add_vectors_one_feature (lemmatized_headline, lemmatized_body,
+        new_feature_array= add_vectors_one_feature (lemmatized_headline, lemmatized_body,
                                                     tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,"")
 
-        num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
+        new_feature_matrix = np.vstack([new_feature_matrix, new_feature_array])
 
 
-        logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
-        logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
+        logging.debug("num_overlap matrix is =" + str(new_feature_matrix))
+        logging.debug("shape  num_overlap_matrix is:" + str(new_feature_matrix.shape))
 
         counter=counter+1
 
@@ -292,7 +291,7 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
     logging.info("shape  combined_vector before stacking is:" + str(combined_vector.shape))
 
 
-    combined_vector = np.hstack([combined_vector, num_overlap_matrix])
+    combined_vector = np.hstack([combined_vector, new_feature_matrix])
     logging.info("shape  combined_vector after stacking is:" + str(combined_vector.shape))
 
     return combined_vector
@@ -1066,11 +1065,6 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     logging.debug(" size vector for head is ")
     logging.debug(str(len(sum_h)))
 
-    # logging.debug(" sum vector for headline is ")
-    # logging.debug(str((sum_h)))
-    # logging.debug(" sum vector for body is ")
-    # logging.debug(str((sum_b)))
-
 
 
     sum_h_r= sum_h.reshape(1,-1)
@@ -1083,9 +1077,8 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     logging.debug(str((sum_h.shape)))
     logging.debug(" size vector for body is ")
     logging.debug(str((sum_b.shape)))
-    sys.exit(1)
 
-    features=[c]
+    features=[c[0][0]]
     return features
 
 
