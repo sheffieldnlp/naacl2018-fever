@@ -280,15 +280,15 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
         new_feature_matrix = np.vstack([new_feature_matrix, new_feature_array])
 
 
-        logging.debug("num_overlap matrix is =" + str(new_feature_matrix))
-        logging.debug("shape  num_overlap_matrix is:" + str(new_feature_matrix.shape))
+        logging.debug("new_feature_matrix matrix is =" + str(new_feature_matrix))
+        logging.info("shape  num_overlap_matrix is:" + str(new_feature_matrix.shape))
 
         counter=counter+1
 
 
 
 
-    logging.info("\ndone with all headline body.:")
+    logging.info("done with all headline body.:")
 
 
     logging.info("shape  combined_vector before stacking is:" + str(combined_vector.shape))
