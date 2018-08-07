@@ -1063,18 +1063,23 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     logging.debug(" size vector for body is ")
     logging.debug(str(len(sum_b)))
 
+    logging.debug(" size vector for head is ")
+    logging.debug(str(len(sum_h)))
+
     # logging.debug(" sum vector for headline is ")
     # logging.debug(str((sum_h)))
     # logging.debug(" sum vector for body is ")
     # logging.debug(str((sum_b)))
 
-    sum_h_r= sum_h.reshape(-1,1)
-    sum_b_r = sum_b.reshape(-1, 1)
+
+
+    sum_h_r= sum_h.reshape(1,-1)
+    sum_b_r = sum_b.reshape(1,-1)
 
     c=cosine_similarity(sum_h_r,sum_b_r)
     logging.debug(" cosine:"+str(c))
 
-    logging.debug(" size of sum vector for headline is ")
+    logging.debug(" size of vector for headline is ")
     logging.debug(str((sum_h.shape)))
     logging.debug(" size vector for body is ")
     logging.debug(str(len(sum_b.shape)))
