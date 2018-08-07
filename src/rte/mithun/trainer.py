@@ -281,7 +281,7 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
 
 
         logging.debug("new_feature_matrix matrix is =" + str(new_feature_matrix))
-        logging.info("shape  num_overlap_matrix is:" + str(new_feature_matrix.shape))
+        logging.info("shape  new_feature_matrix is:" + str(new_feature_matrix.shape))
 
         counter=counter+1
 
