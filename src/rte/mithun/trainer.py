@@ -267,12 +267,14 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
     new_feature_matrix = np.empty((0, 1), float)
     counter=0
 
+    vocab, vec = torchwordemb.load_glove_text(path_glove_server)
+
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) in \
             tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list
                 , heads_deps_obj_list,bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         new_feature_array= add_vectors_one_feature (lemmatized_headline, lemmatized_body,
-                                                    tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,"")
+                                                    tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab, vec)
 
         new_feature_matrix = np.vstack([new_feature_matrix, new_feature_array])
 
@@ -298,8 +300,9 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
 
 
 '''overloaded version that will be used for generarting one feature at a time'''
-def add_vectors_one_feature(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps, head_words, body_words,combined_vector):
-    logging.info("inside add_vectors overloaded")
+def add_vectors_one_feature(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body
+                            , head_deps, body_deps, head_words, body_words,vocab, vec):
+    logging.info("inside add_vectors_one_feature ")
 
 
     lemmatized_headline_data = lemmatized_headline_obj.data
@@ -365,14 +368,13 @@ def add_vectors_one_feature(lemmatized_headline_obj, lemmatized_body_obj, tagged
                   'had', "needn't", "wouldn't","that'll", "mightn't","hadn't","mustn't",'he',"don't","she's", "isn't","should've",
                   'should', "shouldn't",'does',"couldn't","wasn't","haven't","hasn't",'was', "it's"}
 
-    logging.debug(stop_words)
 
     lemmatized_headline_split_sw = [w for w in lemmatized_headline_split if not w in stop_words]
     lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
 
 
 
-    emb_overlap = embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw)
+    emb_overlap = embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec)
     emb_overlap_array = np.array([emb_overlap])
 
 
@@ -1044,10 +1046,9 @@ def get_sum_vector_embedding(vocab,vec, sent):
                 #     sum[index2] = sum2
     return sum
 
-def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw):
+def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec):
+    logging.debug(" got inside embed_cosine_sim_features  ")
 
-
-    vocab, vec = torchwordemb.load_glove_text(path_glove_server)
 
     sum_h=get_sum_vector_embedding(vocab,vec,lemmatized_headline_split_sw)
     sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
