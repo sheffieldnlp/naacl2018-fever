@@ -1077,12 +1077,13 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     sum_b_r = sum_b.reshape(1,-1)
 
     c=cosine_similarity(sum_h_r,sum_b_r)
-    logging.debug(" cosine:"+str(c[0]))
+    logging.debug(" cosine:"+str(c[0][0]))
 
     logging.debug(" size of vector for headline is ")
     logging.debug(str((sum_h.shape)))
     logging.debug(" size vector for body is ")
     logging.debug(str((sum_b.shape)))
+    sys.exit(1)
 
     features=[c]
     return features
