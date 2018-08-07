@@ -1027,7 +1027,7 @@ def read_json(json_file,logging):
     return l
 
 def get_sum_vector_embedding(vocab,vec, sent):
-    sum = np.empty((300,0),float)
+    sum = None
 
     for index, x in tqdm(enumerate(sent), total=len(sent),desc="load_embed"):
         if (x in vocab):
@@ -1037,7 +1037,7 @@ def get_sum_vector_embedding(vocab,vec, sent):
             logging.info(emb.shape)
             q = emb.numpy()
             logging.info(q.shape)
-            q=q.reshape(1,-1)
+            #q=q.reshape(1,-1)
             logging.info(q.shape)
             logging.info(sum.shape)
 
