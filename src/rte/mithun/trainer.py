@@ -267,6 +267,7 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
     new_feature_matrix = np.empty((0, 1), float)
     counter=0
 
+    logging.info("going to load glove vectors...")
     vocab, vec = torchwordemb.load_glove_text(path_glove_server)
 
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) in \
@@ -1038,10 +1039,7 @@ def get_sum_vector_embedding(vocab,vec, sent):
             q = emb.numpy()
             logging.info(q.shape)
             #q=q.reshape(1,-1)
-
             logging.info(q.shape)
-            logging.info(sum.shape)
-
             if (index == 0):
                 sum=q
                 logging.info(sum)
@@ -1050,6 +1048,7 @@ def get_sum_vector_embedding(vocab,vec, sent):
                 sum = sum + q
                 logging.info(sum.shape)
                 logging.info(sum)
+                sys.exit(1)
 
     return sum
 
