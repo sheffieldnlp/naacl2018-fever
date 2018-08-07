@@ -1038,17 +1038,14 @@ def get_sum_vector_embedding(vocab,vec, sent):
             logging.info(emb.shape)
             q = emb.numpy()
             logging.info(q.shape)
-            #q=q.reshape(1,-1)
-            logging.info(q.shape)
             if (index == 0):
                 sum=q
-                logging.info(sum)
+                logging.debug(sum)
             else:
-                logging.info(q)
+                logging.debug(q)
                 sum = sum + q
                 logging.info(sum.shape)
-                logging.info(sum)
-                sys.exit(1)
+                logging.debug(sum)
 
     return sum
 
