@@ -271,8 +271,10 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
     vocab, vec = torchwordemb.load_glove_text(path_glove_server)
 
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) in \
-            tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list
-                , heads_deps_obj_list,bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
+            tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list,
+                     bodies_tags_obj_list
+                , heads_deps_obj_list,bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),
+                 desc="feat_gen_dynamic_cv:"):
 
         new_feature_array= add_vectors_one_feature (lemmatized_headline, lemmatized_body,
                                                     tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab, vec)
