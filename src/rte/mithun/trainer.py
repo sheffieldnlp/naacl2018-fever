@@ -1037,16 +1037,14 @@ def get_sum_vector_embedding(vocab,vec, sent):
             logging.info(emb.shape)
             q = emb.numpy()
             logging.info(q.shape)
+            q=q.reshape(1,-1)
+            logging.info(q.shape)
             if (index == 0):
                 sum=q
             else:
                 sum = sum + q
-                #
-                # # go through each of the 300 entries, and sum it up to that of the previous word
-                # for index2, y in enumerate(q):
-                #
-                #     sum2 = sum[index2] + y
-                #     sum[index2] = sum2
+                sys.exit(1)
+
     return sum
 
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec):
