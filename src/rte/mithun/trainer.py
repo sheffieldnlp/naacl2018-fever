@@ -282,7 +282,7 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list
         new_feature_matrix = np.vstack([new_feature_matrix, new_feature_array])
 
 
-        logging.debug("new_feature_matrix matrix is =" + str(new_feature_matrix))
+        logging.info("new_feature_matrix matrix is =" + str(new_feature_matrix))
         logging.info("shape  new_feature_matrix is:" + str(new_feature_matrix.shape))
 
         counter=counter+1
