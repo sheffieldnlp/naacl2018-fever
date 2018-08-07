@@ -1082,7 +1082,7 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     logging.debug(" size of vector for headline is ")
     logging.debug(str((sum_h.shape)))
     logging.debug(" size vector for body is ")
-    logging.debug(str(len(sum_b.shape)))
+    logging.debug(str((sum_b.shape)))
     sys.exit(1)
 
 
