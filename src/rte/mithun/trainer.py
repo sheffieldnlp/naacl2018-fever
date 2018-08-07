@@ -1029,18 +1029,20 @@ def read_json(json_file,logging):
 
 def get_sum_vector_embedding(vocab,vec, sent):
     sum = None
+    very_first_time=True;
 
     for index, x in tqdm(enumerate(sent), total=len(sent),desc="load_embed"):
         if (x in vocab):
-            logging.info(x)
-            logging.info(index)
+            logging.info("index:"+str(index))
+            logging.info("x:" + str(x))
             emb = vec[vocab[x]]
             logging.info(emb.shape)
             q = emb.numpy()
             logging.info(q.shape)
-            if (index == 0):
+            if (very_first_time):
                 sum=q
                 logging.debug(sum)
+                very_first_time=False
             else:
                 logging.debug(q)
                 sum = sum + q
