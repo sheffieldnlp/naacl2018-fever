@@ -1,6 +1,6 @@
 import logging
 
-def setup_custom_logger(name,args):
+def setup_custom_logger(name, args):
 
     if(args.lmode=="DEBUG"):
         log_mode = logging.DEBUG

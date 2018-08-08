@@ -40,8 +40,7 @@ if __name__ == "__main__":
     #setup_custom_logger
     # LogHelper.setup()
     # logger = LogHelper.get_logger(__name__)
-    logger = setup_custom_logger('root',args)
-    logger.debug('main message')
+
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--db', type=str, help='drqa doc db file')
@@ -59,6 +58,8 @@ if __name__ == "__main__":
 
 
     args = parser.parse_args()
+
+    logger = setup_custom_logger('root', args)
 
     db = FeverDocDB(args.db)
     jlr = JSONLineReader()
