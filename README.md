@@ -9,7 +9,8 @@
 PYTHONPATH=src python src/scripts/retrieval/ir.py --db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/train.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/train.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode train
 
 ## to run training on a smaller data set from another folder on jenny
-PYTHONPATH=src python src/scripts/retrieval/ir.py --db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/train.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/train.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode small  --dynamic_cv True
+PYTHONPATH=src python src/scripts/retrieval/ir.py --db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db
+--model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/train.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/train.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode small  --dynamic_cv True
 
 
  ## To run our entailment trainer on training data alone :
@@ -22,7 +23,7 @@ data_root="/work/mithunpaul/fever/my_fork/fever-baselines/data"
 
 ## to run dev in a  folder branch_myfork in server but feeding from same data fold
 `
-PYTHONPATH=src python src/scripts/retrieval/ir.py --db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/train.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/train.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode train --dynamic_cv True --lmode INFO`
+PYTHONPATH=src python src/scripts/retrieval/ir.py --db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/dev.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode train --dynamic_cv True --lmode INFO`
 
 ## to run testing
 PYTHONPATH=src python src/scripts/retrieval/ir.py --db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/dev.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode test --dynamic_cv True

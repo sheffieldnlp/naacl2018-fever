@@ -35,7 +35,7 @@ model_trained="model_trained.pkl"
 path_glove_server="/data/nlp/corpora/glove/6B/glove.6B.300d.txt"
 
 predicted_results="predicted_results.pkl"
-combined_vector= "combined_vector.pkl"
+combined_vector_pkl= "combined_vector.pkl"
 
 
 def read_json_create_feat_vec(load_ann_corpus_tr,args):
@@ -43,7 +43,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
     #just load feature vector alone. No dynamically adding new features
     if (args.load_feat_vec==True):
         logging.info("going to load combined vector from disk")
-        combined_vector = joblib.load(combined_vector)
+        combined_vector = joblib.load(combined_vector_pkl)
 
 
 
@@ -111,7 +111,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
         if (args.dynamic_cv==True):
                 logging.info("going to load combined vector from disk")
                 logging.info("dynamic_cv=true, load_feat vec=true ")
-                combined_vector_old = joblib.load(combined_vector)
+                combined_vector_old = joblib.load(combined_vector_pkl)
                 logging.info("shaped of combined_vector_old:"+str(combined_vector_old.shape))
                 sys.exit(1)
                 combined_vector = create_feature_vec_one_feature(heads_lemmas, bodies_lemmas, heads_tags,
@@ -121,7 +121,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
             combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
                                              bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words)
 
-        joblib.dump(combined_vector, combined_vector)
+        joblib.dump(combined_vector, combined_vector_pkl)
         logging.info("done generating feature vectors.")
 
 
