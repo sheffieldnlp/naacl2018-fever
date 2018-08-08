@@ -40,7 +40,7 @@ if __name__ == "__main__":
     #setup_custom_logger
     # LogHelper.setup()
     # logger = LogHelper.get_logger(__name__)
-    logger = setup_custom_logger('root')
+    logger = setup_custom_logger('root',args)
     logger.debug('main message')
 
     parser = argparse.ArgumentParser()
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     parser.add_argument('--load_feat_vec', type=str2bool,default=False)
     parser.add_argument('--pred_file', type=str, help='path to save predictions',default="predictions.jsonl")
     parser.add_argument('--dynamic_cv',type=str2bool,default=False)
+    parser.add_argument('--lmode', type=str,default="DEBUG")
 
 
     args = parser.parse_args()
