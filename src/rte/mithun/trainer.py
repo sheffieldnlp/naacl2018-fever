@@ -113,6 +113,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
                 logging.info("dynamic_cv=true, load_feat vec=true ")
                 combined_vector_old = joblib.load(combined_vector_training)
                 logging.info("shaped of combined_vector_old:"+str(combined_vector_old.shape))
+                sys.exit(1)
                 combined_vector = create_feature_vec_one_feature(heads_lemmas, bodies_lemmas, heads_tags,
                                              bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,combined_vector_old)
 
