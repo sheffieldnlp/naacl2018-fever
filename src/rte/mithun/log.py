@@ -2,7 +2,8 @@ import logging
 
 def setup_custom_logger(name):
 
-    logging.basicConfig(level=logging.INFO,
+    log_mode="logging.INFO"
+    logging.basicConfig(level=log_mode,
                     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                     datefmt='%m-%d %H:%M',
                     filename='log_fever.txt',
