@@ -254,7 +254,8 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
 
     
     combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix, noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,neg_vb_matrix,ant_noun_overlap_matrix,ant_adj_overlap_matrix])
+        [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
+         noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,neg_vb_matrix,ant_noun_overlap_matrix,ant_adj_overlap_matrix])
 
     logging.info("shape  combined_vector is:" + str(combined_vector.shape))
     return combined_vector
@@ -490,7 +491,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features(lemmatized_headline_split, lemmatized_body_split)
+    hedge_value = hedging_features_body(lemmatized_headline_split, lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
     hedge_headline = hedging_features_headline(lemmatized_headline_split)
@@ -508,7 +509,6 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 
 
-
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array\
         ,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,\
            antonym_adj_overlap_array
@@ -522,7 +522,7 @@ def word_overlap_features_mithun(clean_headline, clean_body):
 
     return features
 
-def hedging_features(clean_headline, clean_body):
+def hedging_features_body(clean_body):
 
     #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
 
