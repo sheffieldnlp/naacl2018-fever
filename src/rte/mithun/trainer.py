@@ -281,9 +281,15 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
 
     #remove hedging features only:hedging_words_vector
+    # combined_vector = np.hstack(
+    #     [word_overlap_vector , refuting_value_matrix,
+    #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+    #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
+
+    #removing all overlap features:word_overlap_vector,noun_overlap_matrix
     combined_vector = np.hstack(
-        [word_overlap_vector , refuting_value_matrix,
-         noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+        [hedging_words_vector, refuting_value_matrix
+         , ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
          ant_adj_overlap_matrix,emb_cos_sim_matrix])
 
     logging.info("shape  combined_vector is:" + str(combined_vector.shape))
