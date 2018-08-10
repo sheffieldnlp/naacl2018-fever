@@ -1,8 +1,25 @@
 import logging
 
-def setup_custom_logger(name):
+def setup_custom_logger(name, args):
 
-    logging.basicConfig(level=logging.DEBUG,
+    if(args.lmode=="DEBUG"):
+        log_mode = logging.DEBUG
+    else:
+
+        if (args.lmode == "WARNING"):
+            log_mode = logging.WARNING
+
+        else:
+
+            if (args.lmode == "INFO"):
+                log_mode = logging.INFO
+
+            else:
+
+                if (args.lmode == "ERROR"):
+                    log_mode = logging.ERROR
+
+    logging.basicConfig(level=log_mode,
                     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                     datefmt='%m-%d %H:%M',
                     filename='log_fever.txt',
