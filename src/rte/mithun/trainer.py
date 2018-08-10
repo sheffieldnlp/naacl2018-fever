@@ -491,7 +491,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features_body(lemmatized_headline_split, lemmatized_body_split)
+    hedge_value = hedging_features_body( lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
     hedge_headline = hedging_features_headline(lemmatized_headline_split)
