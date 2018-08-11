@@ -279,9 +279,9 @@ def get_gold_labels_small(args,jlr):
 
 
 def uofa_dev(args, jlr, method, logger):
-    logger.warning("got inside uofa_dev")
+    logging.warning("got inside uofa_dev")
     print_missed(args)
-    logger.warning("done printing")
+    logging.warning("done printing")
     sys.exit(1)
 
     gold_labels = get_gold_labels(args, jlr)

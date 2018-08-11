@@ -40,32 +40,6 @@ combined_vector_pkl= "combined_vector.pkl"
 
 
 
-def print_missed(args):
-    if (args.mode == "dev"):
-        data_folder = data_folder_dev
-    else:
-        if (args.mode == "train"):
-            data_folder = data_folder_train
-        else:
-            if (args.mode == "small"):
-                data_folder = data_folder_train_small
-            else:
-                if (args.mode == "test"):
-                    data_folder = data_folder_test
-
-    bf = data_folder + annotated_body_split_folder
-    hf = data_folder + annotated_head_split_folder
-    hfw = hf + annotated_words
-    bfw = bf + annotated_words
-    heads_words = read_json_with_id(hfw)
-    bodies_words = read_json_with_id(bfw)
-
-    pred=joblib.load(predicted_results)
-
-    for a,b,c in zip(heads_words,bodies_words,pred):
-        logging.warning(a,b,c)
-        sys.exit(1)
-
 def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
     #just load feature vector alone. No dynamically adding new features
@@ -193,8 +167,6 @@ def load_model():
     return model;
 
 
-def print_missed():
-    pred=joblib.load(p, predicted_results)
 
 def do_testing(combined_vector,svm):
     logging.info("all value of combined_vector is:"+str(combined_vector))
@@ -203,6 +175,35 @@ def do_testing(combined_vector,svm):
     joblib.dump(p, predicted_results)
     logging.debug("done with predictions")
     return p
+
+
+
+
+def print_missed(args):
+    if (args.mode == "dev"):
+        data_folder = data_folder_dev
+    else:
+        if (args.mode == "train"):
+            data_folder = data_folder_train
+        else:
+            if (args.mode == "small"):
+                data_folder = data_folder_train_small
+            else:
+                if (args.mode == "test"):
+                    data_folder = data_folder_test
+
+    bf = data_folder + annotated_body_split_folder
+    hf = data_folder + annotated_head_split_folder
+    hfw = hf + annotated_words
+    bfw = bf + annotated_words
+    heads_words = read_json_with_id(hfw)
+    bodies_words = read_json_with_id(bfw)
+
+    pred=joblib.load(predicted_results)
+
+    for a,b,c in zip(heads_words,bodies_words,pred):
+        logging.warning(a,b,c)
+        sys.exit(1)
 
 #
 # def normalize_dummy(text):
