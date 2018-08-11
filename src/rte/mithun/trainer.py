@@ -202,7 +202,9 @@ def print_missed(args):
     pred=joblib.load(predicted_results)
 
     for a,b,c in zip(heads_words,bodies_words,pred):
-        logging.warning(a,b,c)
+        logging.warning (a.data)
+        logging.error(b.data)
+        logging.error(c)
         sys.exit(1)
 
 #
