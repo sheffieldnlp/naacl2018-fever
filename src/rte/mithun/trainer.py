@@ -179,7 +179,7 @@ def do_testing(combined_vector,svm):
 
 
 
-def print_missed(args):
+def print_missed(args,gold_labels):
     if (args.mode == "dev"):
         data_folder = data_folder_dev
     else:
@@ -201,11 +201,14 @@ def print_missed(args):
 
     pred=joblib.load(predicted_results)
 
-    for a,b,c in zip(heads_words,bodies_words,pred):
-        logging.warning (a.data)
-        logging.error(b.data)
-        logging.error(c)
-        sys.exit(1)
+    for a,b,c,d in zip(heads_words,bodies_words,pred,gold_labels):
+
+        logging.debug(c)
+        logging.debug(d)
+        if not (c==d):
+            logging.debug (a.data)
+            logging.debug(b.data)
+            sys.exit(1)
 
 #
 # def normalize_dummy(text):
