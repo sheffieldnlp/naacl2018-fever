@@ -4,7 +4,7 @@ from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document
 import logging
-from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,load_model
+from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,load_model,print_missed
 import numpy as np
 import os,sys
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -73,7 +73,7 @@ def uofa_training(args,jlr,method,logger):
     logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    #tr_data=read_claims_annotate(args,jlr,logger,method)
+    tr_data=read_claims_annotate(args,jlr,logger,method)
     # logger.info(
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
@@ -96,13 +96,6 @@ def uofa_training(args,jlr,method,logger):
     sys.exit(1)
 
 
-
-def print_missed(args,jlr):
-    claims, ev = get_claim_evidence_sans_NEI(args, jlr)
-    pred=joblib.load(predicted_results)
-    for a,b,c in zip(claims,ev,pred):
-        logging.debug(a,b,c)
-        sys.exit(1)
 
 def uofa_testing(args,jlr,method,logger):
 
@@ -286,8 +279,11 @@ def get_gold_labels_small(args,jlr):
 
 
 def uofa_dev(args, jlr, method, logger):
-    print_missed(args, jlr)
-    logger.warning("got inside uofa_testing")
+    logger.warning("got inside uofa_dev")
+    print_missed(args)
+    logger.warning("done printing")
+    sys.exit(1)
+
     gold_labels = get_gold_labels(args, jlr)
 
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
