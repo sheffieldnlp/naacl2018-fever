@@ -63,7 +63,7 @@ def print_missed(args):
     pred=joblib.load(predicted_results)
 
     for a,b,c in zip(heads_words,bodies_words,pred):
-        logging.debug(a,b,c)
+        logging.warning(a,b,c)
         sys.exit(1)
 
 def read_json_create_feat_vec(load_ann_corpus_tr,args):
