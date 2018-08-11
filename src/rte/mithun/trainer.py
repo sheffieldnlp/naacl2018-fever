@@ -164,6 +164,10 @@ def load_model():
     model=joblib.load(model_trained)
     return model;
 
+
+def print_missed():
+    pred=joblib.load(p, predicted_results)
+
 def do_testing(combined_vector,svm):
     logging.info("all value of combined_vector is:"+str(combined_vector))
     logging.info("going to predict...")
