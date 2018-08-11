@@ -201,14 +201,33 @@ def print_missed(args,gold_labels):
 
     pred=joblib.load(predicted_results)
 
+    counter=0
     for a,b,c,d in zip(heads_words,bodies_words,pred,gold_labels):
 
-        logging.debug(c)
-        logging.debug(d)
+        # logging.debug(c)
+        # logging.debug(d)
+        logging.debug("wrong predictions")
+
+        gl="SUPPORTS"
+        pl="SUPPORTS"
+
+        if(c==0):
+            pl="REFUTES"
+
+        if (d == 0):
+            gl = "REFUTES"
+
+
         if not (c==d):
+
+
+            counter=counter+1
             logging.debug (a.data)
             logging.debug(b.data)
-            sys.exit(1)
+            logging.debug("gold:"+str(gl))
+            logging.debug("predicted:" + str(pl))
+            if(counter>20):
+                sys.exit(1)
 
 #
 # def normalize_dummy(text):
