@@ -208,14 +208,14 @@ def print_missed(args,gold_labels):
         # logging.debug(d)
         logging.debug("wrong predictions")
 
-        gl="SUPPORTS"
-        pl="SUPPORTS"
+        gl="REFUTES"
+        pl="REFUTES"
 
         if(c==0):
-            pl="REFUTES"
+            pl="SUPPORTS"
 
         if (d == 0):
-            gl = "REFUTES"
+            gl = "SUPPORTS"
 
 
         if not (c==d):
