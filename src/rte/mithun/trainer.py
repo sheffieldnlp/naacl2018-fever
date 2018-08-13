@@ -226,8 +226,6 @@ def print_missed(args,gold_labels):
             logging.debug(b.data)
             logging.debug("gold:"+str(gl))
             logging.debug("predicted:" + str(pl))
-            if(counter>20):
-                sys.exit(1)
 
 #
 # def normalize_dummy(text):
