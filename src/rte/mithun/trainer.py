@@ -227,6 +227,7 @@ def print_missed(args,gold_labels):
             logging.debug("gold:"+str(gl))
             logging.debug("predicted:" + str(pl))
 
+    logging.debug("total wrongly predicted:" + str(counter))
 #
 # def normalize_dummy(text):
 #     x = text.lower().translate(remove_punctuation_map)
