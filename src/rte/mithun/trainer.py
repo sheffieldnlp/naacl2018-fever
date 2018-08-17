@@ -297,7 +297,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
         logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
         logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
-        counter=counter+1
+
 
         #todebug
         combined_vector_inside=None
@@ -307,12 +307,14 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
              noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
              ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
 
-        logging.info("  combined_vector is:" + str((combined_vector_inside)))
+        logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
         logging.info("shape  combined_vector is:" + str(combined_vector_inside.shape))
-        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside)))
+        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
 
         if(counter==55):
             sys.exit(1)
+
+        counter = counter + 1
 
 
 
