@@ -305,10 +305,11 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
              noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
              ant_adj_overlap_matrix, emb_cos_sim_matrix])
 
-        logging.info("  combined_vector is:" + str(combined_vector))
+        logging.info("  combined_vector is:" + str((combined_vector)))
         logging.info("shape  combined_vector is:" + str(combined_vector.shape))
+        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector)))
 
-        if(counter==3):
+        if(counter==55):
             sys.exit(1)
 
 
@@ -1176,17 +1177,17 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
 
 
-    logging.info(" lemmatized_headline_split_sw vector ")
-    logging.info(str((lemmatized_headline_split_sw)))
-    logging.info(" lemmatized_body_split_sw vector ")
-    logging.info(str((lemmatized_body_split_sw)))
+    logging.debug(" lemmatized_headline_split_sw vector ")
+    logging.debug(str((lemmatized_headline_split_sw)))
+    logging.debug(" lemmatized_body_split_sw vector ")
+    logging.debug(str((lemmatized_body_split_sw)))
 
 
-    logging.info(" size vector for body is ")
-    logging.info(str(len(sum_b)))
+    logging.debug(" size vector for body is ")
+    logging.debug(str(len(sum_b)))
 
-    logging.info(" size vector for head is ")
-    logging.info(str(len(sum_h)))
+    logging.debug(" size vector for head is ")
+    logging.debug(str(len(sum_h)))
 
 
 
@@ -1196,10 +1197,10 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     c=cosine_similarity(sum_h_r,sum_b_r)
     logging.debug(" cosine:"+str(c[0][0]))
 
-    logging.info(" size of vector for headline is ")
-    logging.info(str((sum_h.shape)))
-    logging.info(" size vector for body is ")
-    logging.info(str((sum_b.shape)))
+    logging.debug(" size of vector for headline is ")
+    logging.debug(str((sum_h.shape)))
+    logging.debug(" size vector for body is ")
+    logging.debug(str((sum_b.shape)))
 
     features=[c[0][0]]
     return features
