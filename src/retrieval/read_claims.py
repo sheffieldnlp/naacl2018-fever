@@ -283,9 +283,9 @@ def uofa_dev(args, jlr, method, logger):
 
     gold_labels = get_gold_labels(args, jlr)
     logging.warning("got inside uofa_dev")
-    print_missed(args,gold_labels)
-    logging.warning("done printing")
-    sys.exit(1)
+    #print_missed(args,gold_labels)
+    #logging.warning("done printing")
+    #sys.exit(1)
 
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)

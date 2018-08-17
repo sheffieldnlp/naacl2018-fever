@@ -299,6 +299,16 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
         counter=counter+1
 
+        #todebug
+        combined_vector = np.hstack(
+            [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
+             noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+             ant_adj_overlap_matrix, emb_cos_sim_matrix])
+
+        logging.info("  combined_vector is:" + str(combined_vector))
+        logging.info("shape  combined_vector is:" + str(combined_vector.shape))
+        sys.exit(1)
+
 
 
 
@@ -330,7 +340,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, ant_noun_overlap_matrix,
     #      ant_adj_overlap_matrix, emb_cos_sim_matrix])
 
-    #all vectors
+
 
 
     #remove hedging features only:hedging_words_vector
@@ -345,6 +355,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     #      , ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
     #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
 
+    # all vectors
     combined_vector = np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
          noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
@@ -528,8 +539,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(tagged_body.data)
     logging.debug(head_deps.data)
     logging.debug(body_deps.data)
-    logging.debug(head_words.data)
-    logging.debug(body_words.data)
+
 
     logging.debug(tagged_headline)
     logging.debug(tagged_body)
@@ -557,6 +567,12 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
 
 
+    logging.info("words before and after stopword split")
+    logging.info(head_words.data)
+    logging.info(body_words.data)
+
+    logging.info(lemmatized_headline_split_sw)
+    logging.info(lemmatized_body_split_sw)
 
 
     neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
