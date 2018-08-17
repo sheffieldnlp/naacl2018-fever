@@ -264,11 +264,11 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
             = add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab,vec)
 
-        logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
-        logging.info(verb_overlap_array)
-        logging.info("inside create_feature_vec. vb_overlap_matrix is =" + repr(vb_overlap_matrix))
-        logging.info("inside create_feature_vec. just received noun_overlap_array is =" + repr(noun_overlap_array))
-        logging.info("inside create_feature_vec. noun_overlap_matrix is =" + repr(noun_overlap_matrix))
+        logging.debug("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
+        logging.debug(verb_overlap_array)
+        logging.debug("inside create_feature_vec. vb_overlap_matrix is =" + repr(vb_overlap_matrix))
+        logging.debug("inside create_feature_vec. just received noun_overlap_array is =" + repr(noun_overlap_array))
+        logging.debug("inside create_feature_vec. noun_overlap_matrix is =" + repr(noun_overlap_matrix))
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
@@ -307,7 +307,9 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
         logging.info("  combined_vector is:" + str(combined_vector))
         logging.info("shape  combined_vector is:" + str(combined_vector.shape))
-        sys.exit(1)
+
+        if(counter==3):
+            sys.exit(1)
 
 
 
