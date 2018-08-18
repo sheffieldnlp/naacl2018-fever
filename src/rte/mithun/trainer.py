@@ -1129,6 +1129,7 @@ def get_sum_vector_embedding(vocab,vec, sent):
                 logging.debug(q)
                 sum = sum + q
                 logging.info(sum.shape)
+                logging.info(sum.shape)
                 logging.debug(sum)
 
     return sum
