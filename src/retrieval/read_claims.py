@@ -115,8 +115,7 @@ def uofa_testing(args,jlr,method,logger):
     logging.info("above two must match")
     assert(combined_vector.shape[0]==len(gold_labels))
     trained_model=load_model()
-    logging.debug("weights:")
-    #logging.debug(trained_model.coef_ )
+
     pred=do_testing(combined_vector,trained_model)
 
 
@@ -294,8 +293,8 @@ def uofa_dev(args, jlr, method, logger):
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
     logging.info("above two must match")
     trained_model=load_model()
-    logging.debug("weights:")
-    #logging.debug(trained_model.coef_ )
+    logging.warning("weights:")
+    logging.warning(trained_model.coef_)
     pred=do_testing(combined_vector,trained_model)
     logging.debug(str(pred))
     logging.debug("and golden labels are:")

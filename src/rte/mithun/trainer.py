@@ -161,6 +161,8 @@ def do_training(combined_vector,gold_labels_tr):
     file = model_trained
     joblib.dump(clf, file)
     logging.debug("done saving model to disk")
+    logging.warning("weights:")
+    logging.warning(clf.coef_)
 
 def load_model():
     model=joblib.load(model_trained)
