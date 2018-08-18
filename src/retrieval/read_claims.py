@@ -4,7 +4,7 @@ from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document
 import logging
-from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,load_model
+from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,load_model,print_missed
 import numpy as np
 import os,sys
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -17,6 +17,9 @@ load_ann_corpus=True
 #load_combined_vector=True
 from scorer.src.fever.scorer import fever_score
 import json
+from sklearn.externals import joblib
+
+predicted_results="predicted_results.pkl"
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -70,7 +73,7 @@ def uofa_training(args,jlr,method,logger):
     logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    #tr_data=read_claims_annotate(args,jlr,logger,method)
+    tr_data=read_claims_annotate(args,jlr,logger,method)
     # logger.info(
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
@@ -92,10 +95,17 @@ def uofa_training(args,jlr,method,logger):
     logging.warning("done with training. going to exit")
     sys.exit(1)
 
+
+
 def uofa_testing(args,jlr,method,logger):
+
+
     logger.warning("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
     label_ev=get_gold_labels_evidence(args, jlr)
+
+
+
 
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
@@ -228,6 +238,22 @@ def get_gold_labels_evidence(args,jlr):
 
     return evidences
 
+def get_claim_evidence_sans_NEI(args,jlr):
+    claims=[]
+    evidences=[]
+
+    with open(args.in_file,"r") as f:
+        all_claims = jlr.process(f)
+        gold=dict()
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_gold_labels_ev:"):
+            label=claim_full["label"]
+            if not (label.lower()=="NOT ENOUGH INFO"):
+                gold["label"]=label
+                gold["evidence"]=claim_full["evidence"]
+                evidences.append(gold)
+                claims.append(claim_full)
+
+    return claims,evidences
 
 def get_gold_labels_small(args,jlr):
     labels = np.array([[]])
@@ -253,8 +279,13 @@ def get_gold_labels_small(args,jlr):
 
 
 def uofa_dev(args, jlr, method, logger):
-    logger.warning("got inside uofa_testing")
+
+
     gold_labels = get_gold_labels(args, jlr)
+    logging.warning("got inside uofa_dev")
+    #print_missed(args,gold_labels)
+    #logging.warning("done printing")
+    #sys.exit(1)
 
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)

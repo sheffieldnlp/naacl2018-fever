@@ -38,6 +38,8 @@ predicted_results="predicted_results.pkl"
 combined_vector_pkl= "combined_vector.pkl"
 
 
+
+
 def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
     #just load feature vector alone. No dynamically adding new features
@@ -107,6 +109,9 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
             logging.debug("size of heads_lemmas and bodies_lemmas dont match. going to quit")
             sys.exit(1)
 
+        logging.info("going to load glove vectors...")
+        vocab, vec = torchwordemb.load_glove_text(path_glove_server)
+
         #if we are doing dynamic cv addition.make sure load cv is true and load that cv
         if (args.dynamic_cv==True):
                 logging.info("going to load combined vector from disk")
@@ -114,11 +119,11 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
                 combined_vector_old = joblib.load(combined_vector_pkl)
                 logging.info("shaped of combined_vector_old:"+str(combined_vector_old.shape))
                 combined_vector = create_feature_vec_one_feature(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,combined_vector_old)
+                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,combined_vector_old,vocab,vec)
 
         else:
             combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words)
+                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,vocab,vec)
 
         joblib.dump(combined_vector, combined_vector_pkl)
         logging.info("done generating feature vectors.")
@@ -161,6 +166,8 @@ def load_model():
     model=joblib.load(model_trained)
     return model;
 
+
+
 def do_testing(combined_vector,svm):
     logging.info("all value of combined_vector is:"+str(combined_vector))
     logging.info("going to predict...")
@@ -169,12 +176,66 @@ def do_testing(combined_vector,svm):
     logging.debug("done with predictions")
     return p
 
+
+
+
+def print_missed(args,gold_labels):
+    if (args.mode == "dev"):
+        data_folder = data_folder_dev
+    else:
+        if (args.mode == "train"):
+            data_folder = data_folder_train
+        else:
+            if (args.mode == "small"):
+                data_folder = data_folder_train_small
+            else:
+                if (args.mode == "test"):
+                    data_folder = data_folder_test
+
+    bf = data_folder + annotated_body_split_folder
+    hf = data_folder + annotated_head_split_folder
+    hfw = hf + annotated_words
+    bfw = bf + annotated_words
+    heads_words = read_json_with_id(hfw)
+    bodies_words = read_json_with_id(bfw)
+
+    pred=joblib.load(predicted_results)
+
+    counter=0
+    for a,b,c,d in zip(heads_words,bodies_words,pred,gold_labels):
+
+        # logging.debug(c)
+        # logging.debug(d)
+        logging.debug("wrong predictions")
+
+        gl="REFUTES"
+        pl="REFUTES"
+
+        if(c==0):
+            pl="SUPPORTS"
+
+        if (d == 0):
+            gl = "SUPPORTS"
+
+
+        if not (c==d):
+
+
+            counter=counter+1
+            logging.debug (a.data)
+            logging.debug(b.data)
+            logging.debug("gold:"+str(gl))
+            logging.debug("predicted:" + str(pl))
+
+    logging.debug("total wrongly predicted:" + str(counter))
 #
 # def normalize_dummy(text):
 #     x = text.lower().translate(remove_punctuation_map)
 #     return x.split(" ")
 
-def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list):
+def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
+                        heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list,
+                        bodies_words_list,vocab,vec):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
@@ -186,6 +247,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
     neg_vb_matrix = np.empty((0, 4), float)
     hedging_headline_matrix = np.empty((0, 30), int)
     num_overlap_matrix = np.empty((0, 2), float)
+    emb_cos_sim_matrix = np.empty((0, 1), float)
 
 
     counter=0
@@ -198,14 +260,15 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array= add_vectors\
-                (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words)
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,emb_cosine_sim_array \
+            = add_vectors\
+                (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab,vec)
 
-        logging.info("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
-        logging.info(verb_overlap_array)
-        logging.info("inside create_feature_vec. vb_overlap_matrix is =" + repr(vb_overlap_matrix))
-        logging.info("inside create_feature_vec. just received noun_overlap_array is =" + repr(noun_overlap_array))
-        logging.info("inside create_feature_vec. noun_overlap_matrix is =" + repr(noun_overlap_matrix))
+        logging.debug("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
+        logging.debug(verb_overlap_array)
+        logging.debug("inside create_feature_vec. vb_overlap_matrix is =" + repr(vb_overlap_matrix))
+        logging.debug("inside create_feature_vec. just received noun_overlap_array is =" + repr(noun_overlap_array))
+        logging.debug("inside create_feature_vec. noun_overlap_matrix is =" + repr(noun_overlap_matrix))
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
@@ -218,6 +281,9 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
         neg_vb_matrix= np.vstack([neg_vb_matrix, neg_vb_array])
         ant_adj_overlap_matrix = np.vstack([ant_adj_overlap_matrix, antonym_adj_overlap_array])
         ant_noun_overlap_matrix = np.vstack([ant_noun_overlap_matrix, antonym_overlap_array])
+        emb_cos_sim_matrix = np.vstack([emb_cos_sim_matrix, emb_cosine_sim_array])
+
+
 
 
 
@@ -231,7 +297,23 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
         logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
         logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
-        counter=counter+1
+
+
+        #todebug
+        combined_vector_inside=None
+
+        combined_vector_inside = np.hstack(
+            [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
+             noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+             ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
+
+        logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
+        logging.info("shape  combined_vector is:" + str(combined_vector_inside.shape))
+        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+
+
+
+        counter = counter + 1
 
 
 
@@ -252,10 +334,38 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
     logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
-    
+    #no antonym ones
+    # combined_vector = np.hstack(
+    #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
+    #      noun_overlap_matrix,hedging_headline_matrix,neg_vb_matrix,emb_cos_sim_matrix])
+
+    #no negation related. has everything else
+    #refuting_value_matrix,neg_vb_matrix
+    # combined_vector = np.hstack(
+    #     [word_overlap_vector, hedging_words_vector,
+    #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, ant_noun_overlap_matrix,
+    #      ant_adj_overlap_matrix, emb_cos_sim_matrix])
+
+
+
+
+    #remove hedging features only:hedging_words_vector
+    # combined_vector = np.hstack(
+    #     [word_overlap_vector , refuting_value_matrix,
+    #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+    #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
+
+    #removing all overlap features:word_overlap_vector,noun_overlap_matrix
+    # combined_vector = np.hstack(
+    #     [hedging_words_vector, refuting_value_matrix
+    #      , ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+    #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
+
+    # all vectors
     combined_vector = np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-         noun_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,neg_vb_matrix,ant_noun_overlap_matrix,ant_adj_overlap_matrix])
+         noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+         ant_adj_overlap_matrix, emb_cos_sim_matrix,vb_overlap_matrix,num_overlap_matrix])
 
     logging.info("shape  combined_vector is:" + str(combined_vector.shape))
     return combined_vector
@@ -263,14 +373,14 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tag
 
 '''Overloaded version for: if and when you add a new feature, you won't have to go through feature creation of the previously existing features. Just load old ones, and
 attach just the new one alone. Time saven.'''
-def create_feature_vec_one_feature(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list, bodies_words_list,combined_vector):
+def create_feature_vec_one_feature(heads_lemmas_obj_list,
+                                   bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
+                                   bodies_deps_obj_list,heads_words_list, bodies_words_list,combined_vector,vocab,vec):
     logging.info("inside create_feature_vec overloaded")
 
     new_feature_matrix = np.empty((0, 1), float)
     counter=0
 
-    logging.info("going to load glove vectors...")
-    vocab, vec = torchwordemb.load_glove_text(path_glove_server)
 
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) in \
             tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list,
@@ -390,7 +500,8 @@ def add_vectors_one_feature(lemmatized_headline_obj, lemmatized_body_obj, tagged
 
 
 
-def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps, head_words, body_words):
+def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body, head_deps, body_deps,
+                head_words, body_words,vocab,vec):
 
 
 
@@ -434,8 +545,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.debug(tagged_body.data)
     logging.debug(head_deps.data)
     logging.debug(body_deps.data)
-    logging.debug(head_words.data)
-    logging.debug(body_words.data)
+
 
     logging.debug(tagged_headline)
     logging.debug(tagged_body)
@@ -463,6 +573,12 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     lemmatized_body_split_sw = [w for w in lemmatized_body_split if not w in stop_words]
 
 
+    logging.info("words before and after stopword split")
+    logging.info(head_words.data)
+    logging.info(body_words.data)
+
+    logging.info(lemmatized_headline_split_sw)
+    logging.info(lemmatized_body_split_sw)
 
 
     neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
@@ -508,10 +624,12 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     vb_overlap_array = np.array([vb_overlap])
 
 
+    emb_overlap = embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec)
+    emb_overlap_array = np.array([emb_overlap])
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array\
         ,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,\
-           antonym_adj_overlap_array
+           antonym_adj_overlap_array,emb_overlap_array
 
 
 def word_overlap_features_mithun(clean_headline, clean_body):
@@ -1062,17 +1180,17 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
 
 
-    logging.info(" lemmatized_headline_split_sw vector ")
-    logging.info(str((lemmatized_headline_split_sw)))
-    logging.info(" lemmatized_body_split_sw vector ")
-    logging.info(str((lemmatized_body_split_sw)))
+    logging.debug(" lemmatized_headline_split_sw vector ")
+    logging.debug(str((lemmatized_headline_split_sw)))
+    logging.debug(" lemmatized_body_split_sw vector ")
+    logging.debug(str((lemmatized_body_split_sw)))
 
 
-    logging.info(" size vector for body is ")
-    logging.info(str(len(sum_b)))
+    logging.debug(" size vector for body is ")
+    logging.debug(str(len(sum_b)))
 
-    logging.info(" size vector for head is ")
-    logging.info(str(len(sum_h)))
+    logging.debug(" size vector for head is ")
+    logging.debug(str(len(sum_h)))
 
 
 
@@ -1082,10 +1200,10 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
     c=cosine_similarity(sum_h_r,sum_b_r)
     logging.debug(" cosine:"+str(c[0][0]))
 
-    logging.info(" size of vector for headline is ")
-    logging.info(str((sum_h.shape)))
-    logging.info(" size vector for body is ")
-    logging.info(str((sum_b.shape)))
+    logging.debug(" size of vector for headline is ")
+    logging.debug(str((sum_h.shape)))
+    logging.debug(" size vector for body is ")
+    logging.debug(str((sum_b.shape)))
 
     features=[c[0][0]]
     return features
