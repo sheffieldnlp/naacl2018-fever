@@ -237,7 +237,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list,
                         bodies_words_list,vocab,vec):
     word_overlap_vector = np.empty((0, 1), float)
-    hedging_words_vector = np.empty((0, 30), int)
+    hedging_words_vector = np.empty((0, 3), int)
     refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
@@ -245,7 +245,6 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     ant_adj_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
     neg_vb_matrix = np.empty((0, 4), float)
-    hedging_headline_matrix = np.empty((0, 30), int)
     num_overlap_matrix = np.empty((0, 2), float)
     emb_cos_sim_matrix = np.empty((0, 1), float)
 
@@ -260,7 +259,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,emb_cosine_sim_array \
+        antonym_overlap_array,num_overlap_array,neg_vb_array,antonym_adj_overlap_array,emb_cosine_sim_array \
             = add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab,vec)
 
@@ -276,7 +275,6 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
-        hedging_headline_matrix = np.vstack([hedging_headline_matrix, hedge_headline_array])
         num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
         neg_vb_matrix= np.vstack([neg_vb_matrix, neg_vb_array])
         ant_adj_overlap_matrix = np.vstack([ant_adj_overlap_matrix, antonym_adj_overlap_array])
@@ -304,7 +302,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
         combined_vector_inside = np.hstack(
             [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-             noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+             noun_overlap_matrix, ant_overlap_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
              ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
 
         logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
@@ -364,7 +362,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     # all vectors
     combined_vector = np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-         noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+         noun_overlap_matrix, ant_overlap_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
          ant_adj_overlap_matrix, emb_cos_sim_matrix,vb_overlap_matrix,num_overlap_matrix])
 
     logging.info("shape  combined_vector is:" + str(combined_vector.shape))
@@ -581,9 +579,9 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     logging.info(lemmatized_body_split_sw)
 
 
-    neg_vb = negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
-                                 body_pos_split, head_deps, body_deps, "VB", head_words,body_words)
-    neg_vb_array = np.array([neg_vb])
+    neg_vb = polarity(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
+                      body_pos_split, head_deps, body_deps, "VB", head_words, body_words)
+    polarity_array = np.array([neg_vb])
 
 
 
@@ -591,10 +589,10 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
                                       body_pos_split, "CD")
     num_overlap_array = np.array([num_overlap])
 
-
-    antonym_noun_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
-                                      body_pos_split, "NN")
-    antonym_noun_overlap_array = np.array([antonym_noun_overlap])
+    # this is same as anotnym overlap
+    # antonym_noun_overlap = antonym_overlap_features(lemmatized_headline_split_sw, headline_pos_split, lemmatized_body_split_sw,
+    #                                   body_pos_split, "NN")
+    # antonym_noun_overlap_array = np.array([antonym_noun_overlap])
 
     antonym_adj_overlap = antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split,
                                       body_pos_split, "NN")
@@ -607,11 +605,9 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features_body( lemmatized_body_split)
+    hedge_value = get_hedging_features(lemmatized_body_split,lemmatized_headline_split)
     hedge_value_array = np.array([hedge_value])
 
-    hedge_headline = hedging_features_headline(lemmatized_headline_split)
-    hedge_headline_array = np.array([hedge_headline])
 
     refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
@@ -628,7 +624,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     emb_overlap_array = np.array([emb_overlap])
 
     return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array\
-        ,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,\
+        ,antonym_overlap_array,num_overlap_array,polarity_array,\
            antonym_adj_overlap_array,emb_overlap_array
 
 
@@ -640,9 +636,13 @@ def word_overlap_features_mithun(clean_headline, clean_body):
 
     return features
 
-def hedging_features_body(clean_body):
 
-    #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
+'''Do any of the hedging words occur in the claim [1,0]
+    Do any of the hedging words occur in the evidence  [1,0]
+    Do a and b match [1,0]
+    '''
+def get_hedging_features(claim,evidence):
+
 
     hedging_words = [
         'allegedly',
@@ -678,64 +678,75 @@ def hedging_features_body(clean_body):
     ]
 
     length_hedge=len(hedging_words)
-    hedging_body_vector = [0] * length_hedge
 
+    found_claim=0
+    found_evidence = 0
+    found_both=0
 
-
-    for word in clean_body:
+    for word in claim:
         if word in hedging_words:
-            index=hedging_words.index(word)
-            hedging_body_vector[index]=1
+            found_claim=1
 
-
-    return hedging_body_vector
-
-def hedging_features_headline(clean_headline):
-
-    hedging_words = [
-        'allegedly',
-        'reportedly',
-      'argue',
-      'argument',
-      'believe',
-      'belief',
-      'conjecture',
-      'consider',
-      'hint',
-      'hypothesis',
-      'hypotheses',
-      'hypothesize',
-      'implication',
-      'imply',
-      'indicate',
-      'predict',
-      'prediction',
-      'previous',
-      'previously',
-      'proposal',
-      'propose',
-      'question',
-      'speculate',
-      'speculation',
-      'suggest',
-      'suspect',
-      'theorize',
-      'theory',
-      'think',
-      'whether'
-    ]
-
-    length_hedge=len(hedging_words)
-    hedging_h_vector = [0] * length_hedge
-
-
-    for word in clean_headline:
+    for word in evidence:
         if word in hedging_words:
-            index=hedging_words.index(word)
-            hedging_h_vector[index]=1
+            found_evidence=1
 
-    return hedging_h_vector
+    if(found_claim==1 and found_evidence==1):
+        found_both=1
 
+    features=[found_claim, found_evidence, found_both]
+
+    if(found_claim==1 or found_evidence==1):
+        sys.exit(1)
+    return features
+
+#
+# def hedging_features_headline(clean_headline):
+#
+#     hedging_words = [
+#         'allegedly',
+#         'reportedly',
+#       'argue',
+#       'argument',
+#       'believe',
+#       'belief',
+#       'conjecture',
+#       'consider',
+#       'hint',
+#       'hypothesis',
+#       'hypotheses',
+#       'hypothesize',
+#       'implication',
+#       'imply',
+#       'indicate',
+#       'predict',
+#       'prediction',
+#       'previous',
+#       'previously',
+#       'proposal',
+#       'propose',
+#       'question',
+#       'speculate',
+#       'speculation',
+#       'suggest',
+#       'suspect',
+#       'theorize',
+#       'theory',
+#       'think',
+#       'whether'
+#     ]
+#
+#     length_hedge=len(hedging_words)
+#     hedging_h_vector = [0] * length_hedge
+#
+#
+#     for word in clean_headline:
+#         if word in hedging_words:
+#             index=hedging_words.index(word)
+#             hedging_h_vector[index]=1
+#
+#     return hedging_h_vector
+#
 
 def refuting_features_mithun(clean_headline, clean_body):
     # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
@@ -893,7 +904,7 @@ def count_same_polarity_both_texts(text1_lemmas, text1_pos, text1_deps, text2_le
         # if it does then find the position of that verb in the body. then
         # take that position value, go through dependency parse # and find if any of the leading edges go through "neg"
         '''
-def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps,body_deps,pos_in,head_words,body_words):
+def polarity(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, head_deps, body_deps, pos_in, head_words, body_words):
         #+ve in head -ve in body=[1,0,0]
         #-ve in head -ve in body=[0,0,1]
         # #-ve in head +ve in body=[0,1,0]
@@ -902,7 +913,7 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         neg_head_neg_body=0
         pos_head_pos_body=0
 
-        logging.info("inside negated_verbs_count")
+        logging.info("inside polarity")
         # pos_text1_neg_text2, neg_text1_pos_text2
         [pos_head_neg_body, neg_head_pos_body] = count_different_polarity(lemmatized_headline_split, headline_pos_split, head_deps,
                                                                           lemmatized_body_split, body_pos_split, body_deps, pos_in="VB")
@@ -919,25 +930,6 @@ def negated_verbs_count(lemmatized_headline_split, headline_pos_split, lemmatize
         logging.info(lemmatized_headline_split)
         logging.info(lemmatized_body_split)
         logging.info(features)
-
-
-        # if pos_head_pos_body > 0:
-        #     logging.info("pos_head_pos_body>0")
-        #     sys.exit(1)
-
-
-        # if neg_head_pos_body > 0:
-        #     logging.info("neg_head_pos_body>0")
-        #     sys.exit(1)
-        #
-        # if pos_head_neg_body > 0:
-        #     logging.info("pos_head_neg_body>0")
-        #     sys.exit(1)
-
-        # if   neg_head_neg_body > 0:
-        #     logging.info("neg_head_neg_body>0")
-        #     sys.exit(1)
-
 
 
 
