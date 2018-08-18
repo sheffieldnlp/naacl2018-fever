@@ -191,7 +191,7 @@
 08-13 15:28 root         DEBUG    wrong predictions
 08-13 15:28 root         DEBUG    wrong predictions
 08-13 15:28 root         DEBUG    Topman has clothing outlets in six Irish cities and towns .
-08-13 15:28 root         DEBUG    A part of the Arcadia Group , which also owns Burton , Miss Selfridge , Wallis , Evans and Dorothy Perkins , Topman has a chain of high-street men 's clothing stores located throughout the United Kingdom and has a presence on just about every UK High Street , and in Ireland main street outlets in six cities and towns .
+08-13 15:28 root         DEBUG    A part of the Arcadia Group , which also owns Burton , Miss Selfridge , Wallis , Evans and Dorothy Perkins , Topman has a chain of high-street men 's clothing stores located throughou the United Kingdom and has a presence on just about every UK High Street , and in Ireland main street outlets in six cities and towns .
 08-13 15:28 root         DEBUG    gold:SUPPORTS
 08-13 15:28 root         DEBUG    predicted:REFUTES
 08-13 15:28 root         DEBUG    wrong predictions
