@@ -109,7 +109,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
             logging.debug("size of heads_lemmas and bodies_lemmas dont match. going to quit")
             sys.exit(1)
 
-        logging.info("going to load glove vectors...")
+        logging.warning("going to load glove vectors...")
         vocab, vec = torchwordemb.load_glove_text(path_glove_server)
 
         #if we are doing dynamic cv addition.make sure load cv is true and load that cv
@@ -679,16 +679,19 @@ def get_hedging_features(claim,evidence):
 
     length_hedge=len(hedging_words)
 
+    logging.info("inside get_hedging_features")
     found_claim=0
     found_evidence = 0
     found_both=0
 
     for word in claim:
         if word in hedging_words:
+            logging.info(word)
             found_claim=1
 
     for word in evidence:
         if word in hedging_words:
+            logging.info(word)
             found_evidence=1
 
     if(found_claim==1 and found_evidence==1):
@@ -696,7 +699,10 @@ def get_hedging_features(claim,evidence):
 
     features=[found_claim, found_evidence, found_both]
 
+    logging.info(" get_hedging_features features:"+str(features))
+
     if(found_claim==1 or found_evidence==1):
+        logging.info("found hedging word going to exit")
         sys.exit(1)
     return features
 
