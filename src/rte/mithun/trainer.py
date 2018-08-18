@@ -685,12 +685,12 @@ def get_hedging_features(claim,evidence):
 
     for word in claim:
         if word in hedging_words:
-            logging.info(word)
+            logging.debug(word)
             found_claim=1
 
     for word in evidence:
         if word in hedging_words:
-            logging.info(word)
+            logging.debug(word)
             found_evidence=1
 
     if(found_claim==1 and found_evidence==1):
@@ -698,10 +698,8 @@ def get_hedging_features(claim,evidence):
 
     features=[found_claim, found_evidence, found_both]
 
-    logging.info(" get_hedging_features features:"+str(features))
+    logging.debug(" get_hedging_features features:"+str(features))
 
-    if(found_claim==1 or found_evidence==1):
-        logging.info("found hedging word going to exit")
     return features
 
 
@@ -731,19 +729,19 @@ def get_refuting_features(claim,evidence):
     ]
 
 
-    logging.info("inside get_hedging_features")
+    logging.info("inside get_refuting_features")
     found_claim=0
     found_evidence = 0
     found_both=0
 
     for word in claim:
         if word in refuting_words:
-            logging.info(word)
+            logging.debug(word)
             found_claim=1
 
     for word in evidence:
         if word in refuting_words:
-            logging.info(word)
+            logging.debug(word)
             found_evidence=1
 
     if(found_claim==1 and found_evidence==1):
@@ -751,11 +749,8 @@ def get_refuting_features(claim,evidence):
 
     features=[found_claim, found_evidence, found_both]
 
-    logging.info(" get_hedging_features features:"+str(features))
+    logging.debug(" get_refuting_features features:"+str(features))
 
-    if(found_claim==1 or found_evidence==1):
-        logging.info("found refuting word going to exit")
-        sys.exit(1)
     return features
 
 
