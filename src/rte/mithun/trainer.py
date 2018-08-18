@@ -238,7 +238,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         bodies_words_list,vocab,vec):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 3), int)
-    refuting_value_matrix = np.empty((0, 19), int)
+    refuting_value_matrix = np.empty((0, 3), int)
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_noun_overlap_matrix = np.empty((0, 2), float)
@@ -609,7 +609,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     hedge_value_array = np.array([hedge_value])
 
 
-    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
+    refuting_value = get_refuting_features(lemmatized_headline_split, lemmatized_body_split)
     refuting_value_array = np.array([refuting_value])
 
     noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
@@ -677,7 +677,6 @@ def get_hedging_features(claim,evidence):
       'whether'
     ]
 
-    length_hedge=len(hedging_words)
 
     logging.info("inside get_hedging_features")
     found_claim=0
@@ -703,60 +702,11 @@ def get_hedging_features(claim,evidence):
 
     if(found_claim==1 or found_evidence==1):
         logging.info("found hedging word going to exit")
-        sys.exit(1)
     return features
 
-#
-# def hedging_features_headline(clean_headline):
-#
-#     hedging_words = [
-#         'allegedly',
-#         'reportedly',
-#       'argue',
-#       'argument',
-#       'believe',
-#       'belief',
-#       'conjecture',
-#       'consider',
-#       'hint',
-#       'hypothesis',
-#       'hypotheses',
-#       'hypothesize',
-#       'implication',
-#       'imply',
-#       'indicate',
-#       'predict',
-#       'prediction',
-#       'previous',
-#       'previously',
-#       'proposal',
-#       'propose',
-#       'question',
-#       'speculate',
-#       'speculation',
-#       'suggest',
-#       'suspect',
-#       'theorize',
-#       'theory',
-#       'think',
-#       'whether'
-#     ]
-#
-#     length_hedge=len(hedging_words)
-#     hedging_h_vector = [0] * length_hedge
-#
-#
-#     for word in clean_headline:
-#         if word in hedging_words:
-#             index=hedging_words.index(word)
-#             hedging_h_vector[index]=1
-#
-#     return hedging_h_vector
-#
 
-def refuting_features_mithun(clean_headline, clean_body):
-    # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
 
+def get_refuting_features(claim,evidence):
     refuting_words = [
         'fake',
         'fraud',
@@ -780,19 +730,35 @@ def refuting_features_mithun(clean_headline, clean_body):
 
     ]
 
-    # todo: make sure nltk doesn't remove not as a stop word
-    # todo: check the lamm form for 'n't and add it
-    length_hedge=len(refuting_words)
-    refuting_body_vector = [0] * length_hedge
 
-    for word in clean_body:
+    logging.info("inside get_hedging_features")
+    found_claim=0
+    found_evidence = 0
+    found_both=0
+
+    for word in claim:
         if word in refuting_words:
-            index=refuting_words.index(word)
-            refuting_body_vector[index]=1
+            logging.info(word)
+            found_claim=1
+
+    for word in evidence:
+        if word in refuting_words:
+            logging.info(word)
+            found_evidence=1
+
+    if(found_claim==1 and found_evidence==1):
+        found_both=1
+
+    features=[found_claim, found_evidence, found_both]
+
+    logging.info(" get_hedging_features features:"+str(features))
+
+    if(found_claim==1 or found_evidence==1):
+        logging.info("found refuting word going to exit")
+        sys.exit(1)
+    return features
 
 
-
-    return refuting_body_vector
 
 def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
