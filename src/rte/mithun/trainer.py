@@ -296,6 +296,8 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
         logging.debug("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
         logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
         logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
+        logging.info("value of  emb_cosine_sim_array is:" + str(emb_cosine_sim_array))
+        sys.exit(1)
 
 
 
