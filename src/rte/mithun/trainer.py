@@ -311,7 +311,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
         logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
         logging.debug("shape  combined_vector is:" + str(combined_vector_inside.shape))
-        logging.debug("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
 
         sys.exit(1)
 
