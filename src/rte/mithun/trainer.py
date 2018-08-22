@@ -44,7 +44,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
     #just load feature vector alone. No dynamically adding new features
     if (args.load_feat_vec==True):
-        logging.info("going to load combined vector from disk")
+        logging.debug("going to load combined vector from disk")
         combined_vector = joblib.load(combined_vector_pkl)
 
 
@@ -83,7 +83,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         logging.debug("hff:" + str(hff))
         logging.debug("bff:" + str(bff))
-        logging.info("going to read heads_lemmas from disk:")
+        logging.debug("going to read heads_lemmas from disk:")
 
         heads_lemmas= read_json_with_id(hff)
         bodies_lemmas = read_json_with_id(bff)
@@ -114,10 +114,10 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         #if we are doing dynamic cv addition.make sure load cv is true and load that cv
         if (args.dynamic_cv==True):
-                logging.info("going to load combined vector from disk")
-                logging.info("dynamic_cv=true, load_feat vec=true ")
+                logging.debug("going to load combined vector from disk")
+                logging.debug("dynamic_cv=true, load_feat vec=true ")
                 combined_vector_old = joblib.load(combined_vector_pkl)
-                logging.info("shaped of combined_vector_old:"+str(combined_vector_old.shape))
+                logging.debug("shaped of combined_vector_old:"+str(combined_vector_old.shape))
                 combined_vector = create_feature_vec_one_feature(heads_lemmas, bodies_lemmas, heads_tags,
                                              bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,combined_vector_old,vocab,vec)
 
@@ -126,7 +126,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
                                              bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,vocab,vec)
 
         joblib.dump(combined_vector, combined_vector_pkl)
-        logging.info("done generating feature vectors.")
+        logging.debug("done generating feature vectors.")
 
 
     return combined_vector;
@@ -171,8 +171,8 @@ def load_model():
 
 
 def do_testing(combined_vector,svm):
-    logging.info("all value of combined_vector is:"+str(combined_vector))
-    logging.info("going to predict...")
+    logging.debug("all value of combined_vector is:"+str(combined_vector))
+    logging.debug("going to predict...")
     p=svm.predict(combined_vector)
     joblib.dump(p, predicted_results)
     logging.debug("done with predictions")
@@ -297,7 +297,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
         logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
         logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
         logging.info("value of  emb_cosine_sim_array is:" + str(emb_cosine_sim_array))
-        sys.exit(1)
+
 
 
 
@@ -310,8 +310,10 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
              ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
 
         logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
-        logging.info("shape  combined_vector is:" + str(combined_vector_inside.shape))
-        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+        logging.debug("shape  combined_vector is:" + str(combined_vector_inside.shape))
+        logging.debug("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+
+        sys.exit(1)
 
 
 
@@ -323,18 +325,18 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
 
 
-    logging.info("\ndone with all headline body.:")
-    logging.info("overall number count is:" + str(num_o))
-    logging.info("headlines that have numbers is:" + str(num_h))
-    logging.info("body that has numbers is:" + str(num_b))
+    logging.debug("\ndone with all headline body.:")
+    logging.debug("overall number count is:" + str(num_o))
+    logging.debug("headlines that have numbers is:" + str(num_h))
+    logging.debug("body that has numbers is:" + str(num_b))
 
 
-    logging.info("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
-    logging.info("shape of  hedging_words_vector is:" + str(hedging_words_vector.shape))
-    logging.info("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
-    logging.info("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
-    logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
-    logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
+    logging.debug("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
+    logging.debug("shape of  hedging_words_vector is:" + str(hedging_words_vector.shape))
+    logging.debug("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
+    logging.debug("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+    logging.debug("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+    logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
     #no antonym ones
     # combined_vector = np.hstack(
@@ -369,7 +371,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
          noun_overlap_matrix, ant_overlap_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
          ant_adj_overlap_matrix, emb_cos_sim_matrix,vb_overlap_matrix,num_overlap_matrix])
 
-    logging.info("shape  combined_vector is:" + str(combined_vector.shape))
+    logging.debug("shape  combined_vector is:" + str(combined_vector.shape))
     return combined_vector
 
 
@@ -378,7 +380,7 @@ attach just the new one alone. Time saven.'''
 def create_feature_vec_one_feature(heads_lemmas_obj_list,
                                    bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
                                    bodies_deps_obj_list,heads_words_list, bodies_words_list,combined_vector,vocab,vec):
-    logging.info("inside create_feature_vec overloaded")
+    logging.debug("inside create_feature_vec overloaded")
 
     new_feature_matrix = np.empty((0, 1), float)
     counter=0
@@ -396,22 +398,22 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list,
         new_feature_matrix = np.vstack([new_feature_matrix, new_feature_array])
 
 
-        logging.info("new_feature_matrix matrix is =" + str(new_feature_matrix))
-        logging.info("shape  new_feature_matrix is:" + str(new_feature_matrix.shape))
+        logging.debug("new_feature_matrix matrix is =" + str(new_feature_matrix))
+        logging.debug("shape  new_feature_matrix is:" + str(new_feature_matrix.shape))
 
         counter=counter+1
 
 
 
 
-    logging.info("done with all headline body.:")
+    logging.debug("done with all headline body.:")
 
 
-    logging.info("shape  combined_vector before stacking is:" + str(combined_vector.shape))
+    logging.debug("shape  combined_vector before stacking is:" + str(combined_vector.shape))
 
 
     combined_vector = np.hstack([combined_vector, new_feature_matrix])
-    logging.info("shape  combined_vector after stacking is:" + str(combined_vector.shape))
+    logging.debug("shape  combined_vector after stacking is:" + str(combined_vector.shape))
 
     return combined_vector
 
@@ -419,7 +421,7 @@ def create_feature_vec_one_feature(heads_lemmas_obj_list,
 '''overloaded version that will be used for generarting one feature at a time'''
 def add_vectors_one_feature(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, tagged_body
                             , head_deps, body_deps, head_words, body_words,vocab, vec):
-    logging.info("inside add_vectors_one_feature ")
+    logging.debug("inside add_vectors_one_feature ")
 
 
     lemmatized_headline_data = lemmatized_headline_obj.data
@@ -456,8 +458,8 @@ def add_vectors_one_feature(lemmatized_headline_obj, lemmatized_body_obj, tagged
         logging.error("all doc ids dont match going to quit")
         sys.exit(1)
 
-    logging.info(lemmatized_headline_data)
-    logging.info(lemmatized_body_data)
+    logging.debug(lemmatized_headline_data)
+    logging.debug(lemmatized_body_data)
     logging.debug(tagged_headline.data)
     logging.debug(tagged_body.data)
     logging.debug(head_deps.data)
@@ -541,8 +543,8 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
         logging.error("all doc ids dont match going to quit")
         sys.exit(1)
 
-    logging.info(lemmatized_headline_data)
-    logging.info(lemmatized_body_data)
+    logging.debug(lemmatized_headline_data)
+    logging.debug(lemmatized_body_data)
     logging.debug(tagged_headline.data)
     logging.debug(tagged_body.data)
     logging.debug(head_deps.data)
@@ -682,7 +684,7 @@ def get_hedging_features(claim,evidence):
     ]
 
 
-    logging.info("inside get_hedging_features")
+    logging.debug("inside get_hedging_features")
     found_claim=0
     found_evidence = 0
     found_both=0
@@ -733,7 +735,7 @@ def get_refuting_features(claim,evidence):
     ]
 
 
-    logging.info("inside get_refuting_features")
+    logging.debug("inside get_refuting_features")
     found_claim=0
     found_evidence = 0
     found_both=0
@@ -763,7 +765,7 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
     # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
     #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
 
-        logging.info("inside " + pos_in + " overlap")
+        logging.debug("inside " + pos_in + " overlap")
         h_nouns = []
         b_nouns = []
 
@@ -790,10 +792,10 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
         features = [0, 0]
 
 
-        logging.info(str("h_nouns:") + ";" + str((h_nouns)))
-        logging.info(str("b_nouns:") + ";" + str((b_nouns)))
-        logging.info(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
-        logging.info(str("overlap:") + ";" + str((overlap)))
+        logging.debug(str("h_nouns:") + ";" + str((h_nouns)))
+        logging.debug(str("b_nouns:") + ";" + str((b_nouns)))
+        logging.debug(str("overlap_pos_counter:") + ";" + str((overlap_noun_counter)))
+        logging.debug(str("overlap:") + ";" + str((overlap)))
 
 
         logging.debug(str("count_body:") + ";" + str((noun_count_body)))
@@ -811,7 +813,7 @@ def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatiz
             features = [ratio_pos_dir1, ratio_pos_dir2]
 
 
-        logging.info(str("features:") + ";" + str((features)))
+        logging.debug(str("features:") + ";" + str((features)))
 
 
 
@@ -884,7 +886,7 @@ def polarity(lemmatized_headline_split, headline_pos_split, lemmatized_body_spli
         neg_head_neg_body=0
         pos_head_pos_body=0
 
-        logging.info("inside polarity")
+        logging.debug("inside polarity")
         # pos_text1_neg_text2, neg_text1_pos_text2
         [pos_head_neg_body, neg_head_pos_body] = count_different_polarity(lemmatized_headline_split, headline_pos_split, head_deps,
                                                                           lemmatized_body_split, body_pos_split, body_deps, pos_in="VB")
@@ -896,11 +898,11 @@ def polarity(lemmatized_headline_split, headline_pos_split, lemmatized_body_spli
         features = [pos_head_neg_body, neg_head_pos_body, neg_head_neg_body, pos_head_pos_body]
 
         # DEBUG
-        logging.info(head_words.data)
-        logging.info(body_words.data)
-        logging.info(lemmatized_headline_split)
-        logging.info(lemmatized_body_split)
-        logging.info(features)
+        logging.debug(head_words.data)
+        logging.debug(body_words.data)
+        logging.debug(lemmatized_headline_split)
+        logging.debug(lemmatized_body_split)
+        logging.debug(features)
 
 
 
@@ -973,9 +975,9 @@ def get_all_verbs(lemmatized_headline_split, headline_pos_split,pos_in):
 #number of nouns in sentence 2 that were antonyms of anyword in sentence 1 and vice versa
 def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
 
-        logging.info("inside " + pos_in + " antonyms")
-        logging.info("lemmatized_headline_split " +str(lemmatized_headline_split))
-        logging.info("lemmatized_headline_split " + str(lemmatized_body_split))
+        logging.debug("inside " + pos_in + " antonyms")
+        logging.debug("lemmatized_headline_split " +str(lemmatized_headline_split))
+        logging.debug("lemmatized_headline_split " + str(lemmatized_body_split))
         h_nouns = []
         b_nouns = []
         h_nouns_antonyms=[]
@@ -1021,31 +1023,31 @@ def antonym_overlap_features(lemmatized_headline_split, headline_pos_split, lemm
         #number of nouns in evidence that were antonyms of any word in claim
         if(len(h_nouns_antonyms)>0):
 
-            logging.info(("len h_nouns_antonyms"))
-            logging.info(len(h_nouns_antonyms))
+            logging.debug(("len h_nouns_antonyms"))
+            logging.debug(len(h_nouns_antonyms))
             flatten_h = list(itertools.chain.from_iterable(h_nouns_antonyms))
-            logging.info(" flatten_h1:" + str((flatten_h)))
-            logging.info(str("b_nouns:") + ";" + str((b_nouns)))
+            logging.debug(" flatten_h1:" + str((flatten_h)))
+            logging.debug(str("b_nouns:") + ";" + str((b_nouns)))
             overlap = set(flatten_h).intersection(set(b_nouns))
 
             if(len(overlap)>0):
-                logging.info("found overlap1")
-                logging.info(overlap)
+                logging.debug("found overlap1")
+                logging.debug(overlap)
                 overlap_dir1 = len(overlap)
 
         #vice versa
         if (len(b_nouns_antonyms) > 0):
 
-            logging.info(("len b_nouns_antonyms"))
-            logging.info(len(b_nouns_antonyms))
+            logging.debug(("len b_nouns_antonyms"))
+            logging.debug(len(b_nouns_antonyms))
             flatten_b = list(itertools.chain.from_iterable(b_nouns_antonyms))
-            logging.info(" flatten_b:" + str((flatten_b)))
-            logging.info(str("h_nouns:") + ";" + str((h_nouns)))
+            logging.debug(" flatten_b:" + str((flatten_b)))
+            logging.debug(str("h_nouns:") + ";" + str((h_nouns)))
             overlap2 = set(flatten_b).intersection(set(h_nouns))
 
             if (len(overlap2) > 0):
-                logging.info("found overlap2")
-                logging.info(overlap2)
+                logging.debug("found overlap2")
+                logging.debug(overlap2)
                 overlap_dir2 = len(overlap2)
 
 
@@ -1117,12 +1119,12 @@ def get_sum_vector_embedding(vocab,vec, sent):
 
     for index, x in (enumerate(sent)):
         if (x in vocab):
-            logging.info("index:"+str(index))
-            logging.info("x:" + str(x))
+            logging.debug("index:"+str(index))
+            logging.debug("x:" + str(x))
             emb = vec[vocab[x]]
-            logging.info(emb.shape)
+            logging.debug(emb.shape)
             q = emb.numpy()
-            logging.info(q.shape)
+            logging.debug(q.shape)
             if (very_first_time):
                 sum=q
                 logging.debug(sum)
@@ -1130,14 +1132,14 @@ def get_sum_vector_embedding(vocab,vec, sent):
             else:
                 logging.debug(q)
                 sum = sum + q
-                logging.info(sum.shape)
-                logging.info(sum.shape)
+                logging.debug(sum.shape)
+                logging.debug(sum.shape)
                 logging.debug(sum)
 
     return sum
 
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec):
-    logging.info(" got inside embed_cosine_sim_features  ")
+    logging.debug(" got inside embed_cosine_sim_features  ")
 
 
     sum_h=get_sum_vector_embedding(vocab,vec,lemmatized_headline_split_sw)
@@ -1176,9 +1178,9 @@ def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_spli
 #Of all the numbers/digits are mentioned in headline. how many are mentioned in body
 def num_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
 
-        logging.info("inside " + pos_in + " features")
-        logging.info("lemmatized_headline_split " +str(lemmatized_headline_split))
-        logging.info("lemmatized_headline_split " + str(lemmatized_body_split))
+        logging.debug("inside " + pos_in + " features")
+        logging.debug("lemmatized_headline_split " +str(lemmatized_headline_split))
+        logging.debug("lemmatized_headline_split " + str(lemmatized_body_split))
         h_numbers = []
         b_numbers = []
         h_nouns_antonyms=[]
