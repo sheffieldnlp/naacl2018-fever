@@ -245,13 +245,14 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     hedging_words_vector = np.empty((0, 3), int)
     refuting_value_matrix = np.empty((0, 3), int)
     noun_overlap_matrix = np.empty((0, 2), float)
-    vb_overlap_matrix = np.empty((0, 2), float)
+    ant_overlap_matrix = np.empty((0, 2), float)
+    polarity_matrix = np.empty((0, 4), float)
     ant_noun_overlap_matrix = np.empty((0, 2), float)
     ant_adj_overlap_matrix = np.empty((0, 2), float)
-    ant_overlap_matrix = np.empty((0, 2), float)
-    neg_vb_matrix = np.empty((0, 4), float)
-    num_overlap_matrix = np.empty((0, 2), float)
     emb_cos_sim_matrix = np.empty((0, 1), float)
+    vb_overlap_matrix = np.empty((0, 2), float)
+    num_overlap_matrix = np.empty((0, 2), float)
+
 
 
     counter=0
@@ -264,7 +265,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,neg_vb_array,antonym_adj_overlap_array,emb_cosine_sim_array \
+        antonym_overlap_array,num_overlap_array,polarity_array,antonym_adj_overlap_array,emb_cosine_sim_array \
             = add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab,vec)
 
@@ -281,7 +282,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
         num_overlap_matrix = np.vstack([num_overlap_matrix, num_overlap_array])
-        neg_vb_matrix= np.vstack([neg_vb_matrix, neg_vb_array])
+        polarity_matrix= np.vstack([polarity_matrix, polarity_array])
         ant_adj_overlap_matrix = np.vstack([ant_adj_overlap_matrix, antonym_adj_overlap_array])
         ant_noun_overlap_matrix = np.vstack([ant_noun_overlap_matrix, antonym_overlap_array])
         emb_cos_sim_matrix = np.vstack([emb_cos_sim_matrix, emb_cosine_sim_array])
@@ -307,14 +308,14 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
         #todebug
         combined_vector_inside=None
 
-        combined_vector_inside = np.hstack(
-            [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-             noun_overlap_matrix, ant_overlap_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
-             ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
-
-        logging.debug("  combined_vector is:" + str((combined_vector_inside[counter])))
-        logging.debug("shape  combined_vector is:" + str(combined_vector_inside.shape))
-        logging.debug("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+        # combined_vector_inside = np.hstack(
+        #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
+        #      noun_overlap_matrix, ant_overlap_matrix, polarity_matrix, ant_noun_overlap_matrix,
+        #      ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
+        #
+        # logging.debug("  combined_vector is:" + str((combined_vector_inside[counter])))
+        # logging.debug("shape  combined_vector is:" + str(combined_vector_inside.shape))
+        # logging.debug("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
 
 
 
@@ -344,10 +345,10 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     #no antonym ones
     # combined_vector = np.hstack(
     #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-    #      noun_overlap_matrix,hedging_headline_matrix,neg_vb_matrix,emb_cos_sim_matrix])
+    #      noun_overlap_matrix,hedging_headline_matrix,polarity_matrix,emb_cos_sim_matrix])
 
     #no negation related. has everything else
-    #refuting_value_matrix,neg_vb_matrix
+    #refuting_value_matrix,polarity_matrix
     # combined_vector = np.hstack(
     #     [word_overlap_vector, hedging_words_vector,
     #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, ant_noun_overlap_matrix,
@@ -359,19 +360,19 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     #remove hedging features only:hedging_words_vector
     # combined_vector = np.hstack(
     #     [word_overlap_vector , refuting_value_matrix,
-    #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+    #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, polarity_matrix, ant_noun_overlap_matrix,
     #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
 
     #removing all overlap features:word_overlap_vector,noun_overlap_matrix
     # combined_vector = np.hstack(
     #     [hedging_words_vector, refuting_value_matrix
-    #      , ant_overlap_matrix, hedging_headline_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+    #      , ant_overlap_matrix, hedging_headline_matrix, polarity_matrix, ant_noun_overlap_matrix,
     #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
 
     # all vectors
     combined_vector = np.hstack(
         [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-         noun_overlap_matrix, ant_overlap_matrix, neg_vb_matrix, ant_noun_overlap_matrix,
+         noun_overlap_matrix, ant_overlap_matrix, polarity_matrix, ant_noun_overlap_matrix,
          ant_adj_overlap_matrix, emb_cos_sim_matrix,vb_overlap_matrix,num_overlap_matrix])
 
     logging.debug("shape  combined_vector is:" + str(combined_vector.shape))
@@ -765,8 +766,6 @@ def get_refuting_features(claim,evidence):
 
 
 def pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, pos_in):
-    # todo1: try adding just a simple plain noun overlap features ...not direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
-    #todo:2: refer to excel sheet todo. add chunks. i.e entire one chunk and check how much of it overlaps.
 
         logging.debug("inside " + pos_in + " overlap")
         h_nouns = []
