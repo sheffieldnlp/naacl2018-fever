@@ -92,6 +92,7 @@ def uofa_training(args,jlr,method,logger):
     logging.info("above two must match")
 
     do_training(combined_vector, gold_labels_tr)
+
     logging.warning("done with training. going to exit")
     sys.exit(1)
 

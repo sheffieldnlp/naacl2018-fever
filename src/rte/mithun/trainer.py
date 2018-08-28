@@ -155,7 +155,10 @@ def print_nonzero_cv(combined_vector):
 
 def do_training(combined_vector,gold_labels_tr):
     logging.debug("going to train the classifier:")
-    clf=svm.NuSVC()
+    #clf=svm.NuSVC()
+
+    clf=svm.LinearSVC(random_state=1)
+
     clf.fit(combined_vector, gold_labels_tr.ravel())
 
     file = model_trained
