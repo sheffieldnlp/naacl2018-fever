@@ -240,18 +240,18 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list,
                         bodies_words_list,vocab,vec):
     word_overlap_vector = np.empty((0, 1), float)
-    hedging_headline_matrix = np.empty((0, 30), int)
+    hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
-    ant_overlap_matrix = np.empty((0, 2), float)
-    polarity_matrix = np.empty((0, 4), float)
+    vb_overlap_matrix = np.empty((0, 2), float)
     ant_noun_overlap_matrix = np.empty((0, 2), float)
     ant_adj_overlap_matrix = np.empty((0, 2), float)
-
-
-    emb_cos_sim_matrix = np.empty((0, 1), float)
-    vb_overlap_matrix = np.empty((0, 2), float)
+    ant_overlap_matrix = np.empty((0, 2), float)
+    polarity_matrix = np.empty((0, 4), float)
+    hedging_headline_matrix = np.empty((0, 30), int)
     num_overlap_matrix = np.empty((0, 2), float)
+    emb_cos_sim_matrix = np.empty((0, 1), float)
+
 
 
 
