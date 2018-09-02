@@ -348,7 +348,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     # all vectors
     combined_vector = np.hstack([word_overlap_vector, hedging_words_vector, refuting_value_matrix,noun_overlap_matrix,
                                  vb_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,num_overlap_matrix,
-                                 polarity_matrix, ant_adj_overlap_matrix,ant_noun_overlap_matrix emb_cos_sim_matrix])
+                                 polarity_matrix, ant_adj_overlap_matrix,ant_noun_overlap_matrix, emb_cos_sim_matrix])
 
     logging.info("shape  combined_vector is:" + str(combined_vector.shape))
     return combined_vector
