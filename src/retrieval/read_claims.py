@@ -73,7 +73,7 @@ def uofa_training(args,jlr,method,logger):
     logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    #tr_data=read_claims_annotate(args,jlr,logger,method)
+    tr_data=read_claims_annotate(args,jlr,logger,method)
     # logger.info(
     #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
@@ -115,7 +115,8 @@ def uofa_testing(args,jlr,method,logger):
     logging.info("above two must match")
     assert(combined_vector.shape[0]==len(gold_labels))
     trained_model=load_model()
-
+    logging.debug("weights:")
+    #logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
 
 
@@ -293,8 +294,8 @@ def uofa_dev(args, jlr, method, logger):
     logging.info("number of rows in label list is is:" + str(len(gold_labels)))
     logging.info("above two must match")
     trained_model=load_model()
-    # logging.warning("weights:")
-    # logging.warning(trained_model.coef_)
+    logging.debug("weights:")
+    #logging.debug(trained_model.coef_ )
     pred=do_testing(combined_vector,trained_model)
     logging.debug(str(pred))
     logging.debug("and golden labels are:")
