@@ -240,7 +240,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list,
                         bodies_words_list,vocab,vec):
     word_overlap_vector = np.empty((0, 1), float)
-    hedging_words_vector = np.empty((0, 30), int)
+    hedging_headline_matrix = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
     ant_overlap_matrix = np.empty((0, 2), float)
@@ -265,7 +265,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,emb_cosine_sim_array  = add_vectors\
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,polarity_array,antonym_adj_overlap_array,emb_cosine_sim_array  = add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab,vec)
 
         logging.debug("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
