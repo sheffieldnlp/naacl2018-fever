@@ -243,7 +243,8 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         bodies_words_list,vocab,vec):
     word_overlap_vector = np.empty((0, 1), float)
     hedging_words_vector = np.empty((0, 30), int)
-    refuting_value_matrix = np.empty((0, 19), int)
+    refuting_value_head_matrix = np.empty((0, 19), int)
+    refuting_value_body_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
     vb_overlap_matrix = np.empty((0, 2), float)
     ant_noun_overlap_matrix = np.empty((0, 2), float)
@@ -266,7 +267,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
             in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
-        word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
+        word_overlap_array, hedge_value_array, refuting_value_head,refuting_value_body, noun_overlap_array, verb_overlap_array, \
         antonym_overlap_array,num_overlap_array,hedge_headline_array,polarity_array,antonym_adj_overlap_array,emb_cosine_sim_array  = add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab,vec)
 
@@ -278,7 +279,8 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
         word_overlap_vector = np.vstack([word_overlap_vector, word_overlap_array])
         hedging_words_vector = np.vstack([hedging_words_vector, hedge_value_array])
-        refuting_value_matrix = np.vstack([refuting_value_matrix, refuting_value_array])
+        refuting_value_head_matrix = np.vstack([refuting_value_head_matrix, refuting_value_head])
+        refuting_value_body_matrix = np.vstack([refuting_value_body_matrix, refuting_value_body])
         noun_overlap_matrix = np.vstack([noun_overlap_matrix, noun_overlap_array])
         vb_overlap_matrix=np.vstack([vb_overlap_matrix, verb_overlap_array])
         ant_overlap_matrix = np.vstack([ant_overlap_matrix, antonym_overlap_array])
@@ -295,7 +297,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
 
         logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
-        logging.debug("refuting_value_matrix" + str(refuting_value_matrix))
+        logging.debug("refuting_value_head_matrix" + str(refuting_value_head_matrix))
         logging.debug("noun_overlap_matrix is =" + str(noun_overlap_matrix))
         logging.debug("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
         logging.debug("vb_overlap_matrix is =" + str(vb_overlap_matrix))
@@ -310,7 +312,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
 
         # combined_vector_inside = np.hstack(
-        #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
+        #     [word_overlap_vector, hedging_words_vector, refuting_value_head_matrix,
         #      noun_overlap_matrix, ant_overlap_matrix, polarity_matrix, ant_noun_overlap_matrix,
         #      ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
         #
@@ -338,7 +340,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
     logging.info("shape of  word_overlap_vector is:" + str(word_overlap_vector.shape))
     logging.info("shape of  hedging_words_vector is:" + str(hedging_words_vector.shape))
-    logging.info("shape of  refuting_value_matrix is:" + str(refuting_value_matrix.shape))
+    logging.info("shape of  refuting_value_head_matrix is:" + str(refuting_value_head_matrix.shape))
     logging.info("shape of  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
     logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
@@ -346,7 +348,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
 
     # all vectors
-    combined_vector = np.hstack([word_overlap_vector, hedging_words_vector, refuting_value_matrix,noun_overlap_matrix,
+    combined_vector = np.hstack([word_overlap_vector, hedging_words_vector, refuting_value_head_matrix,refuting_value_body_matrix,noun_overlap_matrix,
                                  vb_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,num_overlap_matrix,
                                  polarity_matrix, ant_adj_overlap_matrix,ant_noun_overlap_matrix, emb_cos_sim_matrix])
 
@@ -596,8 +598,11 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     hedge_headline = hedging_features_headline(lemmatized_headline_split)
     hedge_headline_array = np.array([hedge_headline])
 
-    refuting_value = refuting_features_mithun(lemmatized_headline_split, lemmatized_body_split)
-    refuting_value_array = np.array([refuting_value])
+    refuting_value1 = refuting_features(lemmatized_headline_split)
+    refuting_value_head = np.array([refuting_value1])
+
+    refuting_value2 = refuting_features( lemmatized_body_split)
+    refuting_value_body = np.array([refuting_value2])
 
     noun_overlap = pos_overlap_features(lemmatized_headline_split, headline_pos_split, lemmatized_body_split, body_pos_split, "NN")
     noun_overlap_array = np.array([noun_overlap])
@@ -610,7 +615,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     emb_overlap = embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec)
     emb_overlap_array = np.array([emb_overlap])
 
-    return word_overlap_array,hedge_value_array,refuting_value_array,noun_overlap_array,vb_overlap_array\
+    return word_overlap_array,hedge_value_array,refuting_value_head,refuting_value_body,noun_overlap_array,vb_overlap_array\
         ,antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,\
            antonym_adj_overlap_array,emb_overlap_array
 
@@ -720,8 +725,7 @@ def hedging_features_headline(clean_headline):
     return hedging_h_vector
 
 
-def refuting_features_mithun(clean_headline, clean_body):
-    # todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
+def refuting_features( sent):
 
     refuting_words = [
         'fake',
@@ -746,12 +750,10 @@ def refuting_features_mithun(clean_headline, clean_body):
 
     ]
 
-    # todo: make sure nltk doesn't remove not as a stop word
-    # todo: check the lamm form for 'n't and add it
     length_hedge=len(refuting_words)
     refuting_body_vector = [0] * length_hedge
 
-    for word in clean_body:
+    for word in sent:
         if word in refuting_words:
             index=refuting_words.index(word)
             refuting_body_vector[index]=1
@@ -1133,7 +1135,7 @@ def get_sum_vector_embedding(vocab,vec, sent):
     sum = None
     very_first_time=True;
 
-    for index, x in tqdm(enumerate(sent), total=len(sent),desc="load_embed"):
+    for index, x in (enumerate(sent)):
         if (x in vocab):
             logging.info("index:"+str(index))
             logging.info("x:" + str(x))
