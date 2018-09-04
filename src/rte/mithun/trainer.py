@@ -631,10 +631,10 @@ def word_overlap_features(clean_headline, clean_body):
     noun_count_headline=len(set(clean_headline))
     noun_count_body=len(set(clean_body))
 
-    logging.debug("overlap_noun_counter:"+str(overlap_noun_counter))
-    logging.debug("ratio_all_words:"+str(ratio_all_words))
-    logging.debug("noun_count_headline:"+str(noun_count_headline))
-    logging.debug("noun_count_body:"+str(noun_count_body))
+    logging.info("overlap_noun_counter:"+str(overlap_noun_counter))
+    logging.info("ratio_all_words:"+str(ratio_all_words))
+    logging.info("noun_count_headline:"+str(noun_count_headline))
+    logging.info("noun_count_body:"+str(noun_count_body))
 
 
     if (noun_count_body > 0 and noun_count_headline > 0):
@@ -642,12 +642,12 @@ def word_overlap_features(clean_headline, clean_body):
             ratio_pos_dir2 = overlap_noun_counter / (noun_count_headline)
 
             if not ((ratio_pos_dir1==0) or (ratio_pos_dir2==0)):
-                logging.debug("found  overlap")
-                logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
+                logging.info("found  overlap")
+                logging.info(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
 
             features = [ratio_all_words,ratio_pos_dir1, ratio_pos_dir2]
 
-    logging.debug("word overlap3 features:"+str(features))
+    logging.info("word overlap3 features:"+str(features))
 
     sys.exit(1)
     return features
