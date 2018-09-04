@@ -316,10 +316,9 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
              noun_overlap_matrix, ant_overlap_matrix, polarity_matrix, ant_noun_overlap_matrix,
              ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
 
-        logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
-        logging.info("shape  combined_vector is:" + str(combined_vector_inside.shape))
-        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
-        sys.exit(1)
+        # logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
+        # logging.info("shape  combined_vector is:" + str(combined_vector_inside.shape))
+        # logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
 
 
 
@@ -629,7 +628,7 @@ def word_overlap_features(clean_headline, clean_body):
     uni=set(clean_headline).union(clean_body)
     overlap_noun_counter = len(inter)
 
-    ratio_all_words=len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))
+    ratio_all_words=git len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))
 
     noun_count_headline=len(set(clean_headline))
     noun_count_body=len(set(clean_body))
