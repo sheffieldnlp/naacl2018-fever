@@ -296,14 +296,14 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
 
 
-        logging.debug("  word_overlap_vector is:" + str(word_overlap_vector))
-        logging.debug("refuting_value_head_matrix" + str(refuting_value_head_matrix))
-        logging.debug("noun_overlap_matrix is =" + str(noun_overlap_matrix))
-        logging.debug("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
-        logging.debug("vb_overlap_matrix is =" + str(vb_overlap_matrix))
-        logging.debug("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
-        logging.debug("num_overlap matrix is =" + str(num_overlap_matrix))
-        logging.debug("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
+        logging.info("  word_overlap_vector is:" + str(word_overlap_vector))
+        logging.info("refuting_value_head_matrix" + str(refuting_value_head_matrix))
+        logging.info("noun_overlap_matrix is =" + str(noun_overlap_matrix))
+        logging.info("shape  noun_overlap_matrix is:" + str(noun_overlap_matrix.shape))
+        logging.info("vb_overlap_matrix is =" + str(vb_overlap_matrix))
+        logging.info("shape  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
+        logging.info("num_overlap matrix is =" + str(num_overlap_matrix))
+        logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
 
 
@@ -316,9 +316,9 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
              noun_overlap_matrix, ant_overlap_matrix, polarity_matrix, ant_noun_overlap_matrix,
              ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
 
-        logging.debug("  combined_vector is:" + str((combined_vector_inside[counter])))
-        logging.debug("shape  combined_vector is:" + str(combined_vector_inside.shape))
-        logging.debug("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+        logging.info("  combined_vector is:" + str((combined_vector_inside[counter])))
+        logging.info("shape  combined_vector is:" + str(combined_vector_inside.shape))
+        logging.info("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
         sys.exit(1)
 
 
