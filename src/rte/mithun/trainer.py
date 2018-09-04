@@ -592,10 +592,10 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
     word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
 
-    hedge_value = hedging_features_body( lemmatized_body_split)
+    hedge_value = hedging_features( lemmatized_body_split)
     hedge_value_array = np.array([hedge_value])
 
-    hedge_headline = hedging_features_headline(lemmatized_headline_split)
+    hedge_headline = hedging_features(lemmatized_headline_split)
     hedge_headline_array = np.array([hedge_headline])
 
     refuting_value1 = refuting_features(lemmatized_headline_split)
@@ -628,9 +628,8 @@ def word_overlap_features_mithun(clean_headline, clean_body):
 
     return features
 
-def hedging_features_body(clean_body):
+def hedging_features(sent):
 
-    #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
 
     hedging_words = [
         'allegedly',
@@ -670,7 +669,7 @@ def hedging_features_body(clean_body):
 
 
 
-    for word in clean_body:
+    for word in sent:
         if word in hedging_words:
             index=hedging_words.index(word)
             hedging_body_vector[index]=1
@@ -678,51 +677,101 @@ def hedging_features_body(clean_body):
 
     return hedging_body_vector
 
-def hedging_features_headline(clean_headline):
-
-    hedging_words = [
-        'allegedly',
-        'reportedly',
-      'argue',
-      'argument',
-      'believe',
-      'belief',
-      'conjecture',
-      'consider',
-      'hint',
-      'hypothesis',
-      'hypotheses',
-      'hypothesize',
-      'implication',
-      'imply',
-      'indicate',
-      'predict',
-      'prediction',
-      'previous',
-      'previously',
-      'proposal',
-      'propose',
-      'question',
-      'speculate',
-      'speculation',
-      'suggest',
-      'suspect',
-      'theorize',
-      'theory',
-      'think',
-      'whether'
-    ]
-
-    length_hedge=len(hedging_words)
-    hedging_h_vector = [0] * length_hedge
-
-
-    for word in clean_headline:
-        if word in hedging_words:
-            index=hedging_words.index(word)
-            hedging_h_vector[index]=1
-
-    return hedging_h_vector
+# def hedging_features_body(clean_body):
+#
+#     #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
+#
+#     hedging_words = [
+#         'allegedly',
+#         'reportedly',
+#       'argue',
+#       'argument',
+#       'believe',
+#       'belief',
+#       'conjecture',
+#       'consider',
+#       'hint',
+#       'hypothesis',
+#       'hypotheses',
+#       'hypothesize',
+#       'implication',
+#       'imply',
+#       'indicate',
+#       'predict',
+#       'prediction',
+#       'previous',
+#       'previously',
+#       'proposal',
+#       'propose',
+#       'question',
+#       'speculate',
+#       'speculation',
+#       'suggest',
+#       'suspect',
+#       'theorize',
+#       'theory',
+#       'think',
+#       'whether'
+#     ]
+#
+#     length_hedge=len(hedging_words)
+#     hedging_body_vector = [0] * length_hedge
+#
+#
+#
+#     for word in clean_body:
+#         if word in hedging_words:
+#             index=hedging_words.index(word)
+#             hedging_body_vector[index]=1
+#
+#
+#     return hedging_body_vector
+#
+# def hedging_features_headline(clean_headline):
+#
+#     hedging_words = [
+#         'allegedly',
+#         'reportedly',
+#       'argue',
+#       'argument',
+#       'believe',
+#       'belief',
+#       'conjecture',
+#       'consider',
+#       'hint',
+#       'hypothesis',
+#       'hypotheses',
+#       'hypothesize',
+#       'implication',
+#       'imply',
+#       'indicate',
+#       'predict',
+#       'prediction',
+#       'previous',
+#       'previously',
+#       'proposal',
+#       'propose',
+#       'question',
+#       'speculate',
+#       'speculation',
+#       'suggest',
+#       'suspect',
+#       'theorize',
+#       'theory',
+#       'think',
+#       'whether'
+#     ]
+#
+#     length_hedge=len(hedging_words)
+#     hedging_h_vector = [0] * length_hedge
+#
+#
+#     for word in clean_headline:
+#         if word in hedging_words:
+#             index=hedging_words.index(word)
+#             hedging_h_vector[index]=1
+#
+#     return hedging_h_vector
 
 
 def refuting_features( sent):
