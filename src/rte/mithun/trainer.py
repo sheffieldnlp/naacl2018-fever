@@ -639,7 +639,8 @@ def word_overlap_features(clean_headline, clean_body):
                 logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
 
             features = [overlap_noun_counter,ratio_pos_dir1, ratio_pos_dir2]
-        logging.debug("word overlap3 features:"+str(features))
+
+    logging.debug("word overlap3 features:"+str(features))
 
     sys.exit(1)
     return features
