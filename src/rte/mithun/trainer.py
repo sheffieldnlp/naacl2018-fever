@@ -1135,7 +1135,7 @@ def get_sum_vector_embedding(vocab,vec, sent):
     sum = None
     very_first_time=True;
 
-    for index, x in tqdm(enumerate(sent), total=len(sent),desc="load_embed"):
+    for index, x in (enumerate(sent)):
         if (x in vocab):
             logging.info("index:"+str(index))
             logging.info("x:" + str(x))
