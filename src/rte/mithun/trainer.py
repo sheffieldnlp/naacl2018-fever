@@ -623,11 +623,18 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 def word_overlap_features(clean_headline, clean_body):
     # todo: try adding word overlap features direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
 
-    overlap_noun_counter = [
+    overlap_noun_counter = len(set(clean_headline).intersection(clean_body))
+
+    ratio_all_words=[
         len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))]
 
     noun_count_headline=len(set(clean_headline))
     noun_count_body=len(set(clean_body))
+
+    logging.debug("overlap_noun_counter:"+str(overlap_noun_counter))
+    logging.debug("ratio_all_words:"+str(ratio_all_words))
+    logging.debug("noun_count_headline:"+str(noun_count_headline))
+    logging.debug("noun_count_body:"+str(noun_count_body))
 
 
     if (noun_count_body > 0 and noun_count_headline > 0):
@@ -638,7 +645,7 @@ def word_overlap_features(clean_headline, clean_body):
                 logging.debug("found  overlap")
                 logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
 
-            features = [overlap_noun_counter,ratio_pos_dir1, ratio_pos_dir2]
+            features = [ratio_all_words,ratio_pos_dir1, ratio_pos_dir2]
 
     logging.debug("word overlap3 features:"+str(features))
 
