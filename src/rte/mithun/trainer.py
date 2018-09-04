@@ -628,7 +628,7 @@ def word_overlap_features(clean_headline, clean_body):
     uni=set(clean_headline).union(clean_body)
     overlap_noun_counter = len(inter)
 
-    ratio_all_words=git len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))
+    ratio_all_words=len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))
 
     noun_count_headline=len(set(clean_headline))
     noun_count_body=len(set(clean_body))
