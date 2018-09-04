@@ -163,6 +163,8 @@ def do_training(combined_vector,gold_labels_tr):
 
     file = model_trained
     joblib.dump(clf, file)
+    logging.warning("weights:")
+    logging.warning(clf.coef_)
     logging.debug("done saving model to disk")
 
 def load_model():
@@ -243,15 +245,15 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_matrix = np.empty((0, 19), int)
     noun_overlap_matrix = np.empty((0, 2), float)
-    ant_overlap_matrix = np.empty((0, 2), float)
-    polarity_matrix = np.empty((0, 4), float)
+    vb_overlap_matrix = np.empty((0, 2), float)
     ant_noun_overlap_matrix = np.empty((0, 2), float)
     ant_adj_overlap_matrix = np.empty((0, 2), float)
-
-
-    emb_cos_sim_matrix = np.empty((0, 1), float)
-    vb_overlap_matrix = np.empty((0, 2), float)
+    ant_overlap_matrix = np.empty((0, 2), float)
+    polarity_matrix = np.empty((0, 4), float)
+    hedging_headline_matrix = np.empty((0, 30), int)
     num_overlap_matrix = np.empty((0, 2), float)
+    emb_cos_sim_matrix = np.empty((0, 1), float)
+
 
 
 
@@ -265,7 +267,7 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
 
         word_overlap_array, hedge_value_array, refuting_value_array, noun_overlap_array, verb_overlap_array, \
-        antonym_overlap_array,num_overlap_array,hedge_headline_array,neg_vb_array,antonym_adj_overlap_array,emb_cosine_sim_array  = add_vectors\
+        antonym_overlap_array,num_overlap_array,hedge_headline_array,polarity_array,antonym_adj_overlap_array,emb_cosine_sim_array  = add_vectors\
                 (lemmatized_headline, lemmatized_body, tagged_headline, tagged_body,head_deps, body_deps,head_words,body_words,vocab,vec)
 
         logging.debug("inside create_feature_vec. just received verb_overlap_array is =" + repr(verb_overlap_array))
@@ -341,37 +343,12 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     logging.info("shape of  vb_overlap_matrix is:" + str(vb_overlap_matrix.shape))
     logging.info("shape  num_overlap_matrix is:" + str(num_overlap_matrix.shape))
 
-    #no antonym ones
-    # combined_vector = np.hstack(
-    #     [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-    #      noun_overlap_matrix,hedging_headline_matrix,polarity_matrix,emb_cos_sim_matrix])
 
-    #no negation related. has everything else
-    #refuting_value_matrix,polarity_matrix
-    # combined_vector = np.hstack(
-    #     [word_overlap_vector, hedging_words_vector,
-    #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, ant_noun_overlap_matrix,
-    #      ant_adj_overlap_matrix, emb_cos_sim_matrix])
-
-
-
-
-    #remove hedging features only:hedging_words_vector
-    # combined_vector = np.hstack(
-    #     [word_overlap_vector , refuting_value_matrix,
-    #      noun_overlap_matrix, ant_overlap_matrix, hedging_headline_matrix, polarity_matrix, ant_noun_overlap_matrix,
-    #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
-
-    #removing all overlap features:word_overlap_vector,noun_overlap_matrix
-    # combined_vector = np.hstack(
-    #     [hedging_words_vector, refuting_value_matrix
-    #      , ant_overlap_matrix, hedging_headline_matrix, polarity_matrix, ant_noun_overlap_matrix,
-    #      ant_adj_overlap_matrix,emb_cos_sim_matrix])
 
     # all vectors
-    combined_vector = np.hstack(
-        [word_overlap_vector, hedging_words_vector, refuting_value_matrix,
-         ant_adj_overlap_matrix, emb_cos_sim_matrix,vb_overlap_matrix,num_overlap_matrix])
+    combined_vector = np.hstack([word_overlap_vector, hedging_words_vector, refuting_value_matrix,noun_overlap_matrix,
+                                 vb_overlap_matrix,ant_overlap_matrix,hedging_headline_matrix,num_overlap_matrix,
+                                 polarity_matrix, ant_adj_overlap_matrix,ant_noun_overlap_matrix, emb_cos_sim_matrix])
 
     logging.info("shape  combined_vector is:" + str(combined_vector.shape))
     return combined_vector
