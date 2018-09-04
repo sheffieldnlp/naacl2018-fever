@@ -623,6 +623,8 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
 
 def word_overlap_features(clean_headline, clean_body):
 
+
+    features=[0,0,0]
     inter=set(clean_headline).intersection(clean_body)
     uni=set(clean_headline).union(clean_body)
     overlap_noun_counter = len(inter)
@@ -649,7 +651,7 @@ def word_overlap_features(clean_headline, clean_body):
                 logging.info("found  overlap")
                 logging.info(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
 
-            features = [ratio_all_words,ratio_pos_dir1, ratio_pos_dir2]
+    features = [ratio_all_words,ratio_pos_dir1, ratio_pos_dir2]
 
     logging.info("word overlap3 features:"+str(features))
 
