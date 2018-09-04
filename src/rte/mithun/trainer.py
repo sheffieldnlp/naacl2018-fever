@@ -311,14 +311,15 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
         combined_vector_inside=None
 
 
-        # combined_vector_inside = np.hstack(
-        #     [word_overlap_vector, hedging_words_vector, refuting_value_head_matrix,
-        #      noun_overlap_matrix, ant_overlap_matrix, polarity_matrix, ant_noun_overlap_matrix,
-        #      ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
-        #
-        # logging.debug("  combined_vector is:" + str((combined_vector_inside[counter])))
-        # logging.debug("shape  combined_vector is:" + str(combined_vector_inside.shape))
-        # logging.debug("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+        combined_vector_inside = np.hstack(
+            [word_overlap_vector, hedging_words_vector, refuting_value_head_matrix,
+             noun_overlap_matrix, ant_overlap_matrix, polarity_matrix, ant_noun_overlap_matrix,
+             ant_adj_overlap_matrix, emb_cos_sim_matrix, vb_overlap_matrix, num_overlap_matrix])
+
+        logging.debug("  combined_vector is:" + str((combined_vector_inside[counter])))
+        logging.debug("shape  combined_vector is:" + str(combined_vector_inside.shape))
+        logging.debug("  non zero elements in combined_vector is:" + str(np.nonzero(combined_vector_inside[counter])))
+        sys.exit(1)
 
 
 
