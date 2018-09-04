@@ -241,7 +241,7 @@ def print_missed(args,gold_labels):
 def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list,
                         bodies_words_list,vocab,vec):
-    word_overlap_vector = np.empty((0, 1), float)
+    word_overlap_vector = np.empty((0, 3), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_head_matrix = np.empty((0, 19), int)
     refuting_value_body_matrix = np.empty((0, 19), int)
@@ -589,7 +589,7 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
                                                body_pos_split, "JJ")
     antonym_overlap_array = np.array([antonym_overlap])
 
-    word_overlap = word_overlap_features_mithun(lemmatized_headline_split_sw, lemmatized_body_split_sw)
+    word_overlap = word_overlap_features(lemmatized_headline_split_sw, lemmatized_body_split_sw)
     word_overlap_array = np.array([word_overlap])
 
     hedge_value = hedging_features( lemmatized_body_split)
@@ -620,12 +620,28 @@ def add_vectors(lemmatized_headline_obj, lemmatized_body_obj, tagged_headline, t
            antonym_adj_overlap_array,emb_overlap_array
 
 
-def word_overlap_features_mithun(clean_headline, clean_body):
+def word_overlap_features(clean_headline, clean_body):
     # todo: try adding word overlap features direction based, like noun overlap...i.e have 3 overall..one this, and 2 others.
 
-    features = [
+    overlap_noun_counter = [
         len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))]
 
+    noun_count_headline=len(set(clean_headline))
+    noun_count_body=len(set(clean_body))
+
+
+    if (noun_count_body > 0 and noun_count_headline > 0):
+            ratio_pos_dir1 = overlap_noun_counter / (noun_count_body)
+            ratio_pos_dir2 = overlap_noun_counter / (noun_count_headline)
+
+            if not ((ratio_pos_dir1==0) or (ratio_pos_dir2==0)):
+                logging.debug("found  overlap")
+                logging.debug(str(ratio_pos_dir1)+";"+str((ratio_pos_dir2)))
+
+            features = [overlap_noun_counter,ratio_pos_dir1, ratio_pos_dir2]
+        logging.debug("word overlap3 features:"+str(features))
+
+    sys.exit(1)
     return features
 
 def hedging_features(sent):
@@ -676,102 +692,6 @@ def hedging_features(sent):
 
 
     return hedging_body_vector
-
-# def hedging_features_body(clean_body):
-#
-#     #todo: do hedging features for headline. Have one for headline and one for body...note : have as separate vectors
-#
-#     hedging_words = [
-#         'allegedly',
-#         'reportedly',
-#       'argue',
-#       'argument',
-#       'believe',
-#       'belief',
-#       'conjecture',
-#       'consider',
-#       'hint',
-#       'hypothesis',
-#       'hypotheses',
-#       'hypothesize',
-#       'implication',
-#       'imply',
-#       'indicate',
-#       'predict',
-#       'prediction',
-#       'previous',
-#       'previously',
-#       'proposal',
-#       'propose',
-#       'question',
-#       'speculate',
-#       'speculation',
-#       'suggest',
-#       'suspect',
-#       'theorize',
-#       'theory',
-#       'think',
-#       'whether'
-#     ]
-#
-#     length_hedge=len(hedging_words)
-#     hedging_body_vector = [0] * length_hedge
-#
-#
-#
-#     for word in clean_body:
-#         if word in hedging_words:
-#             index=hedging_words.index(word)
-#             hedging_body_vector[index]=1
-#
-#
-#     return hedging_body_vector
-#
-# def hedging_features_headline(clean_headline):
-#
-#     hedging_words = [
-#         'allegedly',
-#         'reportedly',
-#       'argue',
-#       'argument',
-#       'believe',
-#       'belief',
-#       'conjecture',
-#       'consider',
-#       'hint',
-#       'hypothesis',
-#       'hypotheses',
-#       'hypothesize',
-#       'implication',
-#       'imply',
-#       'indicate',
-#       'predict',
-#       'prediction',
-#       'previous',
-#       'previously',
-#       'proposal',
-#       'propose',
-#       'question',
-#       'speculate',
-#       'speculation',
-#       'suggest',
-#       'suspect',
-#       'theorize',
-#       'theory',
-#       'think',
-#       'whether'
-#     ]
-#
-#     length_hedge=len(hedging_words)
-#     hedging_h_vector = [0] * length_hedge
-#
-#
-#     for word in clean_headline:
-#         if word in hedging_words:
-#             index=hedging_words.index(word)
-#             hedging_h_vector[index]=1
-#
-#     return hedging_h_vector
 
 
 def refuting_features( sent):
