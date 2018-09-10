@@ -56,7 +56,11 @@ def read_claims_annotate(args,jlr,logger,method):
                     sent=method.get_sentences_given_claim(t,logger,l)
                     ev_claim.append(sent)
                 all_evidences=' '.join(ev_claim)
-                annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+                # annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+
+                #this is to feed data into attention model of allen nlp.
+                write_snli_format(claim, all_evidences)
+                sys.exit(1)
 
         return obj_all_heads_bodies
 
@@ -73,9 +77,12 @@ def uofa_training(args,jlr,method,logger):
     logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    #tr_data=read_claims_annotate(args,jlr,logger,method)
+    tr_data=read_claims_annotate(args,jlr,logger,method)
+    logger.info(
+        "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    sys.exit(1)
     # logger.info(
-    #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
     gold_labels_tr =None
     if(args.mode =="small"):
@@ -204,6 +211,27 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     with open(json_file_tr_annotated_body, "a") as out:
           out.write(doc2.to_JSON())
           out.write("\n")
+
+    return
+
+
+def write_snli_format(headline,body, index, API,logger):
+
+    logger.debug("got inside write_snli_format")
+
+    snli={}
+    snli["sentence1"]=headline
+    snli["sentence2"]=body
+
+
+    logger.debug("headline:"+headline)
+    logger.debug("body:" + body)
+    doc1 = API.fastnlp.annotate(headline)
+    doc1.id=index
+
+    with open('snli_fever.json', 'w') as outfile:
+        json.dump(snli, outfile)
+
 
     return
 
