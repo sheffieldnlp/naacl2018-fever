@@ -59,7 +59,7 @@ def read_claims_annotate(args,jlr,logger,method):
                 # annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
                 #this is to feed data into attention model of allen nlp.
-                write_snli_format(claim, all_evidences)
+                write_snli_format(claim, all_evidences,logger)
                 sys.exit(1)
 
         return obj_all_heads_bodies
@@ -215,7 +215,7 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     return
 
 
-def write_snli_format(headline,body, index, API,logger):
+def write_snli_format(headline,body,logger):
 
     logger.debug("got inside write_snli_format")
 
@@ -226,8 +226,7 @@ def write_snli_format(headline,body, index, API,logger):
 
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
-    doc1 = API.fastnlp.annotate(headline)
-    doc1.id=index
+
 
     with open('snli_fever.json', 'w') as outfile:
         json.dump(snli, outfile)
