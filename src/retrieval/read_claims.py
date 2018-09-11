@@ -60,6 +60,11 @@ def read_claims_annotate(args,jlr,logger,method):
                         sent=method.get_sentences_given_claim(t,logger,l)
                         ev_claim.append(sent)
                     all_evidences=' '.join(ev_claim)
+
+                    logger.debug("all_evidences  is:" + str((all_evidences)))
+                    logger.debug("found the len(evidences)>1")
+                    sys.exit(1)
+
                 else :
                     for evidence in evidences[0]:
                         t=evidence[2]
@@ -69,13 +74,15 @@ def read_claims_annotate(args,jlr,logger,method):
                         sent=method.get_sentences_given_claim(t,logger,l)
                         ev_claim.append(sent)
                     all_evidences=' '.join(ev_claim)
-                    # annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+                    logger.debug("all_evidences  is:" + str((all_evidences)))
 
-                    #this is to feed data into attention model of allen nlp.
-                    write_snli_format(claim, all_evidences,logger)
-                    if(len(evidences)>1):
-                        logger.debug("found the len(evidences)>1")
-                        sys.exit(1)
+                #uncomment this is to annotate using pyprocessors
+                # annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+
+                #this is to feed data into attention model of allen nlp.
+                write_snli_format(claim, all_evidences,logger)
+
+
 
         return obj_all_heads_bodies
 
