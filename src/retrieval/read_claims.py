@@ -50,7 +50,8 @@ def read_claims_annotate(args,jlr,logger,method):
                 ev_claim=[]
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
-                    for evidence in evidences:
+                    for inside_ev in evidences:
+                        evidence=inside_ev[0]
                         logger.debug(evidence)
                         t= evidence[2]
                         l= evidence[3]
