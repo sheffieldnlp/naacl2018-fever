@@ -81,7 +81,7 @@ def read_claims_annotate(args,jlr,logger,method):
 
                 #this is to feed data into attention model of allen nlp.
                 write_snli_format(claim, all_evidences,logger)
-                sys.exit(1)
+                
 
 
 
