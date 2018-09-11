@@ -45,14 +45,15 @@ def read_claims_annotate(args,jlr,logger,method):
             label=claim_full["label"]
             if not (label=="NOT ENOUGH INFO"):
                 ver_count=ver_count+1
-                logger.debug("length of evidences for this claim_full  is:" + str(len(evidences)))
-                logger.debug("length of evidences for this claim_full  is:" + str(len(evidences[0])))
+                logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
+                logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
                     for evidence in evidences:
-                        t=evidence[2]
-                        l=evidence[3]
+                        logger.debug(evidence)
+                        t= evidence[2]
+                        l= evidence[3]
                         logger.debug(t)
                         logger.debug(l)
                         sent=method.get_sentences_given_claim(t,logger,l)
