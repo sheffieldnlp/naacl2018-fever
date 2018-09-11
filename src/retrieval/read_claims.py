@@ -87,10 +87,10 @@ def read_claims_annotate(args,jlr,logger,method):
                     logger.debug("all_evidences  is:" + str((all_evidences)))
 
                 #uncomment this is to annotate using pyprocessors
-                #annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+                annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
                 #this is to feed data into attention model of allen nlp.
-                write_snli_format(claim, all_evidences,logger)
+                #write_snli_format(claim, all_evidences,logger)
 
 
 
