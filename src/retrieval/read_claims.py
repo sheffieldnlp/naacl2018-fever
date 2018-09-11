@@ -34,6 +34,16 @@ def read_claims_annotate(args,jlr,logger,method):
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
         ver_count=0
+
+        #dictionary to dump to json for allennlp format
+        allenlp_format={
+            "name": "interpolator",
+            "children": [
+            {"name": "ObjectInterpolator", "size": 1629},
+            {"name": "PointInterpolator", "size": 1675},
+            {"name": "RectangleInterpolator", "size": 2042}
+            ]
+        }
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
             logger.debug("entire claim_full is:")
             logger.debug(claim_full)
@@ -45,18 +55,45 @@ def read_claims_annotate(args,jlr,logger,method):
             label=claim_full["label"]
             if not (label=="NOT ENOUGH INFO"):
                 ver_count=ver_count+1
-                logger.debug("length of evidences for this claim_full  is:" + str(len(evidences)))
-                logger.debug("length of evidences for this claim_full  is:" + str(len(evidences[0])))
+                logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
+                logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
-                for evidence in evidences[0]:
-                    t=evidence[2]
-                    l=evidence[3]
-                    logger.debug(t)
-                    logger.debug(l)
-                    sent=method.get_sentences_given_claim(t,logger,l)
-                    ev_claim.append(sent)
-                all_evidences=' '.join(ev_claim)
-                annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+                #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
+                if (len(evidences) >1):
+                    for inside_ev in evidences:
+                        evidence=inside_ev[0]
+                        logger.debug(evidence)
+                        t= evidence[2]
+                        l= evidence[3]
+                        logger.debug(t)
+                        logger.debug(l)
+                        sent=method.get_sentences_given_claim(t,logger,l)
+                        ev_claim.append(sent)
+                    all_evidences=' '.join(ev_claim)
+
+                    logger.debug("all_evidences  is:" + str((all_evidences)))
+                    logger.debug("found the len(evidences)>1")
+
+
+                else :
+                    for evidence in evidences[0]:
+                        t=evidence[2]
+                        l=evidence[3]
+                        logger.debug(t)
+                        logger.debug(l)
+                        sent=method.get_sentences_given_claim(t,logger,l)
+                        ev_claim.append(sent)
+                    all_evidences=' '.join(ev_claim)
+                    logger.debug("all_evidences  is:" + str((all_evidences)))
+
+                #uncomment this is to annotate using pyprocessors
+                #annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+
+                #this is to feed data into attention model of allen nlp.
+                write_snli_format(claim, all_evidences,logger)
+
+
+
 
         return obj_all_heads_bodies
 
@@ -73,9 +110,12 @@ def uofa_training(args,jlr,method,logger):
     logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    #tr_data=read_claims_annotate(args,jlr,logger,method)
+    tr_data=read_claims_annotate(args,jlr,logger,method)
+    logger.info(
+        "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    sys.exit(1)
     # logger.info(
-    #     "Finished writing json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
     gold_labels_tr =None
     if(args.mode =="small"):
@@ -204,6 +244,34 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     with open(json_file_tr_annotated_body, "a") as out:
           out.write(doc2.to_JSON())
           out.write("\n")
+
+    return
+
+
+def write_snli_format(headline,body,logger):
+
+    logger.debug("got inside write_snli_format")
+
+    snli={}
+    snli["sentence1"]=headline
+    snli["sentence2"]=body
+
+
+
+    logger.debug("headline:"+headline)
+    logger.debug("body:" + body)
+    filename='snli_fever.json'
+
+    if os.path.exists(filename):
+        append_write = 'a' # append if already exists
+    else:
+        append_write = 'w' # make a new file if not
+
+
+    with open(filename, append_write) as outfile:
+        json.dump(snli, outfile)
+        outfile.write("\n")
+
 
     return
 
