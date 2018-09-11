@@ -35,15 +35,12 @@ def read_claims_annotate(args,jlr,logger,method):
         obj_all_heads_bodies=[]
         ver_count=0
 
-        #dictionary to dump to json for allennlp format
-        allenlp_format={
-            "name": "interpolator",
-            "children": [
-            {"name": "ObjectInterpolator", "size": 1629},
-            {"name": "PointInterpolator", "size": 1675},
-            {"name": "RectangleInterpolator", "size": 2042}
-            ]
-        }
+
+
+
+
+        allenlp_list=[]
+
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
             logger.debug("entire claim_full is:")
             logger.debug(claim_full)
@@ -53,6 +50,9 @@ def read_claims_annotate(args,jlr,logger,method):
             x = indiv_headline_body()
             evidences=claim_full["evidence"]
             label=claim_full["label"]
+
+
+
             if not (label=="NOT ENOUGH INFO"):
                 ver_count=ver_count+1
                 logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
@@ -93,6 +93,9 @@ def read_claims_annotate(args,jlr,logger,method):
                 write_snli_format(claim, all_evidences,logger)
 
 
+            if(index==3):
+                logger.debug("index==3 going to exit")
+                sys.exit(1)
 
 
         return obj_all_heads_bodies
@@ -251,8 +254,24 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
 def write_snli_format(headline,body,logger):
 
     logger.debug("got inside write_snli_format")
+    #dictionary to dump to json for allennlp format
+    snli= {"annotator_labels": ["contradiction"],
+        "captionID": "3416050480.jpg#4",
+    "gold_label": "contradiction",
+     "pairID": "3416050480.jpg#4r1c",
 
-    snli={}
+     "sentence1": "A personon a horse jumps over a broken down airplane.",
+
+     "sentence1_binary_parse": "( ( (A person ) ( on ( a horse ) ) ) ( ( jumps ( over ( a ( broken ( down airplane )  ) ) ) ) . ) )",
+
+     "sentence1_parse": "(ROOT (S (NP (NP (DT A) (NN person)) (PP (I N on) (NP (DT a) (NN horse)))) (VP (VBZ jumps) (PP (IN over) (NP (DT a) (JJ brok en) (JJ down) (NN airplane))))(. .)))",
+     "sentence2": "A person is at a diner, ordering an omelette.",
+     "sentence2_binary_parse": "( ( A person ) ( ( ( ( is ( at  ( a diner ) ) ) , ) ( ordering ( an omelette ) ) ) . ) )",
+     "sentence2_parse": " (ROOT (S (NP (DT A) (NN person)) (VP (VBZ is) (PP (IN at) (NP (DT a) (NN diner)) ) (, ,) (S (VP (VBG ordering) (NP (DT an) (NN omelette)))))"" (. .)))"
+             }
+
+
+
     snli["sentence1"]=headline
     snli["sentence2"]=body
 
