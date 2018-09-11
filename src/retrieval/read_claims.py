@@ -48,21 +48,32 @@ def read_claims_annotate(args,jlr,logger,method):
                 logger.debug("length of evidences for this claim_full  is:" + str(len(evidences)))
                 logger.debug("length of evidences for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
-                for evidence in evidences[0]:
-                    t=evidence[2]
-                    l=evidence[3]
-                    logger.debug(t)
-                    logger.debug(l)
-                    sent=method.get_sentences_given_claim(t,logger,l)
-                    ev_claim.append(sent)
-                all_evidences=' '.join(ev_claim)
-                # annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+                #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
+                if (len(evidences) >1):
+                    for evidence in evidences:
+                        t=evidence[2]
+                        l=evidence[3]
+                        logger.debug(t)
+                        logger.debug(l)
+                        sent=method.get_sentences_given_claim(t,logger,l)
+                        ev_claim.append(sent)
+                    all_evidences=' '.join(ev_claim)
+                else :
+                    for evidence in evidences[0]:
+                        t=evidence[2]
+                        l=evidence[3]
+                        logger.debug(t)
+                        logger.debug(l)
+                        sent=method.get_sentences_given_claim(t,logger,l)
+                        ev_claim.append(sent)
+                    all_evidences=' '.join(ev_claim)
+                    # annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
-                #this is to feed data into attention model of allen nlp.
-                write_snli_format(claim, all_evidences,logger)
-                if(len(evidences)>1):
-                    logger.debug("found the len(evidences)>1")
-                    sys.exit(1)
+                    #this is to feed data into attention model of allen nlp.
+                    write_snli_format(claim, all_evidences,logger)
+                    if(len(evidences)>1):
+                        logger.debug("found the len(evidences)>1")
+                        sys.exit(1)
 
         return obj_all_heads_bodies
 
