@@ -81,7 +81,7 @@ def read_claims_annotate(args,jlr,logger,method):
 
                 #this is to feed data into attention model of allen nlp.
                 write_snli_format(claim, all_evidences,logger)
-                
+
 
 
 
@@ -247,11 +247,18 @@ def write_snli_format(headline,body,logger):
     snli["sentence2"]=body
 
 
+
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
+    filename='snli_fever.json'
+
+    if os.path.exists(filename):
+        append_write = 'a' # append if already exists
+    else:
+        append_write = 'w' # make a new file if not
 
 
-    with open('snli_fever.json', 'w') as outfile:
+    with open(filename, append_write) as outfile:
         json.dump(snli, outfile)
 
 
