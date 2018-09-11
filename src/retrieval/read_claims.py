@@ -260,6 +260,7 @@ def write_snli_format(headline,body,logger):
 
     with open(filename, append_write) as outfile:
         json.dump(snli, outfile)
+        json.dump("\n", outfile)
 
 
     return
