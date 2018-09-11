@@ -34,6 +34,16 @@ def read_claims_annotate(args,jlr,logger,method):
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
         ver_count=0
+
+        #dictionary to dump to json for allennlp format
+        allenlp_format={
+            "name": "interpolator",
+            "children": [
+            {"name": "ObjectInterpolator", "size": 1629},
+            {"name": "PointInterpolator", "size": 1675},
+            {"name": "RectangleInterpolator", "size": 2042}
+            ]
+        }
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
             logger.debug("entire claim_full is:")
             logger.debug(claim_full)
@@ -260,7 +270,7 @@ def write_snli_format(headline,body,logger):
 
     with open(filename, append_write) as outfile:
         json.dump(snli, outfile)
-        json.dump("\n", outfile)
+        outfile.write("\n")
 
 
     return
