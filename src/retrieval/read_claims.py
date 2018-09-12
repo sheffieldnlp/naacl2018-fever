@@ -58,7 +58,7 @@ def read_claims_annotate(args,jlr,logger,method):
                 logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
                 logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
-                pl_list={"roman":"3"}
+                pl_list=[]
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
                     for inside_ev in evidences:
@@ -67,32 +67,41 @@ def read_claims_annotate(args,jlr,logger,method):
                         page= evidence[2]
                         lineno= evidence[3]
 
-
-                        logger.debug("page:"+str(page))
-                        logger.debug("lineno:"+str(lineno))
-                        logger.debug("going to print dict")
-
-                        for k,v in pl_list.items():
-                            logger.debug(k)
-                            logger.debug(v)
+                        tup=(page,lineno)
+                        pl_list.append(tup)
 
 
-                        if (str("roman") in pl_list):
-                            logger.debug("found small roman")
-
-                        #to check if multiple annotators have picked same page and same line as evidence
-                        if (str(page) in pl_list):
-                            logger.debug("found same page")
-                            logger.debug("lineno:"+str(pl_list[str(page)]))
-                            if( pl_list[str(page)]==str(lineno)):
-                                logger.debug("lineno found same line")
-                                sys.exit(1)
-                        else:
-                                logger.debug("found  page not in list. going to add")
-                                logger.debug("page:"+str(page))
-                                logger.debug("lineno:"+str(lineno))
-                                pl_list[str(page)]=str(lineno)
-                                logger.debug("printing after adding lineno:"+str(pl_list[str(page)]))
+                        # logger.debug("page:"+str(page))
+                        # logger.debug("lineno:"+str(lineno))
+                        # logger.debug("going to print dict")
+                        #
+                        # for k,v in pl_list.items():
+                        #     logger.debug(k)
+                        #     logger.debug(v)
+                        #
+                        #
+                        # if (str("roman") in pl_list):
+                        #     logger.debug("found small roman")
+                        #
+                        # #to check if multiple annotators have picked same page and same line as evidence
+                        # if (str(page) in pl_list):
+                        #     logger.debug("found same page")
+                        #     logger.debug("lineno:"+str(pl_list[str(page)]))
+                        #     if( pl_list[str(page)]==str(lineno)):
+                        #         logger.debug("lineno found same line")
+                        #         sys.exit(1)
+                        #     else:
+                        #             logger.debug("found  same page but different line numbers")
+                        #             logger.debug("page:"+str(page))
+                        #             logger.debug("lineno:"+str(lineno))
+                        #             pl_list[str(page)]=str(lineno)
+                        #             logger.debug("printing after adding lineno:"+str(pl_list[str(page)]))
+                        # else:
+                        #         logger.debug("found  page not in list. going to add")
+                        #         logger.debug("page:"+str(page))
+                        #         logger.debug("lineno:"+str(lineno))
+                        #         pl_list[str(page)]=str(lineno)
+                        #         logger.debug("printing after adding lineno:"+str(pl_list[str(page)]))
 
 
 
@@ -100,9 +109,15 @@ def read_claims_annotate(args,jlr,logger,method):
                         logger.debug(lineno)
                         sent=method.get_sentences_given_claim(page,logger,lineno)
                         ev_claim.append(sent)
+                        logger.debug("tuple now is:"+str(pl_list))
+
                     all_evidences=' '.join(ev_claim)
+                    logger.debug("tuple after all evidences is:"+str(pl_list))
+                    logger.debug("unique tuple after all evidences is:"+str(set(pl_list)))
+
 
                     logger.debug("all_evidences  is:" + str((all_evidences)))
+
                     logger.debug("found the len(evidences)>1")
 
 
