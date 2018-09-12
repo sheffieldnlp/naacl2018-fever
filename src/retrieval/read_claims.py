@@ -72,7 +72,7 @@ def read_claims_annotate(args,jlr,logger,method):
                         logger.debug("lineno:"+str(lineno))
                         logger.debug("going to print dict")
 
-                        for k,v in pl_list:
+                        for k,v in pl_list.items():
                             logger.debug(k)
                             logger.debug(v)
 
