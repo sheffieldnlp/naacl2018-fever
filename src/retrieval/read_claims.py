@@ -87,7 +87,7 @@ def read_claims_annotate(args,jlr,logger,method):
                             if( pl_list[str(page)]==str(lineno)):
                                 logger.debug("lineno found same line")
                                 sys.exit(1)
-                            else:
+                        else:
                                 logger.debug("found  page not in list. going to add")
                                 logger.debug("page:"+str(page))
                                 logger.debug("lineno:"+str(lineno))
