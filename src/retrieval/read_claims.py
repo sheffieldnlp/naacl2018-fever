@@ -58,7 +58,7 @@ def read_claims_annotate(args,jlr,logger,method):
                 logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
                 logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
-                pl_list={}
+                pl_list={"roman":"3"}
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
                     for inside_ev in evidences:
@@ -69,7 +69,7 @@ def read_claims_annotate(args,jlr,logger,method):
 
 
                         logger.debug("page:"+str(page))
-                        logger.debug("lineno:"+str(lineno))
+                        logger.debug("lineno:"+str(pl_list["roman"]))
                         logger.debug("going to print dict")
 
                         for k,v in pl_list.items():
@@ -85,7 +85,7 @@ def read_claims_annotate(args,jlr,logger,method):
                                 logger.debug("lineno found same line")
                                 sys.exit(1)
                             else:
-                                pl_list[page]=lineno
+                                pl_list[str(page)]=str(lineno)
 
 
 
