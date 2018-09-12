@@ -43,7 +43,7 @@ def read_claims_annotate(args,jlr,logger,method):
         if os.path.exists(snli_filename):
             append_write = 'w' # make a new file if not
             with open(snli_filename, append_write) as outfile:
-                outfile.write("firsttime\n")
+                outfile.write("")
 
 
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
@@ -98,9 +98,6 @@ def read_claims_annotate(args,jlr,logger,method):
                 write_snli_format(claim, all_evidences,logger,label)
 
 
-            if(index==3):
-                logger.debug("index==3 going to exit")
-                sys.exit(1)
 
 
         return obj_all_heads_bodies
