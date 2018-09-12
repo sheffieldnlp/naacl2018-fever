@@ -62,9 +62,9 @@ def read_claims_annotate(args,jlr,logger,method):
             if not (label=="NOT ENOUGH INFO"):
 
                 if label not in ['SUPPORTS', 'REFUTES']:
-                print(f'BAD label: {label}')
-                sys.exit()
-                
+                    print(f'BAD label: {label}')
+                    sys.exit()
+
                 ver_count=ver_count+1
                 logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
                 logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
