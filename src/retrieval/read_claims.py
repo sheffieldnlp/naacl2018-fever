@@ -70,10 +70,16 @@ def read_claims_annotate(args,jlr,logger,method):
 
                         logger.debug("page:"+str(page))
                         logger.debug("lineno:"+str(lineno))
+                        logger.debug("going to print dict")
+
+                        for k,v in pl_list:
+                            logger.debug(k)
+                            logger.debug(v)
 
 
                         #to check if multiple annotators have picked same page and same line as evidence
                         if (page in pl_list):
+                            logger.debug("found same page")
 
                             if( pl_list[page]==lineno):
                                 logger.debug("lineno found same line")
