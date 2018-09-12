@@ -20,6 +20,7 @@ import json
 from sklearn.externals import joblib
 
 predicted_results="predicted_results.pkl"
+snli_filename='snli_fever.json'
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -38,8 +39,12 @@ def read_claims_annotate(args,jlr,logger,method):
 
 
 
+        #DELETE THE FILE IF IT EXISTS every time before the loop
+        if os.path.exists(snli_filename):
+            append_write = 'w' # make a new file if not
+            with open(snli_filename, append_write) as outfile:
+                outfile.write("firsttime\n")
 
-        allenlp_list=[]
 
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
             logger.debug("entire claim_full is:")
@@ -90,7 +95,7 @@ def read_claims_annotate(args,jlr,logger,method):
                 #annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
                 #this is to feed data into attention model of allen nlp.
-                write_snli_format(claim, all_evidences,logger)
+                write_snli_format(claim, all_evidences,logger,label)
 
 
             if(index==3):
@@ -251,43 +256,32 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     return
 
 
-def write_snli_format(headline,body,logger):
+def write_snli_format(headline,body,logger,label):
 
     logger.debug("got inside write_snli_format")
     #dictionary to dump to json for allennlp format
-    snli= {"annotator_labels": ["contradiction"],
-        "captionID": "3416050480.jpg#4",
-    "gold_label": "contradiction",
-     "pairID": "3416050480.jpg#4r1c",
-
-     "sentence1": "A personon a horse jumps over a broken down airplane.",
-
-     "sentence1_binary_parse": "( ( (A person ) ( on ( a horse ) ) ) ( ( jumps ( over ( a ( broken ( down airplane )  ) ) ) ) . ) )",
-
-     "sentence1_parse": "(ROOT (S (NP (NP (DT A) (NN person)) (PP (I N on) (NP (DT a) (NN horse)))) (VP (VBZ jumps) (PP (IN over) (NP (DT a) (JJ brok en) (JJ down) (NN airplane))))(. .)))",
-     "sentence2": "A person is at a diner, ordering an omelette.",
-     "sentence2_binary_parse": "( ( A person ) ( ( ( ( is ( at  ( a diner ) ) ) , ) ( ordering ( an omelette ) ) ) . ) )",
-     "sentence2_parse": " (ROOT (S (NP (DT A) (NN person)) (VP (VBZ is) (PP (IN at) (NP (DT a) (NN diner)) ) (, ,) (S (VP (VBG ordering) (NP (DT an) (NN omelette)))))"" (. .)))"
+    snli={"annotator_labels": [""],
+        "captionID": "",
+    "gold_label": label,
+     "pairID": "",
+     "sentence1": headline,
+     "sentence1_binary_parse": "",
+     "sentence1_parse": "",
+     "sentence2": body,
+     "sentence2_binary_parse": "",
+     "sentence2_parse": ""
              }
-
-
-
-    snli["sentence1"]=headline
-    snli["sentence2"]=body
-
-
 
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
-    filename='snli_fever.json'
 
-    if os.path.exists(filename):
+    if os.path.exists(snli_filename):
         append_write = 'a' # append if already exists
     else:
         append_write = 'w' # make a new file if not
 
 
-    with open(filename, append_write) as outfile:
+    with open(snli_filename, append_write) as outfile:
         json.dump(snli, outfile)
         outfile.write("\n")
 
