@@ -69,7 +69,7 @@ def read_claims_annotate(args,jlr,logger,method):
 
 
                         logger.debug("page:"+str(page))
-                        logger.debug("lineno:"+str(pl_list["roman"]))
+                        logger.debug("lineno:"+str(lineno))
                         logger.debug("going to print dict")
 
                         for k,v in pl_list.items():
@@ -88,7 +88,11 @@ def read_claims_annotate(args,jlr,logger,method):
                                 logger.debug("lineno found same line")
                                 sys.exit(1)
                             else:
+                                logger.debug("found  page not in list. going to add")
+                                logger.debug("page:"+str(page))
+                                logger.debug("lineno:"+str(lineno))
                                 pl_list[str(page)]=str(lineno)
+                                logger.debug("printing after adding lineno:"+str(pl_list[str(page)]))
 
 
 
