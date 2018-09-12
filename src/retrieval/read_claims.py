@@ -112,8 +112,18 @@ def read_claims_annotate(args,jlr,logger,method):
                         logger.debug("tuple now is:"+str(pl_list))
 
                     all_evidences=' '.join(ev_claim)
+
                     logger.debug("tuple after all evidences is:"+str(pl_list))
                     logger.debug("unique tuple after all evidences is:"+str(set(pl_list)))
+                    logger.debug("ev_claim before :"+str((ev_claim)))
+                    logger.debug("ev_claim after:"+str(set(ev_claim)))
+
+
+                    bef=len(pl_list)
+                    after=len(set(pl_list))
+                    if not (bef==after):
+                        sys.exit(1)
+
 
 
                     logger.debug("all_evidences  is:" + str((all_evidences)))
