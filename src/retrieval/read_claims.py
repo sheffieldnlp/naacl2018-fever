@@ -55,6 +55,9 @@ def read_claims_annotate(args,jlr,logger,method):
             x = indiv_headline_body()
             evidences=claim_full["evidence"]
             label=claim_full["label"]
+            if label not in ['SUPPORTS', 'REFUTES']:
+                print(f'BAD label: {label}')
+                sys.exit()
 
 
 
