@@ -58,16 +58,34 @@ def read_claims_annotate(args,jlr,logger,method):
                 logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
                 logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
+                pl_list={}
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
                     for inside_ev in evidences:
                         evidence=inside_ev[0]
                         logger.debug(evidence)
-                        t= evidence[2]
-                        l= evidence[3]
-                        logger.debug(t)
-                        logger.debug(l)
-                        sent=method.get_sentences_given_claim(t,logger,l)
+                        page= evidence[2]
+                        lineno= evidence[3]
+
+
+                        logger.debug("page:"+str(page))
+                        logger.debug("lineno:"+str(lineno))
+
+
+                        #to check if multiple annotators have picked same page and same line as evidence
+                        if (page in pl_list):
+
+                            if( pl_list[page]==lineno):
+                                logger.debug("lineno found same line")
+                                sys.exit(1)
+                            else:
+                                pl_list[page]=lineno
+
+
+
+                        logger.debug(page)
+                        logger.debug(lineno)
+                        sent=method.get_sentences_given_claim(page,logger,lineno)
                         ev_claim.append(sent)
                     all_evidences=' '.join(ev_claim)
 
@@ -77,11 +95,11 @@ def read_claims_annotate(args,jlr,logger,method):
 
                 else :
                     for evidence in evidences[0]:
-                        t=evidence[2]
-                        l=evidence[3]
-                        logger.debug(t)
-                        logger.debug(l)
-                        sent=method.get_sentences_given_claim(t,logger,l)
+                        page=evidence[2]
+                        lineno=evidence[3]
+                        logger.debug(page)
+                        logger.debug(lineno)
+                        sent=method.get_sentences_given_claim(page,logger,lineno)
                         ev_claim.append(sent)
                     all_evidences=' '.join(ev_claim)
                     logger.debug("all_evidences  is:" + str((all_evidences)))
