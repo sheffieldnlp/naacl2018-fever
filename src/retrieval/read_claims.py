@@ -36,15 +36,8 @@ def read_claims_annotate(args,jlr,logger,method):
         ver_count=0
 
         #dictionary to dump to json for allennlp format
-        allenlp_format={
-            "name": "interpolator",
-            "children": [
-            {"name": "ObjectInterpolator", "size": 1629},
-            {"name": "PointInterpolator", "size": 1675},
-            {"name": "RectangleInterpolator", "size": 2042}
-            ]
-        }
-        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="annotation:"):
             logger.debug("entire claim_full is:")
             logger.debug(claim_full)
             claim=claim_full["claim"]
@@ -71,37 +64,6 @@ def read_claims_annotate(args,jlr,logger,method):
                         pl_list.append(tup)
 
 
-                        # logger.debug("page:"+str(page))
-                        # logger.debug("lineno:"+str(lineno))
-                        # logger.debug("going to print dict")
-                        #
-                        # for k,v in pl_list.items():
-                        #     logger.debug(k)
-                        #     logger.debug(v)
-                        #
-                        #
-                        # if (str("roman") in pl_list):
-                        #     logger.debug("found small roman")
-                        #
-                        # #to check if multiple annotators have picked same page and same line as evidence
-                        # if (str(page) in pl_list):
-                        #     logger.debug("found same page")
-                        #     logger.debug("lineno:"+str(pl_list[str(page)]))
-                        #     if( pl_list[str(page)]==str(lineno)):
-                        #         logger.debug("lineno found same line")
-                        #         sys.exit(1)
-                        #     else:
-                        #             logger.debug("found  same page but different line numbers")
-                        #             logger.debug("page:"+str(page))
-                        #             logger.debug("lineno:"+str(lineno))
-                        #             pl_list[str(page)]=str(lineno)
-                        #             logger.debug("printing after adding lineno:"+str(pl_list[str(page)]))
-                        # else:
-                        #         logger.debug("found  page not in list. going to add")
-                        #         logger.debug("page:"+str(page))
-                        #         logger.debug("lineno:"+str(lineno))
-                        #         pl_list[str(page)]=str(lineno)
-                        #         logger.debug("printing after adding lineno:"+str(pl_list[str(page)]))
 
 
 
@@ -142,9 +104,6 @@ def read_claims_annotate(args,jlr,logger,method):
 
                 #uncomment this is to annotate using pyprocessors
                 annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
-
-                #this is to feed data into attention model of allen nlp.
-                #write_snli_format(claim, all_evidences,logger)
 
 
 
@@ -406,10 +365,12 @@ def uofa_dev(args, jlr, method, logger):
 
     gold_labels = get_gold_labels(args, jlr)
     logging.warning("got inside uofa_dev")
-    #print_missed(args,gold_labels)
-    #logging.warning("done printing")
-    #sys.exit(1)
 
+    #for annotation: you will probably run this only once in your lifetime.
+    tr_data = read_claims_annotate(args, jlr, logger, method)
+    logger.info(
+        "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    sys.exit(1)
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
