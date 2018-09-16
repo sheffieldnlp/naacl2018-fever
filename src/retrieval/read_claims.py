@@ -36,15 +36,8 @@ def read_claims_annotate(args,jlr,logger,method):
         ver_count=0
 
         #dictionary to dump to json for allennlp format
-        allenlp_format={
-            "name": "interpolator",
-            "children": [
-            {"name": "ObjectInterpolator", "size": 1629},
-            {"name": "PointInterpolator", "size": 1675},
-            {"name": "RectangleInterpolator", "size": 2042}
-            ]
-        }
-        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="get_claim_ev:"):
+
+        for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="annotation:"):
             logger.debug("entire claim_full is:")
             logger.debug(claim_full)
             claim=claim_full["claim"]
@@ -58,39 +51,59 @@ def read_claims_annotate(args,jlr,logger,method):
                 logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
                 logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
+                pl_list=[]
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
                     for inside_ev in evidences:
                         evidence=inside_ev[0]
                         logger.debug(evidence)
-                        t= evidence[2]
-                        l= evidence[3]
-                        logger.debug(t)
-                        logger.debug(l)
-                        sent=method.get_sentences_given_claim(t,logger,l)
+                        page= evidence[2]
+                        lineno= evidence[3]
+
+                        tup=(page,lineno)
+                        pl_list.append(tup)
+
+
+
+
+
+                        logger.debug(page)
+                        logger.debug(lineno)
+                        sent=method.get_sentences_given_claim(page,logger,lineno)
                         ev_claim.append(sent)
-                    all_evidences=' '.join(ev_claim)
+                        logger.debug("tuple now is:"+str(pl_list))
+
+
+
+                    logger.debug("tuple after all evidences is:"+str(pl_list))
+                    logger.debug("unique tuple after all evidences is:"+str(set(pl_list)))
+                    logger.debug("ev_claim before :"+str((ev_claim)))
+                    logger.debug("ev_claim after:"+str(set(ev_claim)))
+
+                    #to get only unique sentences. i.e not repeated evidences
+                    all_evidences=' '.join(set(ev_claim))
+
+
+
 
                     logger.debug("all_evidences  is:" + str((all_evidences)))
+
                     logger.debug("found the len(evidences)>1")
 
 
                 else :
                     for evidence in evidences[0]:
-                        t=evidence[2]
-                        l=evidence[3]
-                        logger.debug(t)
-                        logger.debug(l)
-                        sent=method.get_sentences_given_claim(t,logger,l)
+                        page=evidence[2]
+                        lineno=evidence[3]
+                        logger.debug(page)
+                        logger.debug(lineno)
+                        sent=method.get_sentences_given_claim(page,logger,lineno)
                         ev_claim.append(sent)
                     all_evidences=' '.join(ev_claim)
                     logger.debug("all_evidences  is:" + str((all_evidences)))
 
                 #uncomment this is to annotate using pyprocessors
-                #annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
-
-                #this is to feed data into attention model of allen nlp.
-                write_snli_format(claim, all_evidences,logger)
+                annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
 
 
@@ -110,10 +123,10 @@ def uofa_training(args,jlr,method,logger):
     logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
-    tr_data=read_claims_annotate(args,jlr,logger,method)
-    logger.info(
-        "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
-    sys.exit(1)
+    # tr_data=read_claims_annotate(args,jlr,logger,method)
+    # logger.info(
+    #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    # sys.exit(1)
     # logger.info(
     #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
 
@@ -352,10 +365,12 @@ def uofa_dev(args, jlr, method, logger):
 
     gold_labels = get_gold_labels(args, jlr)
     logging.warning("got inside uofa_dev")
-    #print_missed(args,gold_labels)
-    #logging.warning("done printing")
-    #sys.exit(1)
 
+    # #for annotation: you will probably run this only once in your lifetime.
+    # tr_data = read_claims_annotate(args, jlr, logger, method)
+    # logger.info(
+    #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    # sys.exit(1)
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
