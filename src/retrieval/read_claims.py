@@ -20,6 +20,7 @@ import json
 from sklearn.externals import joblib
 
 predicted_results="predicted_results.pkl"
+snli_filename='snli_fever.json'
 
 def read_claims_annotate(args,jlr,logger,method):
     try:
@@ -35,9 +36,19 @@ def read_claims_annotate(args,jlr,logger,method):
         obj_all_heads_bodies=[]
         ver_count=0
 
-        #dictionary to dump to json for allennlp format
+
+
+
+
+        #DELETE THE FILE IF IT EXISTS every time before the loop
+        if os.path.exists(snli_filename):
+            append_write = 'w' # make a new file if not
+            with open(snli_filename, append_write) as outfile:
+                outfile.write("")
+
 
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="annotation:"):
+
             logger.debug("entire claim_full is:")
             logger.debug(claim_full)
             claim=claim_full["claim"]
@@ -46,7 +57,16 @@ def read_claims_annotate(args,jlr,logger,method):
             x = indiv_headline_body()
             evidences=claim_full["evidence"]
             label=claim_full["label"]
+
+
+
+
             if not (label=="NOT ENOUGH INFO"):
+
+                if label not in ['SUPPORTS', 'REFUTES']:
+                    print(f'BAD label: {label}')
+                    sys.exit()
+
                 ver_count=ver_count+1
                 logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
                 logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
@@ -103,7 +123,11 @@ def read_claims_annotate(args,jlr,logger,method):
                     logger.debug("all_evidences  is:" + str((all_evidences)))
 
                 #uncomment this is to annotate using pyprocessors
+
                 annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+
+                #this is to feed data into attention model of allen nlp.
+                #write_snli_format(claim, all_evidences,logger,label)
 
 
 
@@ -261,27 +285,32 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     return
 
 
-def write_snli_format(headline,body,logger):
+def write_snli_format(headline,body,logger,label):
 
     logger.debug("got inside write_snli_format")
-
-    snli={}
-    snli["sentence1"]=headline
-    snli["sentence2"]=body
-
-
+    #dictionary to dump to json for allennlp format
+    snli={"annotator_labels": [""],
+        "captionID": "",
+    "gold_label": label,
+     "pairID": "",
+     "sentence1": headline,
+     "sentence1_binary_parse": "",
+     "sentence1_parse": "",
+     "sentence2": body,
+     "sentence2_binary_parse": "",
+     "sentence2_parse": ""
+             }
 
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
-    filename='snli_fever.json'
 
-    if os.path.exists(filename):
+    if os.path.exists(snli_filename):
         append_write = 'a' # append if already exists
     else:
         append_write = 'w' # make a new file if not
 
 
-    with open(filename, append_write) as outfile:
+    with open(snli_filename, append_write) as outfile:
         json.dump(snli, outfile)
         outfile.write("\n")
 
