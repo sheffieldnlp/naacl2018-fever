@@ -31,7 +31,7 @@ class FEVERReader(DatasetReader):
     "premise" and "hypothesis".
 
     Parameters
-    ----------
+    ----------   
     tokenizer : ``Tokenizer``, optional (default=``WordTokenizer()``)
         We use this ``Tokenizer`` for both the premise and the hypothesis.  See :class:`Tokenizer`.
     token_indexers : ``Dict[str, TokenIndexer]``, optional (default=``{"tokens": SingleIdTokenIndexer()}``)
