@@ -55,7 +55,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     with open(os.path.join(serialization_dir, "model_params.json"), "w") as param_file:
         json.dump(serialization_params, param_file, indent=4)
 
-    # Now we begin assembling the required parts for the Trainer.
+    # Now we begin assembling    the required parts for the Trainer.
     ds_params = params.pop('dataset_reader', {})
     dataset_reader = FEVERReader(db,
                                  sentence_level=ds_params.pop("sentence_level",False),
