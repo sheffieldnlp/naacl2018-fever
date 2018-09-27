@@ -17,6 +17,7 @@ from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from common.dataset.reader import JSONLineReader
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
+from retrieval.read_claims import UOFADataReader
 from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema, FEVERGoldFormatter
 from common.dataset.data_set import DataSet as FEVERDataSet
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -71,8 +72,15 @@ class FEVERReader(DatasetReader):
 
         ds = FEVERDataSet(file_path,reader=self.reader, formatter=self.formatter)
         ds.read()
+        counter=0
+
+        objUOFADataReader = UOFADataReader()
+        # DELETE THE FILE IF IT EXISTS every time before the loop
+        self.delete_if_exists(objUOFADataReader.ann_head_tr)
+        self.delete_if_exists(objUOFADataReader.ann_body_tr)
 
         for instance in tqdm.tqdm(ds.data):
+            counter=counter+1
             if instance is None:
                 continue
 
@@ -88,6 +96,7 @@ class FEVERReader(DatasetReader):
 
             hypothesis = instance["claim"]
             label = instance["label_text"]
+            self.uofa_annotate(hypothesis, premise, counter, objUOFADataReader)
             instances.append(self.text_to_instance(premise, hypothesis, label))
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
@@ -108,6 +117,32 @@ class FEVERReader(DatasetReader):
         if label is not None:
             fields['label'] = LabelField(label)
         return Instance(fields)
+
+    def uofa_annotate(self, claim, evidence, index, objUOFADataReader):
+        # logger.info(f' hypothesis is:{claim}')
+        # logger.info(f'premise is:{evidence}')
+        # logger.info(f' label is:{index}')
+        # print(f' hypothesis is:{claim}')
+        # print(f'premise is:{evidence}')
+        # print(f' label is:{index}')
+        head_ann, body_ann = objUOFADataReader.annotate_and_save_doc(claim, evidence, index, objUOFADataReader.API,
+                                                                     objUOFADataReader.ann_head_tr,
+                                                                     objUOFADataReader.ann_body_tr, logger)
+
+        # heads_entities=head_ann.sentences[0].entities
+        # heads_lemmas= head_ann.sentences[0].entities
+        # heads_words=head_ann.sentences[0].words
+        # bodies_entities = body_ann.sentences[0].entities
+        # bodies_lemmas = body_ann.sentences[0].entities
+        # bodies_words = body_ann.sentences[0].words
+        #
+        # print(f'{heads_entities}')
+        # print(f'{heads_lemmas}')
+        # print(f'{heads_words}')
+        # print(f'{bodies_entities}')
+        # print(f'{bodies_lemmas}')
+        # print(f'{bodies_words}')
+        # sys.exit(1)
 
     @classmethod
     def from_params(cls, params: Params) -> 'FEVERReader':
