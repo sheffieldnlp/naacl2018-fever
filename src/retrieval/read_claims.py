@@ -1,5 +1,5 @@
 from common.util.log_helper import LogHelper
-from rte.mithun.ds import indiv_headline_body
+from rte.mithun.da import indiv_headline_body
 from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document

@@ -21,7 +21,8 @@ import json
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int, serialization_dir: str, filtering: str) -> Model:
+def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int,
+                serialization_dir: str, filtering: str) -> Model:
     """
     This function can be used as an entry point to running models in AllenNLP
     directly from a JSON specification using a :class:`Driver`. Note that if

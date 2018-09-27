@@ -144,6 +144,13 @@ class FEVERReader(DatasetReader):
         # print(f'{bodies_words}')
         # sys.exit(1)
 
+    def delete_if_exists(self, name):
+
+        if os.path.exists(name):
+            append_write = 'w'  # make a new file if not
+            with open(name, append_write) as outfile:
+                outfile.write("")
+
     @classmethod
     def from_params(cls, params: Params) -> 'FEVERReader':
         claim_tokenizer = Tokenizer.from_params(params.pop('claim_tokenizer', {}))
