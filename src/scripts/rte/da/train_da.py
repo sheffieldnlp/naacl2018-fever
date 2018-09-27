@@ -19,7 +19,7 @@ import logging
 import sys
 import json
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)  # pylint:    disable=invalid-name
 
 def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int,
                 serialization_dir: str, filtering: str) -> Model:
