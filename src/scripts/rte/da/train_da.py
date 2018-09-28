@@ -107,6 +107,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
                                   validation_data,
                                   trainer_params)
 
+    print('finished annotation. going to quit before training starts')
+    sys.exit(1)
     trainer.train()
 
     # Now tar up results
