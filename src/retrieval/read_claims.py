@@ -17,6 +17,8 @@ class UOFADataReader():
     def __init__(self):
         self.ann_head_tr = "ann_head_tr.json"
         self.ann_body_tr = "ann_body_tr.json"
+        self.ann_head_dev = "ann_body_dev.json"
+        self.ann_body_dev = "ann_body_dev.json"
         self.logger = None
         self.load_ann_corpus = True
         self.predicted_results = "predicted_results.pkl"
