@@ -99,7 +99,8 @@ class FEVERReader(DatasetReader):
             #replacing hypothesis with the annotated one
             hypothesis, premise=self.uofa_annotate(hypothesis, premise, counter, objUOFADataReader)
             print(f'hypothesis:{hypothesis}')
-            print(f'hypothesis:{hypothesis}')
+            print(f'premise:{premise}')
+            print(f'label_text:{label_text}')
             sys.exit(1)
 
             instances.append(self.text_to_instance(premise, hypothesis, label))
