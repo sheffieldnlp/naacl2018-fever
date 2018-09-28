@@ -107,7 +107,7 @@ class FEVERReader(DatasetReader):
             hypothesis = instance["claim"]
             label = instance["label_text"]
             #replacing hypothesis with the annotated one
-            temp1,temp2 =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader)
+            temp1,temp2 =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
 
 
             instances.append(self.text_to_instance(premise, hypothesis, label))
@@ -132,12 +132,7 @@ class FEVERReader(DatasetReader):
         return Instance(fields)
 
 
-    def uofa_annotate(self, claim, evidence, index,objUOFADataReader):
-
-
-
-
-
+    def uofa_annotate(self, claim, evidence, index,objUOFADataReader,head_file,body_file):
         head_ann, body_ann = objUOFADataReader.annotate_and_save_doc\
             (claim, evidence, index, objUOFADataReader.API,head_file,body_file,logger)
 
