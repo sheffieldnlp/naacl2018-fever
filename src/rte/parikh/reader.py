@@ -97,11 +97,8 @@ class FEVERReader(DatasetReader):
             hypothesis = instance["claim"]
             label = instance["label_text"]
             #replacing hypothesis with the annotated one
-            hypothesis, premise=self.uofa_annotate(hypothesis, premise, counter, objUOFADataReader)
-            print(f'hypothesis:{hypothesis}')
-            print(f'premise:{premise}')
-            print(f'label:{label}')
-            sys.exit(1)
+            temp1,temp2 =self.uofa_annotate(hypothesis, premise, counter, objUOFADataReader)
+
 
             instances.append(self.text_to_instance(premise, hypothesis, label))
         if not instances:
@@ -125,30 +122,10 @@ class FEVERReader(DatasetReader):
         return Instance(fields)
 
     def uofa_annotate(self, claim, evidence, index, objUOFADataReader):
-        # logger.info(f' hypothesis is:{claim}')
-        # logger.info(f'premise is:{evidence}')
-        # logger.info(f' label is:{index}')
-        # print(f' hypothesis is:{claim}')
-        # print(f'premise is:{evidence}')
-        # print(f' label is:{index}')
+
         head_ann, body_ann = objUOFADataReader.annotate_and_save_doc(claim, evidence, index, objUOFADataReader.API,
                                                                      objUOFADataReader.ann_head_tr,
-                                                                     objUOFADataReader.ann_body_tr, logger)
 
-        # heads_entities=head_ann.sentences[0].entities
-        # heads_lemmas= head_ann.sentences[0].entities
-        # heads_words=head_ann.sentences[0].words
-        # bodies_entities = body_ann.sentences[0].entities
-        # bodies_lemmas = body_ann.sentences[0].entities
-        # bodies_words = body_ann.sentences[0].words
-        #
-        # print(f'{heads_entities}')
-        # print(f'{heads_lemmas}')
-        # print(f'{heads_words}')
-        # print(f'{bodies_entities}')
-        # print(f'{bodies_lemmas}')
-        # print(f'{bodies_words}')
-        # sys.exit(1)
         return head_ann, body_ann
 
     def delete_if_exists(self, name):

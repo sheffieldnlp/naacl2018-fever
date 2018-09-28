@@ -277,20 +277,8 @@ class UOFADataReader():
               out.write(doc2.to_JSON())
               out.write("\n")
 
-        print(f'doc1:{doc1}')
-        print(f'doc1.lemmas:{doc1.lemmas}')
-        print(f'doc1.sentences[0]:{doc1.sentences[0]}')
-        print(f'doc1.sentences[0].lemmas:{doc1.sentences[0].lemmas}')
-        print(f'doc1.sentences[0].entities:{doc1.sentences[0].entities}')
 
-        print(f'doc2:{doc2}')
-        print(f'doc2.lemmas:{doc2.lemmas}')
-        print(f'doc2.sentences[0]:{doc2.sentences[0]}')
-        print(f'doc2.sentences[0].lemmas:{doc2.sentences[0].lemmas}')
-        print(f'doc2.sentences[0].entities:{doc2.sentences[0].entities}')
-
-
-        return doc1.entities,doc2.entities
+        return doc1,doc2
 
 
     def write_snli_format(headline,body,logger,label):
