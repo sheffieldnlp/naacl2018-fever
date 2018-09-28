@@ -278,7 +278,7 @@ class UOFADataReader():
               out.write("\n")
 
 
-        return doc1,doc2
+        return doc1.lemmas,doc2.lemmas
 
 
     def write_snli_format(headline,body,logger,label):
