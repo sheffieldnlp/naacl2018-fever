@@ -121,10 +121,12 @@ class FEVERReader(DatasetReader):
             fields['label'] = LabelField(label)
         return Instance(fields)
 
+
     def uofa_annotate(self, claim, evidence, index, objUOFADataReader):
 
-        head_ann, body_ann = objUOFADataReader.annotate_and_save_doc(claim, evidence, index, objUOFADataReader.API,
-                                                                     objUOFADataReader.ann_head_tr,
+        head_ann, body_ann = objUOFADataReader.annotate_and_save_doc\
+            (claim, evidence, index, objUOFADataReader.API,objUOFADataReader.ann_head_tr
+             ,objUOFADataReader.ann_body_tr,logger)
 
         return head_ann, body_ann
 
