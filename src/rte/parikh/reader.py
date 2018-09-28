@@ -74,6 +74,20 @@ class FEVERReader(DatasetReader):
         ds.read()
         counter=0
 
+        objUOFADataReader = UOFADataReader()
+
+        if (run_name == "train"):
+            head_file = objUOFADataReader.ann_head_tr
+            body_file = objUOFADataReader.ann_body_tr
+        else:
+            if (run_name == "dev"):
+                head_file = objUOFADataReader.ann_head_dev
+                body_file = objUOFADataReader.ann_body_dev
+
+        # DELETE THE FILE IF IT EXISTS every time before the loop
+        self.delete_if_exists(head_file)
+        self.delete_if_exists(body_file)
+
 
         for instance in tqdm.tqdm(ds.data):
             counter=counter+1
@@ -93,7 +107,7 @@ class FEVERReader(DatasetReader):
             hypothesis = instance["claim"]
             label = instance["label_text"]
             #replacing hypothesis with the annotated one
-            temp1,temp2 =self.uofa_annotate(hypothesis, premise, counter,run_name)
+            temp1,temp2 =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader)
 
 
             instances.append(self.text_to_instance(premise, hypothesis, label))
@@ -118,21 +132,11 @@ class FEVERReader(DatasetReader):
         return Instance(fields)
 
 
-    def uofa_annotate(self, claim, evidence, index,run_name):
-        objUOFADataReader = UOFADataReader()
-
-        if(run_name=="train"):
-            head_file = objUOFADataReader.ann_head_tr
-            body_file = objUOFADataReader.ann_body_tr
-        else:
-            if(run_name=="dev"):
-                head_file = objUOFADataReader.ann_head_dev
-                body_file = objUOFADataReader.ann_body_dev
+    def uofa_annotate(self, claim, evidence, index,objUOFADataReader):
 
 
-        # DELETE THE FILE IF IT EXISTS every time before the loop
-        self.delete_if_exists(head_file)
-        self.delete_if_exists(body_file)
+
+
 
         head_ann, body_ann = objUOFADataReader.annotate_and_save_doc\
             (claim, evidence, index, objUOFADataReader.API,head_file,body_file,logger)
