@@ -278,8 +278,8 @@ class UOFADataReader():
               out.write("\n")
 
         print(f'doc1:{doc1}')
-        print(f'doc1.lemmas:{doc1.lemmas}')
-        print(f'doc1.entities:{doc1.entities}')
+        #print(f'doc1.lemmas:{doc1.lemmas}')
+        #print(f'doc1.entities:{doc1.entities}')
         print(f'doc1.sentences[0]:{doc1.sentences[0]}')
         print(f'doc1.sentences[0].lemmas:{doc1.sentences[0].lemmas}')
         print(f'doc1.sentences[0].entities:{doc1.sentences[0].entities}')
