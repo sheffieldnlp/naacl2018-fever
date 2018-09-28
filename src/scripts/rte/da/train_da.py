@@ -67,7 +67,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
 
     train_data_path = params.pop('train_data_path')
     logger.info("Reading training data from %s", train_data_path)
-    train_data = dataset_reader.read(train_data_path)
+    run_name="train"
+    train_data = dataset_reader.read(train_data_path,run_name)
 
 
     all_datasets = [train_data]
@@ -76,7 +77,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     validation_data_path = params.pop('validation_data_path', None)
     if validation_data_path is not None:
         logger.info("Reading validation data from %s", validation_data_path)
-        validation_data = dataset_reader.read(validation_data_path)
+        run_name = "dev"
+        validation_data = dataset_reader.read(validation_data_path,run_name)
         all_datasets.append(validation_data)
         datasets_in_vocab.append("validation")
     else:

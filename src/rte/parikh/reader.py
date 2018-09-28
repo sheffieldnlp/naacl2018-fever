@@ -66,7 +66,7 @@ class FEVERReader(DatasetReader):
             return non_empty_lines[SimpleRandom.get_instance().next_rand(0,len(non_empty_lines)-1)]
 
     @overrides
-    def read(self, file_path: str):
+    def read(self, file_path: str, run_name):
 
         instances = []
 
@@ -74,10 +74,6 @@ class FEVERReader(DatasetReader):
         ds.read()
         counter=0
 
-        objUOFADataReader = UOFADataReader()
-        # DELETE THE FILE IF IT EXISTS every time before the loop
-        self.delete_if_exists(objUOFADataReader.ann_head_tr)
-        self.delete_if_exists(objUOFADataReader.ann_body_tr)
 
         for instance in tqdm.tqdm(ds.data):
             counter=counter+1
@@ -97,7 +93,7 @@ class FEVERReader(DatasetReader):
             hypothesis = instance["claim"]
             label = instance["label_text"]
             #replacing hypothesis with the annotated one
-            temp1,temp2 =self.uofa_annotate(hypothesis, premise, counter, objUOFADataReader)
+            temp1,temp2 =self.uofa_annotate(hypothesis, premise, counter,run_name)
 
 
             instances.append(self.text_to_instance(premise, hypothesis, label))
@@ -122,11 +118,24 @@ class FEVERReader(DatasetReader):
         return Instance(fields)
 
 
-    def uofa_annotate(self, claim, evidence, index, objUOFADataReader):
+    def uofa_annotate(self, claim, evidence, index,run_name):
+        objUOFADataReader = UOFADataReader()
+
+        if(run_name=="train"):
+            head_file = objUOFADataReader.ann_head_tr
+            body_file = objUOFADataReader.ann_body_tr
+        else:
+            if(run_name=="dev"):
+                head_file = objUOFADataReader.ann_head_dev
+                body_file = objUOFADataReader.ann_body_dev
+
+
+        # DELETE THE FILE IF IT EXISTS every time before the loop
+        self.delete_if_exists(head_file)
+        self.delete_if_exists(body_file)
 
         head_ann, body_ann = objUOFADataReader.annotate_and_save_doc\
-            (claim, evidence, index, objUOFADataReader.API,objUOFADataReader.ann_head_tr
-             ,objUOFADataReader.ann_body_tr,logger)
+            (claim, evidence, index, objUOFADataReader.API,head_file,body_file,logger)
 
         return head_ann, body_ann
 
