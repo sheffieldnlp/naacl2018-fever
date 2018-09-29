@@ -15,28 +15,6 @@ from .proc_data import PyProcDoc
 import torchwordemb
 
 
-# API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
-# n_cores = 2
-# LABELS = ['SUPPORTS', 'REFUTES', 'NOT ENOUGH INFO']
-# RELATED = LABELS[0:3]
-# annotated_only_lemmas="ann_lemmas.json"
-# annotated_only_entities="ann_entities.json"
-# annotated_only_tags="ann_tags.json"
-# annotated_only_dep="ann_deps.json"
-# annotated_words="ann_words.json"
-# annotated_body_split_folder="split_body/"
-# annotated_head_split_folder="split_head/"
-# #pick based on which folder you are running from. if not on home folder:
-# data_root="/work/mithunpaul/fever/my_fork/fever-baselines/"
-# data_folder_train=data_root+"/data/fever-data-ann/train/"
-# data_folder_train_small=data_root+"/data/fever-data-ann/train_small/"
-# data_folder_dev=data_root+"/data/fever-data-ann/dev/"
-# data_folder_test=data_root+"/data/fever-data-ann/test/"
-# model_trained="model_trained.pkl"
-# path_glove_server="/data/nlp/corpora/glove/6B/glove.6B.300d.txt"
-#
-# predicted_results="predicted_results.pkl"
-# combined_vector_pkl= "combined_vector.pkl"
 
 class UofaTrainTest():
 
@@ -1271,14 +1249,14 @@ class UofaTrainTest():
         for he, be, hl, bl, hw, bw, lbl in (zip(heads_entities, bodies_entities, heads_lemmas,
                                                 bodies_lemmas, heads_words, bodies_words, labels_no_nei)):
 
-            premise,hypothesis, label= self.convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw, lbl)
-            instances.append((premise,hypothesis,label))
+            premise,hypothesis= self.convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw, lbl)
+            instances.append((premise,hypothesis,lbl))
 
         return (instances)
 
 
 
-    def convert_NER_form_per_sent(self,he, be, hl, bl, hw, bw, lbl):
+    def convert_NER_form_per_sent(self,he, be, hl, bl, hw, bw):
 
 
             he_split_list = he.data.split(" ")
@@ -1312,8 +1290,7 @@ class UofaTrainTest():
 
             premise = "".join(neutered_headline)
             hypothesis = "".join(neutered_body)
-            label = lbl
 
-            return (premise, hypothesis,label)
+            return (premise, hypothesis)
 
 

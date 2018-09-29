@@ -4,6 +4,7 @@ import logging
 
 from overrides import overrides
 import tqdm
+import sys
 
 from allennlp.common import Params
 from allennlp.common.checks import ConfigurationError
@@ -20,6 +21,8 @@ from retrieval.fever_doc_db import FeverDocDB
 from retrieval.read_claims import UOFADataReader
 from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema, FEVERGoldFormatter
 from common.dataset.data_set import DataSet as FEVERDataSet
+from rte.mithun.trainer import UofaTrainTest
+
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
@@ -140,8 +143,18 @@ class FEVERReader(DatasetReader):
         doc1,doc2 = objUOFADataReader.annotate_and_save_doc\
             (claim, evidence, index, objUOFADataReader.API,head_file,body_file,logger)
 
-        #convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw, lbl):
-        return doc1._entities, doc2._entities
+        he=doc1._entities
+        hl=doc1.lemmas
+        hw=doc1.words
+        be = doc2._entities
+        bl = doc2.lemmas
+        bw = doc2.words
+        objUofaTrainTest=UofaTrainTest()
+
+        premise, hyp= objUofaTrainTest.convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw)
+        print(premise,hyp)
+        sys.exit(1)
+        return premise,hyp
 
     def delete_if_exists(self, name):
 
