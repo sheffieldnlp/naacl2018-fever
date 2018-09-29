@@ -107,8 +107,13 @@ class FEVERReader(DatasetReader):
             hypothesis = instance["claim"]
             label = instance["label_text"]
             #replacing hypothesis with the annotated one
-            premise,hypothesis =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
+            premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
+            premise= "".join(premise_ann)
+            hypothesis = "".join(hypothesis_ann)
 
+            print(f'hypothesis:{hypothesis}')
+            print(f'premise:{premise}')
+            sys.exit(1)
             instances.append(self.text_to_instance(premise, hypothesis, label))
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
