@@ -111,9 +111,9 @@ class FEVERReader(DatasetReader):
             premise= " ".join(premise_ann)
             hypothesis = " ".join(hypothesis_ann)
 
-            print(f'hypothesis:{hypothesis}')
-            print(f'premise:{premise}')
-            sys.exit(1)
+            # print(f'hypothesis:{hypothesis}')
+            # print(f'premise:{premise}')
+            #
             instances.append(self.text_to_instance(premise, hypothesis, label))
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
