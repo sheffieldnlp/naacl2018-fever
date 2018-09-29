@@ -13,6 +13,7 @@ from common.util.log_helper import LogHelper
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 from rte.parikh.reader import FEVERReader
+from sklearn.externals import joblib
 
 import argparse
 import logging
@@ -69,6 +70,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     logger.info("Reading training data from %s", train_data_path)
     run_name="train"
     train_data = dataset_reader.read(train_data_path,run_name)
+    joblib.dump(train_data, "fever_tr_dataset_format.pkl")
 
 
     all_datasets = [train_data]
@@ -81,6 +83,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
         validation_data = dataset_reader.read(validation_data_path,run_name)
         all_datasets.append(validation_data)
         datasets_in_vocab.append("validation")
+        joblib.dump(validation_data, "fever_dev_dataset_format.pkl")
     else:
         validation_data = None
 
@@ -107,8 +110,6 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
                                   validation_data,
                                   trainer_params)
 
-    print('finished annotation. going to quit before training starts')
-    sys.exit(1)
     trainer.train()
 
     # Now tar up results
