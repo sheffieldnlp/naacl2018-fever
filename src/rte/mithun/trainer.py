@@ -1262,3 +1262,58 @@ class UofaTrainTest():
                     antonyms.append(l.antonyms()[0].name())
 
         return antonyms
+
+    def convert_NER_form_all_data(self,heads_entities, bodies_entities, heads_lemmas,
+                                                bodies_lemmas, heads_words, bodies_words, labels_no_nei):
+
+        instances=[]
+
+        for he, be, hl, bl, hw, bw, lbl in (zip(heads_entities, bodies_entities, heads_lemmas,
+                                                bodies_lemmas, heads_words, bodies_words, labels_no_nei)):
+
+            premise,hypothesis, label= self.convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw, lbl)
+            instances.append((premise,hypothesis,label))
+
+        return (instances)
+
+
+
+    def convert_NER_form_per_sent(self,he, be, hl, bl, hw, bw, lbl):
+
+
+            he_split_list = he.data.split(" ")
+            hl_split_list = hl.data.split(" ")
+            hw_split_list = hw.data.split(" ")
+
+            be_split_list = be.data.split(" ")
+            bl_split_list = bl.data.split(" ")
+            bw_split_list = bw.data.split(" ")
+
+            neutered_headline = []
+            neutered_body = []
+
+            for hee, hll, hww in zip(he_split_list, hl_split_list, hw_split_list):
+
+                # if no NER tag exists, use the lemma itself, else use the NER tag
+                if (hee == 'O'):
+                    neutered_headline.append(hww)
+                    # if NER tag exists use the NER tag
+                else:
+                    neutered_headline.append(hee)
+
+            for bee, bll, bww in zip(be_split_list, bl_split_list, bw_split_list):
+
+                # if no NER tag exists, use the lemma itself, else use the NER tag
+                if (bee == 'O'):
+                    neutered_body.append(bww)
+                    # if NER tag exists use the NER tag
+                else:
+                    neutered_body.append(bee)
+
+            premise = "".join(neutered_headline)
+            hypothesis = "".join(neutered_body)
+            label = lbl
+
+            return (premise, hypothesis,label)
+
+

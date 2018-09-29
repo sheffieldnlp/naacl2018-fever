@@ -284,7 +284,7 @@ class UOFADataReader():
         # print(f'doc1.sentences[0].lemmas:{doc1.sentences[0].lemmas}')
         # print(f'doc1.sentences[0].entities:{doc1.sentences[0].entities}')
 
-        return doc1._entities,doc2._entities
+        return doc1,doc2
 
 
     def write_snli_format(headline,body,logger,label):
