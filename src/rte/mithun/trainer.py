@@ -1288,8 +1288,8 @@ class UofaTrainTest():
                 else:
                     neutered_body.append(bee)
 
-            premise = "".join(neutered_headline)
-            hypothesis = "".join(neutered_body)
+            premise = " ".join(neutered_headline)
+            hypothesis = " ".join(neutered_body)
 
             return (premise, hypothesis)
 
