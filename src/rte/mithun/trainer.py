@@ -1259,13 +1259,13 @@ class UofaTrainTest():
     def convert_NER_form_per_sent(self,he, be, hl, bl, hw, bw):
 
 
-            he_split_list = he.data.split(" ")
-            hl_split_list = hl.data.split(" ")
-            hw_split_list = hw.data.split(" ")
+            he_split_list = he.split(" ")
+            hl_split_list = hl.split(" ")
+            hw_split_list = hw.split(" ")
 
-            be_split_list = be.data.split(" ")
-            bl_split_list = bl.data.split(" ")
-            bw_split_list = bw.data.split(" ")
+            be_split_list = be.split(" ")
+            bl_split_list = bl.split(" ")
+            bw_split_list = bw.split(" ")
 
             neutered_headline = []
             neutered_body = []
