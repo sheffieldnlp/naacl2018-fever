@@ -1249,7 +1249,7 @@ class UofaTrainTest():
         for he, be, hl, bl, hw, bw, lbl in (zip(heads_entities, bodies_entities, heads_lemmas,
                                                 bodies_lemmas, heads_words, bodies_words, labels_no_nei)):
 
-            premise,hypothesis= self.convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw, lbl)
+            premise,hypothesis= self.convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw)
             instances.append((premise,hypothesis,lbl))
 
         return (instances)
