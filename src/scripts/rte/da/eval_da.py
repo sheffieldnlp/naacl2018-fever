@@ -40,7 +40,7 @@ def eval_model(db: FeverDocDB, args) -> Model:
                                  token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})))
 
     logger.info("Reading training data from %s", args.in_file)
-    data = reader.read(args.in_file).instances
+    data = reader.read(args.in_file,"dev").instances
 
     actual = []
     predicted = []
