@@ -150,10 +150,9 @@ class FEVERReader(DatasetReader):
         bl = doc2.lemmas
         bw = doc2.words
         objUofaTrainTest=UofaTrainTest()
-        print(f'{he}{hl}{hw}{be}{bl}{bw}')
+        # print(f'{he}{hl}{hw}{be}{bl}{bw}')
         premise, hyp= objUofaTrainTest.convert_NER_form_per_sent( he, be, hl, bl, hw, bw)
-        print(premise,hyp)
-        sys.exit(1)
+        # print(premise,hyp)
         return premise,hyp
 
     def delete_if_exists(self, name):
