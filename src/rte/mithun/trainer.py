@@ -1259,18 +1259,18 @@ class UofaTrainTest():
     def convert_NER_form_per_sent(self,he, be, hl, bl, hw, bw):
 
 
-            he_split_list = he.split(" ")
-            hl_split_list = hl.split(" ")
-            hw_split_list = hw.split(" ")
-
-            be_split_list = be.split(" ")
-            bl_split_list = bl.split(" ")
-            bw_split_list = bw.split(" ")
+            # he_split_list = he.split(" ")
+            # hl_split_list = hl.split(" ")
+            # hw_split_list = hw.split(" ")
+            #
+            # be_split_list = be.split(" ")
+            # bl_split_list = bl.split(" ")
+            # bw_split_list = bw.split(" ")
 
             neutered_headline = []
             neutered_body = []
 
-            for hee, hll, hww in zip(he_split_list, hl_split_list, hw_split_list):
+            for hee, hll, hww in zip(he, hl, hw):
 
                 # if no NER tag exists, use the lemma itself, else use the NER tag
                 if (hee == 'O'):
@@ -1279,7 +1279,7 @@ class UofaTrainTest():
                 else:
                     neutered_headline.append(hee)
 
-            for bee, bll, bww in zip(be_split_list, bl_split_list, bw_split_list):
+            for bee, bll, bww in zip(be, bl, bw):
 
                 # if no NER tag exists, use the lemma itself, else use the NER tag
                 if (bee == 'O'):
