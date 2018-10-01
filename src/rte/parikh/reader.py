@@ -151,7 +151,8 @@ class FEVERReader(DatasetReader):
         bw = doc2.words
         objUofaTrainTest=UofaTrainTest()
 
-        premise, hyp= objUofaTrainTest.convert_NER_form_per_sent(self, he, be, hl, bl, hw, bw)
+        #(self,he, be, hl, bl, hw, bw):
+        premise, hyp= objUofaTrainTest.convert_NER_form_per_sent( he, be, hl, bl, hw, bw)
         print(premise,hyp)
         sys.exit(1)
         return premise,hyp
