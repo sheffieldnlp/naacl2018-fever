@@ -161,17 +161,19 @@ class FEVERReader(DatasetReader):
 
     def uofa_load_ann_disk(self,objUOFADataReader,run_name):
 
+        objUofaTrainTest = UofaTrainTest()
+
         if (run_name == "dev"):
-            data_folder = objUOFADataReader.data_folder_dev
+            data_folder = objUofaTrainTest.data_folder_dev
         else:
-            if (run_name== "train"):
-                data_folder = objUOFADataReader.data_folder_train
+            if (run_name == "train"):
+                data_folder = objUofaTrainTest.data_folder_train
             else:
                 if (run_name == "small"):
-                    data_folder = objUOFADataReader.data_folder_train_small
+                    data_folder = objUofaTrainTest.data_folder_train_small
                 else:
                     if (run_name== "test"):
-                        data_folder = objUOFADataReader.data_folder_test
+                        data_folder = objUofaTrainTest.data_folder_test
 
         bf = data_folder + objUOFADataReader.annotated_body_split_folder
         bfl = bf + objUOFADataReader.annotated_only_lemmas
@@ -194,7 +196,7 @@ class FEVERReader(DatasetReader):
         hw = objUOFADataReader.read_json_with_id(hfw)
         bw = objUOFADataReader.read_json_with_id(bfw)
 
-        objUofaTrainTest = UofaTrainTest()
+
         premise, hyp = objUofaTrainTest.convert_NER_form_per_sent(he, be, hl, bl, hw, bw)
         print(f'premise:{premise}')
         print(f'hyp:{hyp}')
