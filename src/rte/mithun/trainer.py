@@ -1253,17 +1253,17 @@ class UofaTrainTest():
         return (instances)
 
 
-
+#EXPECTS ALL THESE TO BE AN ARRAY. SPLIT ON SPACE IF YOU HAVENT he, be, hl, bl, hw, bw
     def convert_NER_form_per_sent(self,he, be, hl, bl, hw, bw):
 
 
             neutered_headline = []
             neutered_body = []
-            # print(f"he:{he}")
-            # print(f"be:{be}")
-            # print(f"hl:{hl}")
-            # print(f"bl:{bl}")
-            # print(f"hw:{hw}")
+            print(f"he:{he}")
+            print(f"be:{be}")
+            print(f"hl:{hl}")
+            print(f"bl:{bl}")
+            print(f"hw:{hw}")
 
 
             for hee, hll, hww in zip(he, hl, hw):
