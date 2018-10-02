@@ -1259,13 +1259,13 @@ class UofaTrainTest():
 
             neutered_headline = []
             neutered_body = []
-            print(f"he:{he}")
-            print(f"be:{be}")
-            print(f"hl:{hl}")
-            print(f"bl:{bl}")
-            print(f"hw:{hw}")
+            # print(f"he:{he}")
+            # print(f"be:{be}")
+            # print(f"hl:{hl}")
+            # print(f"bl:{bl}")
+            # print(f"hw:{hw}")
 
-            print(f"he is of type {type(he)}")
+            #print(f"he is of type {type(he)}")
 
             for hee, hll, hww in zip(he, hl, hw):
 

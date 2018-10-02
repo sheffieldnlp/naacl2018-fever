@@ -87,7 +87,8 @@ class FEVERReader(DatasetReader):
                 head_file = objUOFADataReader.ann_head_dev
                 body_file = objUOFADataReader.ann_body_dev
 
-
+        # replacing hypothesis with the annotated one-either load pre-nnotated data
+        # from disk or do live annotation (Takes more time)
         if(do_annotation):
           # DELETE THE annotated file IF IT EXISTS every time before the loop
             self.delete_if_exists(head_file)
@@ -110,8 +111,7 @@ class FEVERReader(DatasetReader):
 
                 hypothesis = instance["claim"]
                 label = instance["label_text"]
-                #replacing hypothesis with the annotated one-either load pre-nnotated data
-                # from disk or do live annotation (Takes more time)
+
 
 
                 premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
@@ -163,8 +163,8 @@ class FEVERReader(DatasetReader):
             bodies_words = objUofaTrainTest.read_json(bfw)
 
 
-            for he, be, hl, bl, hw, bw in (zip(heads_entities, bodies_entities, heads_lemmas,
-                                                        bodies_lemmas, heads_words, bodies_words)):
+            for he, be, hl, bl, hw, bw,instance in (zip(heads_entities, bodies_entities, heads_lemmas,
+                                                        bodies_lemmas, heads_words, bodies_words,ds.data)):
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
@@ -178,18 +178,20 @@ class FEVERReader(DatasetReader):
                 premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
                 print(f"premise_ann:{premise_ann}")
                 print(f"hypothesis_ann:{hypothesis_ann}")
+                label = instance["label_text"]
+                print(f"label:{label}")
+
+
+
+
+                premise = " ".join(premise_ann)
+                hypothesis = " ".join(hypothesis_ann)
+                print(f"premise :{premise}")
+                print(f"hypothesis:{hypothesis}")
+                print(f"label after:{label}")
                 sys.exit(1)
 
-
-
-
-            #for each line in the annotated data:
-            #premise_ann, hypothesis_ann = self.uofa_load_ann_disk(self, objUOFADataReader, head_file, body_file)
-
-            premise = " ".join(premise_ann)
-            hypothesis = " ".join(hypothesis_ann)
-
-            instances.append(self.text_to_instance(premise, hypothesis, label))
+                instances.append(self.text_to_instance(premise, hypothesis, label))
 
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
