@@ -126,7 +126,51 @@ class FEVERReader(DatasetReader):
         else:
             # load it from the disk
             print("going to load annotated data from the disk")
-            premise_ann, hypothesis_ann = self.uofa_load_ann_disk(objUOFADataReader,run_name)
+
+            objUofaTrainTest = UofaTrainTest()
+
+            if (run_name == "dev"):
+                data_folder = objUofaTrainTest.data_folder_dev
+            else:
+                if (run_name == "train"):
+                    data_folder = objUofaTrainTest.data_folder_train
+                else:
+                    if (run_name == "small"):
+                        data_folder = objUofaTrainTest.data_folder_train_small
+                    else:
+                        if (run_name == "test"):
+                            data_folder = objUofaTrainTest.data_folder_test
+
+            bf = data_folder + objUofaTrainTest.annotated_body_split_folder
+            bfl = bf + objUofaTrainTest.annotated_only_lemmas
+            bfw = bf + objUofaTrainTest.annotated_words
+            bfe = bf + objUofaTrainTest.annotated_only_entities
+
+            hf = data_folder + objUofaTrainTest.annotated_head_split_folder
+            hfl = hf + objUofaTrainTest.annotated_only_lemmas
+            hfw = hf + objUofaTrainTest.annotated_words
+            hfe = hf + objUofaTrainTest.annotated_only_entities
+
+            print(f"hfl:{hfl}")
+            print(f"bfl:{bfl}")
+            print("going to read annotated data from disk:")
+
+            heads_lemmas = objUofaTrainTest.read_json(hfl)
+            bodies_lemmas = objUofaTrainTest.read_json(bfl)
+            heads_entities = objUofaTrainTest.read_json(hfe)
+            bodies_entities = objUofaTrainTest.read_json(bfe)
+            heads_words = objUofaTrainTest.read_json(hfw)
+            bodies_words = objUofaTrainTest.read_json(bfw)
+
+
+            for he, be, hl, bl, hw, bw in (zip(heads_entities, bodies_entities, heads_lemmas,
+                                                        bodies_lemmas, heads_words, bodies_words)):
+                premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent(he, be, hl, bl, hw, bw)
+                print(f"premise_ann:{premise_ann}")
+                print(f"hypothesis_ann:{hypothesis_ann}")
+                sys.exit(1)
+
+
 
 
             #for each line in the annotated data:
@@ -161,45 +205,7 @@ class FEVERReader(DatasetReader):
 
     def uofa_load_ann_disk(self,objUOFADataReader,run_name):
 
-        objUofaTrainTest = UofaTrainTest()
 
-        if (run_name == "dev"):
-            data_folder = objUofaTrainTest.data_folder_dev
-        else:
-            if (run_name == "train"):
-                data_folder = objUofaTrainTest.data_folder_train
-            else:
-                if (run_name == "small"):
-                    data_folder = objUofaTrainTest.data_folder_train_small
-                else:
-                    if (run_name== "test"):
-                        data_folder = objUofaTrainTest.data_folder_test
-
-        bf = data_folder + objUofaTrainTest.annotated_body_split_folder
-        bfl = bf + objUofaTrainTest.annotated_only_lemmas
-        bfw = bf + objUofaTrainTest.annotated_words
-        bfe=bf+objUofaTrainTest.annotated_only_entities
-
-        hf = data_folder + objUofaTrainTest.annotated_head_split_folder
-        hfl = hf + objUofaTrainTest.annotated_only_lemmas
-        hfw = hf + objUofaTrainTest.annotated_words
-        hfe = hf + objUofaTrainTest.annotated_only_entities
-
-        print(f"hfl:{hfl}")
-        print(f"bfl:{bfl}")
-        print("going to read annotated data from disk:")
-
-        hl = objUofaTrainTest.read_json(hfl)
-        bl = objUofaTrainTest.read_json(bfl)
-        he = objUofaTrainTest.read_json(hfe)
-        be = objUofaTrainTest.read_json(bfe)
-        hw = objUofaTrainTest.read_json(hfw)
-        bw = objUofaTrainTest.read_json(bfw)
-
-        print(f"hl:{len(hl)}")
-        sys.exit(1)
-
-        premise, hyp = objUofaTrainTest.convert_NER_form_per_sent(he, be, hl, bl, hw, bw)
         print(f'premise:{premise}')
         print(f'hyp:{hyp}')
         sys.exit(1)
