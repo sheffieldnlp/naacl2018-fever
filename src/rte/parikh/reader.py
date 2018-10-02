@@ -125,7 +125,7 @@ class FEVERReader(DatasetReader):
 
         else:
             # load it from the disk
-            print("temp")
+            print("going to load annotated data from the disk")
             premise_ann, hypothesis_ann = self.uofa_load_ann_disk(objUOFADataReader,run_name)
 
 
@@ -185,8 +185,8 @@ class FEVERReader(DatasetReader):
         hfw = hf + objUofaTrainTest.annotated_words
         hfe = hf + objUofaTrainTest.annotated_only_entities
 
-        logging.debug("hff:" + str(hfl))
-        logging.debug("bff:" + str(bfl))
+        print(f"hfl:{hfl}")
+        print(f"bfl:{bfl}")
         logging.info("going to read heads_lemmas from disk:")
 
         hl = objUofaTrainTest.read_json_with_id(hfl)
