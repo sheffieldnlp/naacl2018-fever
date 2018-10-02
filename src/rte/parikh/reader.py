@@ -189,12 +189,12 @@ class FEVERReader(DatasetReader):
         logging.debug("bff:" + str(bfl))
         logging.info("going to read heads_lemmas from disk:")
 
-        hl = objUOFADataReader.read_json_with_id(hfl)
-        bl = objUOFADataReader.read_json_with_id(bfl)
-        he = objUOFADataReader.read_json_with_id(hfe)
-        be = objUOFADataReader.read_json_with_id(bfe)
-        hw = objUOFADataReader.read_json_with_id(hfw)
-        bw = objUOFADataReader.read_json_with_id(bfw)
+        hl = objUofaTrainTest.read_json_with_id(hfl)
+        bl = objUofaTrainTest.read_json_with_id(bfl)
+        he = objUofaTrainTest.read_json_with_id(hfe)
+        be = objUofaTrainTest.read_json_with_id(bfe)
+        hw = objUofaTrainTest.read_json_with_id(hfw)
+        bw = objUofaTrainTest.read_json_with_id(bfw)
 
 
         premise, hyp = objUofaTrainTest.convert_NER_form_per_sent(he, be, hl, bl, hw, bw)
