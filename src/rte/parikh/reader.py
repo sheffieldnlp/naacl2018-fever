@@ -189,12 +189,12 @@ class FEVERReader(DatasetReader):
         print(f"bfl:{bfl}")
         logging.info("going to read heads_lemmas from disk:")
 
-        hl = objUofaTrainTest.read_json_with_id(hfl)
-        bl = objUofaTrainTest.read_json_with_id(bfl)
-        he = objUofaTrainTest.read_json_with_id(hfe)
-        be = objUofaTrainTest.read_json_with_id(bfe)
-        hw = objUofaTrainTest.read_json_with_id(hfw)
-        bw = objUofaTrainTest.read_json_with_id(bfw)
+        hl = objUofaTrainTest.read_json(hfl)
+        bl = objUofaTrainTest.read_json(bfl)
+        he = objUofaTrainTest.read_json(hfe)
+        be = objUofaTrainTest.read_json(bfe)
+        hw = objUofaTrainTest.read_json(hfw)
+        bw = objUofaTrainTest.read_json(bfw)
 
         print(f"hl:{hl}")
         print(f"bl:{bl}")
