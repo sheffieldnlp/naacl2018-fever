@@ -126,8 +126,7 @@ class FEVERReader(DatasetReader):
         else:
             # load it from the disk
             print("temp")
-            premise_ann, hypothesis_ann = self.uofa_load_ann_disk\
-                (self, objUOFADataReader,run_name)
+            premise_ann, hypothesis_ann = self.uofa_load_ann_disk(objUOFADataReader,run_name)
 
 
             #for each line in the annotated data:
