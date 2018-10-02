@@ -87,7 +87,7 @@ class FEVERReader(DatasetReader):
                 head_file = objUOFADataReader.ann_head_dev
                 body_file = objUOFADataReader.ann_body_dev
 
-        # replacing hypothesis with the annotated one-either load pre-nnotated data
+        # replacing hypothesis with the annotated one-either load pre-annotated data
         # from disk or do live annotation (Takes more time)
         if(do_annotation):
           # DELETE THE annotated file IF IT EXISTS every time before the loop
