@@ -1265,6 +1265,7 @@ class UofaTrainTest():
             print(f"bl:{bl}")
             print(f"hw:{hw}")
 
+            print(f"he is of type {type(he)}")
 
             for hee, hll, hww in zip(he, hl, hw):
 

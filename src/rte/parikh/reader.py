@@ -166,14 +166,16 @@ class FEVERReader(DatasetReader):
             for he, be, hl, bl, hw, bw in (zip(heads_entities, bodies_entities, heads_lemmas,
                                                         bodies_lemmas, heads_words, bodies_words)):
 
-                he_split=he.split(" ")
+                he_split=  he.split(" ")
+                be_split = be.split(" ")
+                hl_split = hl.split(" ")
+                bl_split = bl.split(" ")
+                hw_split = hw.split(" ")
+                bw_split = bw.split(" ")
 
-                print(f"he before split{he}")
-                print(f"he after split{he_split}")
-                print(f"he is of type {type(he_split)}")
-                print(f"he_split is of type {type(he_split)}")
-                sys.exit(1)
-                premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent(he, be, hl, bl, hw, bw)
+
+
+                premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
                 print(f"premise_ann:{premise_ann}")
                 print(f"hypothesis_ann:{hypothesis_ann}")
                 sys.exit(1)
