@@ -121,7 +121,7 @@ class FEVERReader(DatasetReader):
                 hypothesis = " ".join(hypothesis_ann)
 
 
-                instances.append(self.text_to_instance(premise, hypothesis, label))
+                instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
 
         else:
             # load it from the disk
@@ -163,7 +163,7 @@ class FEVERReader(DatasetReader):
             bodies_words = objUofaTrainTest.read_json(bfw)
 
 
-            for he, be, hl, bl, hw, bw,instance in (zip(heads_entities, bodies_entities, heads_lemmas,
+            for he, be, hl, bl, hw, bw,instance in tqdm.tqdm(zip(heads_entities, bodies_entities, heads_lemmas,
                                                         bodies_lemmas, heads_words, bodies_words,ds.data)):
 
                 he_split=  he.split(" ")
@@ -176,22 +176,11 @@ class FEVERReader(DatasetReader):
 
 
                 premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
-                print(f"premise_ann:{premise_ann}")
-                print(f"hypothesis_ann:{hypothesis_ann}")
+                # print(f"premise_ann:{premise_ann}")
+                # print(f"hypothesis_ann:{hypothesis_ann}")
                 label = instance["label_text"]
-                print(f"label:{label}")
 
-
-
-
-                premise = " ".join(premise_ann)
-                hypothesis = " ".join(hypothesis_ann)
-                print(f"premise :{premise}")
-                print(f"hypothesis:{hypothesis}")
-                print(f"label after:{label}")
-                sys.exit(1)
-
-                instances.append(self.text_to_instance(premise, hypothesis, label))
+                instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
 
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
