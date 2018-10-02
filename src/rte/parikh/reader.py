@@ -187,7 +187,7 @@ class FEVERReader(DatasetReader):
 
         print(f"hfl:{hfl}")
         print(f"bfl:{bfl}")
-        logging.info("going to read heads_lemmas from disk:")
+        print("going to read annotated data from disk:")
 
         hl = objUofaTrainTest.read_json(hfl)
         bl = objUofaTrainTest.read_json(bfl)
