@@ -69,7 +69,7 @@ class FEVERReader(DatasetReader):
             return non_empty_lines[SimpleRandom.get_instance().next_rand(0,len(non_empty_lines)-1)]
 
     @overrides
-    def read(self, file_path: str, run_name):
+    def read(self, file_path: str, run_name,do_annotation):
 
         instances = []
 
@@ -87,37 +87,57 @@ class FEVERReader(DatasetReader):
                 head_file = objUOFADataReader.ann_head_dev
                 body_file = objUOFADataReader.ann_body_dev
 
-        # DELETE THE FILE IF IT EXISTS every time before the loop
-        self.delete_if_exists(head_file)
-        self.delete_if_exists(body_file)
+
+        if(do_annotation):
+          # DELETE THE annotated file IF IT EXISTS every time before the loop
+            self.delete_if_exists(head_file)
+            self.delete_if_exists(body_file)
+
+            for instance in tqdm.tqdm(ds.data):
+                counter=counter+1
+                if instance is None:
+                    continue
+
+                if not self._sentence_level:
+                    pages = set(ev[0] for ev in instance["evidence"])
+                    premise = " ".join([self.db.get_doc_text(p) for p in pages])
+                else:
+                    lines = set([self.get_doc_line(d[0],d[1]) for d in instance['evidence']])
+                    premise = " ".join(lines)
+
+                if len(premise.strip()) == 0:
+                    premise = ""
+
+                hypothesis = instance["claim"]
+                label = instance["label_text"]
+                #replacing hypothesis with the annotated one-either load pre-nnotated data
+                # from disk or do live annotation (Takes more time)
 
 
-        for instance in tqdm.tqdm(ds.data):
-            counter=counter+1
-            if instance is None:
-                continue
+                premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
 
-            if not self._sentence_level:
-                pages = set(ev[0] for ev in instance["evidence"])
-                premise = " ".join([self.db.get_doc_text(p) for p in pages])
-            else:
-                lines = set([self.get_doc_line(d[0],d[1]) for d in instance['evidence']])
-                premise = " ".join(lines)
 
-            if len(premise.strip()) == 0:
-                premise = ""
+                premise= " ".join(premise_ann)
+                hypothesis = " ".join(hypothesis_ann)
 
-            hypothesis = instance["claim"]
-            label = instance["label_text"]
-            #replacing hypothesis with the annotated one
-            premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
-            premise= " ".join(premise_ann)
+
+                instances.append(self.text_to_instance(premise, hypothesis, label))
+
+        else:
+            # load it from the disk
+            print("temp")
+            premise_ann, hypothesis_ann = self.uofa_load_ann_disk\
+                (self, objUOFADataReader,run_name)
+
+
+            #for each line in the annotated data:
+            #premise_ann, hypothesis_ann = self.uofa_load_ann_disk(self, objUOFADataReader, head_file, body_file)
+
+            premise = " ".join(premise_ann)
             hypothesis = " ".join(hypothesis_ann)
 
-            # print(f'hypothesis:{hypothesis}')
-            # print(f'premise:{premise}')
-            #
             instances.append(self.text_to_instance(premise, hypothesis, label))
+
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
                                      "Is the path correct?".format(file_path))
@@ -138,6 +158,53 @@ class FEVERReader(DatasetReader):
             fields['label'] = LabelField(label)
         return Instance(fields)
 
+
+
+    def uofa_load_ann_disk(self,objUOFADataReader,run_name):
+
+        if (run_name == "dev"):
+            data_folder = objUOFADataReader.data_folder_dev
+        else:
+            if (run_name== "train"):
+                data_folder = objUOFADataReader.data_folder_train
+            else:
+                if (run_name == "small"):
+                    data_folder = objUOFADataReader.data_folder_train_small
+                else:
+                    if (run_name== "test"):
+                        data_folder = objUOFADataReader.data_folder_test
+
+        bf = data_folder + objUOFADataReader.annotated_body_split_folder
+        bfl = bf + objUOFADataReader.annotated_only_lemmas
+        bfw = bf + objUOFADataReader.annotated_words
+        bfe=bf+objUOFADataReader.annotated_only_entities
+
+        hf = objUOFADataReader.data_folder_train + objUOFADataReader.annotated_head_split_folder
+        hfl = hf + objUOFADataReader.annotated_only_lemmas
+        hfw = hf + objUOFADataReader.annotated_words
+        hfe = hf + objUOFADataReader.annotated_only_entities
+
+        logging.debug("hff:" + str(hfl))
+        logging.debug("bff:" + str(bfl))
+        logging.info("going to read heads_lemmas from disk:")
+
+        hl = objUOFADataReader.read_json_with_id(hfl)
+        bl = objUOFADataReader.read_json_with_id(bfl)
+        he = objUOFADataReader.read_json_with_id(hfe)
+        be = objUOFADataReader.read_json_with_id(bfe)
+        hw = objUOFADataReader.read_json_with_id(hfw)
+        bw = objUOFADataReader.read_json_with_id(bfw)
+
+        objUofaTrainTest = UofaTrainTest()
+        premise, hyp = objUofaTrainTest.convert_NER_form_per_sent(he, be, hl, bl, hw, bw)
+        print(f'premise:{premise}')
+        print(f'hyp:{hyp}')
+        sys.exit(1)
+
+
+
+        # print(premise,hyp)
+        return premise, hyp
 
     def uofa_annotate(self, claim, evidence, index,objUOFADataReader,head_file,body_file):
         doc1,doc2 = objUOFADataReader.annotate_and_save_doc\
