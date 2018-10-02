@@ -5,7 +5,7 @@ import logging
 from overrides import overrides
 import tqdm
 import sys
-
+from tqdm import tqdm as tq
 from allennlp.common import Params
 from allennlp.common.checks import ConfigurationError
 from allennlp.common.file_utils import cached_path
@@ -163,8 +163,12 @@ class FEVERReader(DatasetReader):
             bodies_words = objUofaTrainTest.read_json(bfw)
 
 
-            for he, be, hl, bl, hw, bw,instance in tqdm.tqdm(zip(heads_entities, bodies_entities, heads_lemmas,
-                                                        bodies_lemmas, heads_words, bodies_words,ds.data)):
+            for he, be, hl, bl, hw, bw,instance in\
+                    tq(zip(heads_entities, bodies_entities, heads_lemmas,
+                                                        bodies_lemmas,
+                                                          heads_words,
+                                                          bodies_words,ds.data),
+                       total=len(ds.data),desc="reading annotated data"):
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
