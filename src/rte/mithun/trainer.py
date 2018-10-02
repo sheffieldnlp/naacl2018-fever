@@ -1105,10 +1105,8 @@ class UofaTrainTest():
 
 
     def read_json(self, json_file):
-        #logging.debug("inside read_json")
         l = []
         counter=0
-        print(f"insid json_file:{json_file}")
         with open(json_file) as f:
             for eachline in (f):
                 d = json.loads(eachline)

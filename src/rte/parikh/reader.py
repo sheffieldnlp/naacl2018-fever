@@ -196,8 +196,9 @@ class FEVERReader(DatasetReader):
         hw = objUofaTrainTest.read_json(hfw)
         bw = objUofaTrainTest.read_json(bfw)
 
-        print(f"hl:{hl}")
+        print(f"hl:{len(hl)}")
         print(f"bl:{bl}")
+        sys.exit(1)
 
         premise, hyp = objUofaTrainTest.convert_NER_form_per_sent(he, be, hl, bl, hw, bw)
         print(f'premise:{premise}')
