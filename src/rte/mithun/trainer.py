@@ -1104,7 +1104,7 @@ class UofaTrainTest():
         return py_proc_doc_list
 
 
-    def read_json(json_file):
+    def read_json(self, json_file):
         #logging.debug("inside read_json")
         l = []
         counter=0
