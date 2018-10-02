@@ -180,8 +180,7 @@ class FEVERReader(DatasetReader):
 
 
                 premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
-                print(f"premise_ann:{premise_ann}")
-                print(f"hypothesis_ann:{hypothesis_ann}")
+
                 label = instance["label_text"]
 
                 instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
