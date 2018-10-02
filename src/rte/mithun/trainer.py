@@ -1105,7 +1105,7 @@ class UofaTrainTest():
 
 
     def read_json(json_file,logging):
-        logging.debug("inside read_json")
+        #logging.debug("inside read_json")
         l = []
         counter=0
 
