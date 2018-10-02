@@ -175,15 +175,15 @@ class FEVERReader(DatasetReader):
                     if (run_name== "test"):
                         data_folder = objUofaTrainTest.data_folder_test
 
-        bf = data_folder + objUOFADataReader.annotated_body_split_folder
-        bfl = bf + objUOFADataReader.annotated_only_lemmas
-        bfw = bf + objUOFADataReader.annotated_words
-        bfe=bf+objUOFADataReader.annotated_only_entities
+        bf = data_folder + objUofaTrainTest.annotated_body_split_folder
+        bfl = bf + objUofaTrainTest.annotated_only_lemmas
+        bfw = bf + objUofaTrainTest.annotated_words
+        bfe=bf+objUofaTrainTest.annotated_only_entities
 
-        hf = objUOFADataReader.data_folder_train + objUOFADataReader.annotated_head_split_folder
-        hfl = hf + objUOFADataReader.annotated_only_lemmas
-        hfw = hf + objUOFADataReader.annotated_words
-        hfe = hf + objUOFADataReader.annotated_only_entities
+        hf = data_folder + objUofaTrainTest.annotated_head_split_folder
+        hfl = hf + objUofaTrainTest.annotated_only_lemmas
+        hfw = hf + objUofaTrainTest.annotated_words
+        hfe = hf + objUofaTrainTest.annotated_only_entities
 
         logging.debug("hff:" + str(hfl))
         logging.debug("bff:" + str(bfl))
