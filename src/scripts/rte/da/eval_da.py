@@ -21,6 +21,7 @@ import logging
 import sys
 import json
 import numpy as np
+from sklearn.externals import joblib
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -42,6 +43,7 @@ def eval_model(db: FeverDocDB, args) -> Model:
     logger.info("Reading training data from %s", args.in_file)
     do_annotation_live = False
     data = reader.read(args.in_file,"dev",do_annotation_live).instances
+    joblib.dump(data, "fever_dev_dataset_format.pkl")
 
     actual = []
     predicted = []
