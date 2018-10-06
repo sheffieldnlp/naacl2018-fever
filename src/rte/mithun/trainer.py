@@ -13,6 +13,7 @@ from nltk.corpus import wordnet
 import itertools
 from .proc_data import PyProcDoc
 import torchwordemb
+from rte.mithun.log import setup_custom_logger
 
 
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
@@ -123,7 +124,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         else:
             combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,vocab,vec)
+                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,vocab,vec,args)
 
         joblib.dump(combined_vector, combined_vector_pkl)
         logging.info("done generating feature vectors.")
@@ -240,7 +241,7 @@ def print_missed(args,gold_labels):
 
 def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list,
-                        bodies_words_list,vocab,vec):
+                        bodies_words_list,vocab,vec,args):
     word_overlap_vector = np.empty((0, 3), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_head_matrix = np.empty((0, 19), int)
@@ -255,14 +256,14 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     num_overlap_matrix = np.empty((0, 2), float)
     emb_cos_sim_matrix = np.empty((0, 1), float)
 
-
-
-
     counter=0
     #debug:find total number of sentences which had numbers, either in headline, body or both
     num_o=0
     num_h=0
     num_b=0
+
+
+
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) \
             in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
@@ -325,6 +326,10 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
 
         counter = counter + 1
+
+        if(counter==150):
+            args.lmode = "DEBUG"
+            logger = setup_custom_logger('root', args)
 
 
 

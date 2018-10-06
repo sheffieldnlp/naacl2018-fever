@@ -39,6 +39,8 @@ RUN conda create -q -n fever python=3.6
 
 WORKDIR /fever/
 RUN . activate fever
-RUN conda install -y pytorch=0.3.1 torchvision -c pytorch
-RUN pip install -r requirements.txt
+RUN conda install pytorch torchvision -c pytorch
+RUN conda install cython nltk scikit-learn
+#RUN pip install -r requirements.txt
 RUN python src/scripts/prepare_nltk.py
+CMD ["python",  "src/scripts/retrieval/document/batch_ir_ns.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split train"]
