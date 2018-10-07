@@ -16,6 +16,7 @@ ADD requirements.txt /fever/
 ADD src /fever/src/
 ADD config /fever/config/
 ADD scripts /fever/scripts/
+ADD data /fever/data/
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
