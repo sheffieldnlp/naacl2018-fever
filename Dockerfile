@@ -41,6 +41,8 @@ WORKDIR /fever/
 RUN . activate fever
 RUN conda install pytorch torchvision -c pytorch
 RUN conda install cython nltk scikit-learn
-#RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt
 RUN python src/scripts/prepare_nltk.py
-CMD ["python",  "src/scripts/retrieval/document/batch_ir_ns.py --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --count 1 --split train"]
+ENV PYTHONPATH src
+CMD ["python", "src/scripts/retrieval/ir.py"]
+#--db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/dev.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode dev --lmode INFO
