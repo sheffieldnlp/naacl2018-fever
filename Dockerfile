@@ -12,6 +12,9 @@ RUN mkdir /fever/scripts
 
 VOLUME /fever/
 
+RUN bash scripts/download-glove.sh
+RUN bash scripts/download-data.sh
+
 ADD requirements.txt /fever/
 ADD src /fever/src/
 ADD config /fever/config/
@@ -45,6 +48,4 @@ RUN conda install cython nltk scikit-learn
 RUN pip install -r requirements.txt
 RUN python src/scripts/prepare_nltk.py
 ENV PYTHONPATH src
-RUN bash scripts/download-glove.sh
-RUN bash scripts/download-data.sh
-CMD ["python", "src/scripts/retrieval/ir.py  --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/dev.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode dev --lmode INFO"]
+CMD ["python",  "src/scripts/retrieval/ir.py  --model data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file data/fever-data/dev.jsonl --out-file data/fever/dev.sentences.p5.s5.jsonl --mode dev --lmode WARNING"]

@@ -1,8 +1,8 @@
 from common.util.log_helper import LogHelper
 from rte.mithun.ds import indiv_headline_body
-from processors import ProcessorsBaseAPI
+#from processors import ProcessorsBaseAPI
 from tqdm import tqdm
-from processors import Document
+#from processors import Document
 import logging
 from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,load_model,print_missed
 import numpy as np
@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 
 ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
-API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
+#API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 logger=None
 load_ann_corpus=True
 #load_combined_vector=True

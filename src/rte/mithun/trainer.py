@@ -7,16 +7,16 @@ import os
 import numpy as np
 from tqdm import tqdm
 from sklearn.externals import joblib
-from processors import ProcessorsBaseAPI
+#from processors import ProcessorsBaseAPI
 import json
 from nltk.corpus import wordnet
 import itertools
 from .proc_data import PyProcDoc
-import torchwordemb
+#import torchwordemb
 from rte.mithun.log import setup_custom_logger
 
 
-API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
+#API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 n_cores = 2
 LABELS = ['SUPPORTS', 'REFUTES', 'NOT ENOUGH INFO']
 RELATED = LABELS[0:3]
