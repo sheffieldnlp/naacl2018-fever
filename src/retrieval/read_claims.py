@@ -119,8 +119,8 @@ def print_cv(combined_vector,gold_labels_tr):
     sys.exit(1)
 
 
-def uofa_training(args,jlr,method,logger):
-    logger.warning("got inside uofatraining")
+def uofa_training(args,jlr):
+    #logger.warning("got inside uofatraining")
 
     #this code annotates the given file using pyprocessors. Run it only once in its lifetime.
     # tr_data=read_claims_annotate(args,jlr,logger,method)
@@ -151,10 +151,10 @@ def uofa_training(args,jlr,method,logger):
 
 
 
-def uofa_testing(args,jlr,method,logger):
+def uofa_testing(args,jlr):
 
 
-    logger.warning("got inside uofa_testing")
+    #logger.warning("got inside uofa_testing")
     gold_labels = get_gold_labels(args, jlr)
     label_ev=get_gold_labels_evidence(args, jlr)
 
@@ -184,7 +184,7 @@ def uofa_testing(args,jlr,method,logger):
     logging.info(classification_report(gold_labels, pred))
     logging.info(confusion_matrix(gold_labels, pred))
 
-    
+
 
     # get number of support vectors for each class
     #logging.debug(trained_model.n_support_)

@@ -76,12 +76,12 @@ if __name__ == "__main__":
         uofa_training(args,jlr)
     else:
         if(args.mode=="dev"):
-            uofa_dev(args,jlr,method,logger)
+            uofa_dev(args,jlr)
             logger.info("Done, testing ")
 
         else:
             if(args.mode=="test" ):
-                uofa_testing(args,jlr,method,logger)
+                uofa_testing(args,jlr)
                 logger.info("Done, testing ")
 
 
