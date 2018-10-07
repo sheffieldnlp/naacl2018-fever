@@ -7,6 +7,6 @@ tqdm
 nltk
 #allennlp==0.2.3
 pytz
-#tensorboard-pytorch
+tensorboard-pytorch
 git+git://github.com/j6mes/drqa@parallel
 git+git://github.com/sheffieldnlp/fever-scorer@master
