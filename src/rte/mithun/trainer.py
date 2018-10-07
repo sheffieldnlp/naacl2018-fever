@@ -1142,38 +1142,38 @@ def get_sum_vector_embedding(vocab,vec, sent):
 
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec):
     logging.info(" got inside embed_cosine_sim_features  ")
-
+    features=[0]
 
     sum_h=get_sum_vector_embedding(vocab,vec,lemmatized_headline_split_sw)
     sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
 
-
-    logging.debug(" lemmatized_headline_split_sw vector ")
-    logging.debug(str((lemmatized_headline_split_sw)))
-    logging.debug(" lemmatized_body_split_sw vector ")
-    logging.debug(str((lemmatized_body_split_sw)))
-
-
-    logging.debug(" size vector for body is ")
-    logging.debug(str(len(sum_b)))
-
-    logging.debug(" size vector for head is ")
-    logging.debug(str(len(sum_h)))
+    if(len(sum_h) >0 and len(sum_b) >0):
+        logging.debug(" lemmatized_headline_split_sw vector ")
+        logging.debug(str((lemmatized_headline_split_sw)))
+        logging.debug(" lemmatized_body_split_sw vector ")
+        logging.debug(str((lemmatized_body_split_sw)))
 
 
+        logging.debug(" size vector for body is ")
+        logging.debug(str(len(sum_b)))
 
-    sum_h_r= sum_h.reshape(1,-1)
-    sum_b_r = sum_b.reshape(1,-1)
+        logging.debug(" size vector for head is ")
+        logging.debug(str(len(sum_h)))
 
-    c=cosine_similarity(sum_h_r,sum_b_r)
-    logging.debug(" cosine:"+str(c[0][0]))
 
-    logging.debug(" size of vector for headline is ")
-    logging.debug(str((sum_h.shape)))
-    logging.debug(" size vector for body is ")
-    logging.debug(str((sum_b.shape)))
 
-    features=[c[0][0]]
+        sum_h_r= sum_h.reshape(1,-1)
+        sum_b_r = sum_b.reshape(1,-1)
+
+        c=cosine_similarity(sum_h_r,sum_b_r)
+        logging.debug(" cosine:"+str(c[0][0]))
+
+        logging.debug(" size of vector for headline is ")
+        logging.debug(str((sum_h.shape)))
+        logging.debug(" size vector for body is ")
+        logging.debug(str((sum_b.shape)))
+
+        features=[c[0][0]]
     return features
 
 
