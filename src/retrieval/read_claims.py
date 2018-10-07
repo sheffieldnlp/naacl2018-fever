@@ -360,7 +360,7 @@ def get_gold_labels_small(args,jlr):
     return labels
 
 
-def uofa_dev(args, jlr, method, logger):
+def uofa_dev(args, jlr):
 
 
     gold_labels = get_gold_labels(args, jlr)
