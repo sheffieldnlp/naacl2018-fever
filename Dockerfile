@@ -40,10 +40,11 @@ RUN conda create -q -n fever python=3.6
 
 WORKDIR /fever/
 RUN . activate fever
-RUN conda install pytorch torchvision -c pytorch
+#RUN conda install pytorch torchvision -c pytorch
 RUN conda install cython nltk scikit-learn
 RUN pip install -r requirements.txt
 RUN python src/scripts/prepare_nltk.py
 ENV PYTHONPATH src
-CMD ["python", "src/scripts/retrieval/ir.py"]
-#--db /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/dev.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode dev --lmode INFO
+RUN bash scripts/download-glove.sh
+RUN bash scripts/download-data.sh
+CMD ["python", "src/scripts/retrieval/ir.py  --model /work/mithunpaul/fever/my_fork/fever-baselines/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --in-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever-data/dev.jsonl --out-file /work/mithunpaul/fever/my_fork/fever-baselines/data/fever/dev.sentences.p5.s5.jsonl --max-page 5 --max-sent 5 --mode dev --lmode INFO"]
