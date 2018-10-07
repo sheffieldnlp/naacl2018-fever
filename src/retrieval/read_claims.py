@@ -366,11 +366,11 @@ def uofa_dev(args, jlr, method, logger):
     gold_labels = get_gold_labels(args, jlr)
     logging.warning("got inside uofa_dev")
 
-    # #for annotation: you will probably run this only once in your lifetime.
-    # tr_data = read_claims_annotate(args, jlr, logger, method)
-    # logger.info(
-    #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
-    # sys.exit(1)
+    #for annotation: you will probably run this only once in your lifetime.
+    tr_data = read_claims_annotate(args, jlr, logger, method)
+    logger.info(
+        "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    sys.exit(1)
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
