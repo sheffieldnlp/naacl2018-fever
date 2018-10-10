@@ -7,15 +7,16 @@ import os
 import numpy as np
 from tqdm import tqdm
 from sklearn.externals import joblib
-from processors import ProcessorsBaseAPI
+#from processors import ProcessorsBaseAPI
 import json
 from nltk.corpus import wordnet
 import itertools
 from .proc_data import PyProcDoc
-import torchwordemb
+#import torchwordemb
+from rte.mithun.log import setup_custom_logger
 
 
-API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
+#API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 n_cores = 2
 LABELS = ['SUPPORTS', 'REFUTES', 'NOT ENOUGH INFO']
 RELATED = LABELS[0:3]
@@ -123,7 +124,7 @@ def read_json_create_feat_vec(load_ann_corpus_tr,args):
 
         else:
             combined_vector = create_feature_vec(heads_lemmas, bodies_lemmas, heads_tags,
-                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,vocab,vec)
+                                             bodies_tags,heads_deps,bodies_deps,heads_words, bodies_words,vocab,vec,args)
 
         joblib.dump(combined_vector, combined_vector_pkl)
         logging.info("done generating feature vectors.")
@@ -240,7 +241,7 @@ def print_missed(args,gold_labels):
 
 def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
                         heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list, bodies_deps_obj_list,heads_words_list,
-                        bodies_words_list,vocab,vec):
+                        bodies_words_list,vocab,vec,args):
     word_overlap_vector = np.empty((0, 3), float)
     hedging_words_vector = np.empty((0, 30), int)
     refuting_value_head_matrix = np.empty((0, 19), int)
@@ -255,14 +256,14 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
     num_overlap_matrix = np.empty((0, 2), float)
     emb_cos_sim_matrix = np.empty((0, 1), float)
 
-
-
-
     counter=0
     #debug:find total number of sentences which had numbers, either in headline, body or both
     num_o=0
     num_h=0
     num_b=0
+
+
+
     for  (lemmatized_headline, lemmatized_body,tagged_headline,tagged_body,head_deps,body_deps,head_words,body_words) \
             in tqdm(zip(heads_lemmas_obj_list, bodies_lemmas_obj_list, heads_tags_obj_list, bodies_tags_obj_list, heads_deps_obj_list,
                         bodies_deps_obj_list,heads_words_list, bodies_words_list),total=len(bodies_tags_obj_list),desc="feat_gen:"):
@@ -325,6 +326,10 @@ def create_feature_vec (heads_lemmas_obj_list, bodies_lemmas_obj_list,
 
 
         counter = counter + 1
+
+        if(counter==150):
+            args.lmode = "DEBUG"
+            logger = setup_custom_logger('root', args)
 
 
 
@@ -1137,38 +1142,38 @@ def get_sum_vector_embedding(vocab,vec, sent):
 
 def embed_cosine_sim_features(lemmatized_headline_split_sw, lemmatized_body_split_sw,vocab, vec):
     logging.info(" got inside embed_cosine_sim_features  ")
-
+    features=[0]
 
     sum_h=get_sum_vector_embedding(vocab,vec,lemmatized_headline_split_sw)
     sum_b = get_sum_vector_embedding(vocab, vec, lemmatized_body_split_sw)
 
-
-    logging.debug(" lemmatized_headline_split_sw vector ")
-    logging.debug(str((lemmatized_headline_split_sw)))
-    logging.debug(" lemmatized_body_split_sw vector ")
-    logging.debug(str((lemmatized_body_split_sw)))
-
-
-    logging.debug(" size vector for body is ")
-    logging.debug(str(len(sum_b)))
-
-    logging.debug(" size vector for head is ")
-    logging.debug(str(len(sum_h)))
+    if(len(sum_h) >0 and len(sum_b) >0):
+        logging.debug(" lemmatized_headline_split_sw vector ")
+        logging.debug(str((lemmatized_headline_split_sw)))
+        logging.debug(" lemmatized_body_split_sw vector ")
+        logging.debug(str((lemmatized_body_split_sw)))
 
 
+        logging.debug(" size vector for body is ")
+        logging.debug(str(len(sum_b)))
 
-    sum_h_r= sum_h.reshape(1,-1)
-    sum_b_r = sum_b.reshape(1,-1)
+        logging.debug(" size vector for head is ")
+        logging.debug(str(len(sum_h)))
 
-    c=cosine_similarity(sum_h_r,sum_b_r)
-    logging.debug(" cosine:"+str(c[0][0]))
 
-    logging.debug(" size of vector for headline is ")
-    logging.debug(str((sum_h.shape)))
-    logging.debug(" size vector for body is ")
-    logging.debug(str((sum_b.shape)))
 
-    features=[c[0][0]]
+        sum_h_r= sum_h.reshape(1,-1)
+        sum_b_r = sum_b.reshape(1,-1)
+
+        c=cosine_similarity(sum_h_r,sum_b_r)
+        logging.debug(" cosine:"+str(c[0][0]))
+
+        logging.debug(" size of vector for headline is ")
+        logging.debug(str((sum_h.shape)))
+        logging.debug(" size vector for body is ")
+        logging.debug(str((sum_b.shape)))
+
+        features=[c[0][0]]
     return features
 
 
