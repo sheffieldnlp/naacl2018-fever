@@ -96,9 +96,7 @@ class FEVERReader(DatasetReader):
 
             for instance in tqdm.tqdm(ds.data):
                 counter=counter+1
-                if(counter == 123):
-                    print("going to quit")
-                    sys.exit(1)
+
                 if instance is None:
                     continue
 
@@ -182,9 +180,7 @@ class FEVERReader(DatasetReader):
                 hw_split = hw.split(" ")
                 bw_split = bw.split(" ")
 
-                if (counter == 123):
-                    print("going to quit")
-                    sys.exit(1)
+
 
 
 

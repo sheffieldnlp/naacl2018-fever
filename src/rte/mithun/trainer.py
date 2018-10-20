@@ -1259,8 +1259,8 @@ class UofaTrainTest():
 
             neutered_headline = []
             neutered_body = []
-            print(f"he:{claims_ner_list}")
-            print(f"be:{evidence_ner_list}")
+            # print(f"he:{claims_ner_list}")
+            # print(f"be:{evidence_ner_list}")
             # print(f"hl:{hl}")
             # print(f"bl:{bl}")
             # print(f"hw:{claims_words_list}")
@@ -1275,7 +1275,7 @@ class UofaTrainTest():
             # print("new_sent_after_collapse="+str(new_sent))
             # print("dict_newner_token is:" + str(dict_newner_token))
 
-            print(claims_words_list)
+            #print(claims_words_list)
             # print("new_sent_after_collapse")
             # print(new_sent_after_collapse)
 
@@ -1286,7 +1286,7 @@ class UofaTrainTest():
 
             # print("new_sent_after_collapse")
             # print(new_sent_after_collapse)
-            print(evidence_words_list)
+            #print(evidence_words_list)
             neutered_body= self.check_exists_in_claim(new_sent_after_collapse, dict_tokenner_newner_evidence, dict_newner_token_ev,
                                   dict_tokenner_newner_claims)
 
