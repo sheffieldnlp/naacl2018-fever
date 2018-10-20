@@ -178,8 +178,7 @@ class FEVERReader(DatasetReader):
 
                 if(counter==2):
                     print("its 2")
-
-                sys.exit(1)
+                    sys.exit(1)
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
