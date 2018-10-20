@@ -1333,9 +1333,7 @@ class UofaTrainTest():
 
             premise = " ".join(neutered_headline)
             hypothesis = " ".join(neutered_body)
-            print(premise)
-            print(hypothesis)
-            sys.exit(1)
+
 
             return (premise, hypothesis)
 
