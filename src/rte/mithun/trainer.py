@@ -1413,7 +1413,7 @@ class UofaTrainTest():
                     #print(name_cl_split)
 
                     #if (token_split.intersection(name_cl_split)):
-                    if (token_split.issubset(name_cl_split)):
+                    if (token_split.issubset(name_cl_split) or token_split.issubset(name_cl_split)):
                         #print("name exists")
 
 
