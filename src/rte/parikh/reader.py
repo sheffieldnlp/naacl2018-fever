@@ -174,10 +174,10 @@ class FEVERReader(DatasetReader):
 
                 counter=counter+1
 
-                print(counter)
+                print("value of counter is"+counter)
 
-                if(counter==1):
-                    print("its now")
+                if(counter==2):
+                    print("its 2")
 
                 sys.exit(1)
 
