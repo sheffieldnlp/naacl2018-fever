@@ -174,6 +174,11 @@ class FEVERReader(DatasetReader):
 
                 counter=counter+1
 
+                print(counter)
+
+                if(counter==1):
+                    prints("its now")
+
                 sys.exit(1)
 
                 he_split=  he.split(" ")
