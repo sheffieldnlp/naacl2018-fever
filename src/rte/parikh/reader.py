@@ -171,9 +171,10 @@ class FEVERReader(DatasetReader):
                                                           heads_words,
                                                           bodies_words,ds.data),
                        total=len(ds.data),desc="reading annotated data"):
+
                 counter=counter+1
-                if(counter==2):
-                    sys.exit(1)
+
+                sys.exit(1)
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
