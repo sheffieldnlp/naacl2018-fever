@@ -174,7 +174,7 @@ class FEVERReader(DatasetReader):
 
                 counter=counter+1
 
-                
+
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
