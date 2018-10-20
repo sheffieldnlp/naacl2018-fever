@@ -179,7 +179,7 @@ class FEVERReader(DatasetReader):
 
 
 
-                premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
+                premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
 
                 label = instance["label_text"]
 
@@ -231,7 +231,7 @@ class FEVERReader(DatasetReader):
         bw = doc2.words
         objUofaTrainTest=UofaTrainTest()
         # print(f'{he}{hl}{hw}{be}{bl}{bw}')
-        premise, hyp= objUofaTrainTest.convert_NER_form_per_sent( he, be, hl, bl, hw, bw)
+        premise, hyp= objUofaTrainTest.convert_SMARTNER_form_per_sent(he, be, hl, bl, hw, bw)
         # print(premise,hyp)
         return premise,hyp
 
