@@ -1,3 +1,10 @@
+# UOFA- Fact Extraction and VERification
+
+To run the smart NER use this command
+@server@jenny
+`source activate fever`
+`PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/dev.ns.pages.p1.jsonl`
+    
 # Fact Extraction and VERification
 
 This is the PyTorch implementation of the FEVER pipeline baseline described in the NAACL2018 paper: [FEVER: A large-scale dataset for Fact Extraction and VERification.]()

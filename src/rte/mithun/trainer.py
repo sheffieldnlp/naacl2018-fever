@@ -1278,7 +1278,7 @@ class UofaTrainTest():
             # print(new_sent_after_collapse)
 
             ev_claim = "e"
-            new_sent_after_collapse, dict_tokenner_newner_evidence, dict_newner_token_ev = collapse_both(
+            new_sent_after_collapse, dict_tokenner_newner_evidence, dict_newner_token_ev = self.collapse_both(
                 evidence_words_list, evidence_ner_list, ev_claim)
             # print("dict_newner_token is:" + str(dict_newner_token))
 
@@ -1482,7 +1482,7 @@ class UofaTrainTest():
                     new_sent.append(curr_word)
                 else:
 
-                    prev, dict_tokenner_newner, new_sent, full_name,unique_new_ners,unique_new_tokens,dict_newner_token = get_new_name(prev, unique_new_ners, curr_ner,
+                    prev, dict_tokenner_newner, new_sent, full_name,unique_new_ners,unique_new_tokens,dict_newner_token = self.get_new_name(prev, unique_new_ners, curr_ner,
                                                                                    dict_tokenner_newner, curr_word,
                                                                                    new_sent, ev_claim, full_name,unique_new_tokens,dict_newner_token)
                     new_sent.append(curr_word)
@@ -1495,7 +1495,7 @@ class UofaTrainTest():
                         prev.append(curr_ner)
                         full_name.append(curr_word)
                     else:
-                        prev, dict_tokenner_newner, new_sent, full_name,unique_new_ners,unique_new_tokens,dict_newner_token = get_new_name(
+                        prev, dict_tokenner_newner, new_sent, full_name,unique_new_ners,unique_new_tokens,dict_newner_token = self.get_new_name(
                             prev, unique_new_ners, curr_ner,
                                                                                        dict_tokenner_newner, curr_word,
                                                                                new_sent, ev_claim, full_name,unique_new_tokens,dict_newner_token)
