@@ -96,7 +96,7 @@ class FEVERReader(DatasetReader):
 
             for instance in tqdm.tqdm(ds.data):
                 counter=counter+1
-                if(counter%10=0):
+                if((counter % 10) == 0):
                     print("going to quit")
                     sys.exit(1)
                 if instance is None:
