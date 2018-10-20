@@ -1296,7 +1296,7 @@ class UofaTrainTest():
             hypothesis = " ".join(neutered_body)
             print(premise)
             print(hypothesis)
-            
+
 
             return (premise, hypothesis)
 

@@ -96,7 +96,7 @@ class FEVERReader(DatasetReader):
 
             for instance in tqdm.tqdm(ds.data):
                 counter=counter+1
-                if((counter % 10) == 0):
+                if((counter == 123):
                     print("going to quit")
                     sys.exit(1)
                 if instance is None:
@@ -166,12 +166,14 @@ class FEVERReader(DatasetReader):
             bodies_words = objUofaTrainTest.read_json(bfw)
 
 
+            counter=0
             for he, be, hl, bl, hw, bw,instance in\
                     tq(zip(heads_entities, bodies_entities, heads_lemmas,
                                                         bodies_lemmas,
                                                           heads_words,
                                                           bodies_words,ds.data),
                        total=len(ds.data),desc="reading annotated data"):
+                counter=counter+1
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
@@ -179,6 +181,10 @@ class FEVERReader(DatasetReader):
                 bl_split = bl.split(" ")
                 hw_split = hw.split(" ")
                 bw_split = bw.split(" ")
+
+                if ((counter == 123):
+                    print("going to quit")
+                    sys.exit(1)
 
 
 
