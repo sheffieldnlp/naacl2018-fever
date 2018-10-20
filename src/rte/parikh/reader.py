@@ -177,7 +177,7 @@ class FEVERReader(DatasetReader):
                 print(counter)
 
                 if(counter==1):
-                    prints("its now")
+                    print("its now")
 
                 sys.exit(1)
 
