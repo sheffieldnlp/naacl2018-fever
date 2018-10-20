@@ -126,7 +126,7 @@ class FEVERReader(DatasetReader):
 
         else:
             # load it from the disk
-            print("going to load annotated data from the disk")
+            logging.info("going to load annotated data from the disk")
 
             objUofaTrainTest = UofaTrainTest()
 
@@ -172,6 +172,8 @@ class FEVERReader(DatasetReader):
                                                           bodies_words,ds.data),
                        total=len(ds.data),desc="reading annotated data"):
                 counter=counter+1
+                if(counter==2):
+                    sys.exit(1)
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
@@ -179,6 +181,7 @@ class FEVERReader(DatasetReader):
                 bl_split = bl.split(" ")
                 hw_split = hw.split(" ")
                 bw_split = bw.split(" ")
+
 
 
 
