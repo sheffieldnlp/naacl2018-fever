@@ -1259,11 +1259,12 @@ class UofaTrainTest():
 
             neutered_headline = []
             neutered_body = []
-            print(f"he:{he}")
-            print(f"be:{be}")
+            print(f"he:{claims_ner_list}")
+            print(f"be:{evidence_ner_list}")
             print(f"hl:{hl}")
             print(f"bl:{bl}")
-            print(f"hw:{hw}")
+            print(f"hw:{claims_words_list}")
+            print(f"hw:{evidence_words_list}")
             sys.exit(1)
 
             ev_claim = "c"
