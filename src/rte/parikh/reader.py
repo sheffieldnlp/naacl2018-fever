@@ -174,7 +174,7 @@ class FEVERReader(DatasetReader):
 
                 counter=counter+1
 
-                print(f"value of counter is {counter})
+                print("value of counter is "+str(counter))
 
                 if(counter==2):
                     print("its 2")
