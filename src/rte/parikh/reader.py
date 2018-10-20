@@ -184,7 +184,7 @@ class FEVERReader(DatasetReader):
                 hw_split = hw.split(" ")
                 bw_split = bw.split(" ")
 
-                if (counter == 3):
+                if (counter == 4):
                     sys.exit(1)
                 print(f"hw:{hw_split}")
                 print(f"hw:{bw_split}")
