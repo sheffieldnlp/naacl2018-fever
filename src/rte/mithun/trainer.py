@@ -1259,11 +1259,12 @@ class UofaTrainTest():
 
             neutered_headline = []
             neutered_body = []
-            # print(f"he:{he}")
-            # print(f"be:{be}")
-            # print(f"hl:{hl}")
-            # print(f"bl:{bl}")
-            # print(f"hw:{hw}")
+            print(f"he:{he}")
+            print(f"be:{be}")
+            print(f"hl:{hl}")
+            print(f"bl:{bl}")
+            print(f"hw:{hw}")
+            sys.exit(1)
 
             ev_claim = "c"
 
@@ -1413,7 +1414,7 @@ class UofaTrainTest():
                     #print(name_cl_split)
 
                     #if (token_split.intersection(name_cl_split)):
-                    if (token_split.issubset(name_cl_split) or token_split.issubset(name_cl_split)):
+                    if (token_split.issubset(name_cl_split) or name_cl_split.issubset(token_split)):
                         #print("name exists")
 
 
