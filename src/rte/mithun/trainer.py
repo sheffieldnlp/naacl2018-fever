@@ -1263,8 +1263,7 @@ class UofaTrainTest():
             # print(f"be:{evidence_ner_list}")
             # print(f"hl:{hl}")
             # print(f"bl:{bl}")
-            print(f"hw:{claims_words_list}")
-            print(f"hw:{evidence_words_list}")
+
 
 
             ev_claim = "c"

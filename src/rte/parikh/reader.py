@@ -176,8 +176,6 @@ class FEVERReader(DatasetReader):
 
                 print("value of counter is "+str(counter))
 
-                if(counter==3):
-                    sys.exit(1)
 
                 he_split=  he.split(" ")
                 be_split = be.split(" ")
@@ -185,6 +183,11 @@ class FEVERReader(DatasetReader):
                 bl_split = bl.split(" ")
                 hw_split = hw.split(" ")
                 bw_split = bw.split(" ")
+
+                if (counter == 13):
+                    sys.exit(1)
+                    print(f"hw:{hw_split}")
+                    print(f"hw:{bw_split}")
 
 
 
