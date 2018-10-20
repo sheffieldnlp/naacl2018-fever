@@ -1410,11 +1410,13 @@ class UofaTrainTest():
                 for tup in dict_tokenner_newner_claims.keys():
                     name_cl = tup[0]
                     ner_cl=tup[1]
-                    name_cl_split = name_cl.split(" ")
-                    #print("first value in tuples is")
-                    #print(name_cl_split)
+                    name_cl_split = set(name_cl.split(" "))
+                    # print("first value in tuples is")
+                    # print(type(token_split))
+                    # print(type(name_cl_split))
+                    #
 
-                    #if (token_split.intersection(name_cl_split)):
+                    # if (token_split.intersection(name_cl_split)):
                     if (token_split.issubset(name_cl_split) or name_cl_split.issubset(token_split)):
                         #print("name exists")
 
