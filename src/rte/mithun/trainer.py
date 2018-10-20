@@ -1290,12 +1290,12 @@ class UofaTrainTest():
             neutered_body= self.check_exists_in_claim(new_sent_after_collapse, dict_tokenner_newner_evidence, dict_newner_token_ev,
                                   dict_tokenner_newner_claims)
 
-            print("done")
+            #print("done")
 
             premise = " ".join(neutered_headline)
             hypothesis = " ".join(neutered_body)
-            print(premise)
-            print(hypothesis)
+            #print(premise)
+            #print(hypothesis)
 
 
             return (premise, hypothesis)

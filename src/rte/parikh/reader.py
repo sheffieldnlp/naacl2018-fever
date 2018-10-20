@@ -215,9 +215,9 @@ class FEVERReader(DatasetReader):
     def uofa_load_ann_disk(self,objUOFADataReader,run_name):
 
 
-        print(f'premise:{premise}')
-        print(f'hyp:{hyp}')
-        sys.exit(1)
+        # print(f'premise:{premise}')
+        # print(f'hyp:{hyp}')
+        # sys.exit(1)
 
 
 
