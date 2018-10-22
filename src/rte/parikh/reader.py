@@ -227,7 +227,7 @@ class FEVERReader(DatasetReader):
                     print(f"premise_ann: {premise_ann}")
                     print(f"premise_ann: {premise_ann}")
                     print(f"label: {label}")
-                    sys.exit(1)
+                    
 
 
 
