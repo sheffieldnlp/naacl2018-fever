@@ -70,7 +70,8 @@ class FEVERReader(DatasetReader):
 
     @overrides
     def read(self, file_path: str, run_name,do_annotation):
-        print("got inside read")
+        logger.info("got inside read")
+        sys.exit(1)
 
         instances = []
 
