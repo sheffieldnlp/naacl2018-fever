@@ -207,6 +207,15 @@ class FEVERReader(DatasetReader):
                 #print(premise_ann)
                 #print(hypothesis_ann)
 
+                print(premise_ann)
+                print(hypothesis_ann )
+                premise = " ".join(premise_ann)
+                hypothesis = " ".join(hypothesis_ann)
+                print(premise)
+                print(hypothesis)
+
+                sys.exit(1)
+
 
                 label = instance["label_text"]
 
