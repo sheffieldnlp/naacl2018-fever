@@ -133,7 +133,7 @@ class FEVERReader(DatasetReader):
         else:
 
             print("(do_annotation=false):going to load annotated data from the disk. going to exit")
-            sys.exit(1)
+
 
             objUofaTrainTest = UofaTrainTest()
 
@@ -199,7 +199,10 @@ class FEVERReader(DatasetReader):
 
                 premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
                 #premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,hl_split, bl_split,hw_split, bw_split)
-
+                print("value of the first premise and hypothesis after smart ner replacement is")
+                print(premise_ann)
+                print(hypothesis_ann)
+                sys.exit(1)
 
                 label = instance["label_text"]
 
