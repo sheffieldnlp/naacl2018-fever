@@ -70,7 +70,7 @@ class FEVERReader(DatasetReader):
 
     @overrides
     def read(self, file_path: str, run_name,do_annotation):
-        logger.info("got inside read")
+        print("got inside read")
 
         instances = []
 
@@ -81,19 +81,19 @@ class FEVERReader(DatasetReader):
         objUOFADataReader = UOFADataReader()
 
         if (run_name == "train"):
-            logger.info("run_name == train")
+            print("run_name == train")
             head_file = objUOFADataReader.ann_head_tr
             body_file = objUOFADataReader.ann_body_tr
         else:
             if (run_name == "dev"):
-                logger.info("run_name == dev")
+                print("run_name == dev")
                 head_file = objUOFADataReader.ann_head_dev
                 body_file = objUOFADataReader.ann_body_dev
 
         # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etc.
         # This takes along time. so almost always we do it only once, and load it from disk
         if(do_annotation):
-            logger.info("do_annotation == true")
+            print("do_annotation == true")
           # DELETE THE annotated file IF IT EXISTS every time before the loop
             self.delete_if_exists(head_file)
             self.delete_if_exists(body_file)
@@ -132,7 +132,7 @@ class FEVERReader(DatasetReader):
         # from disk
         else:
 
-            logging.info("(do_annotation=false):going to load annotated data from the disk")
+            print("(do_annotation=false):going to load annotated data from the disk. going to exit")
             sys.exit(1)
 
             objUofaTrainTest = UofaTrainTest()
