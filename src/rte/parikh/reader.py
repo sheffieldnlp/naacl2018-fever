@@ -202,12 +202,15 @@ class FEVERReader(DatasetReader):
                 print("value of the first premise and hypothesis after smart ner replacement is")
                 print(premise_ann)
                 print(hypothesis_ann)
-                sys.exit(1)
+
 
                 label = instance["label_text"]
 
                 instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
 
+
+        print(f"after reading and converting training data to smart ner format. The length of the number of training data is:{len(instances)}")
+        sys.exit(1)
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
                                      "Is the path correct?".format(file_path))
