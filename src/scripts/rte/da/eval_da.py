@@ -41,6 +41,9 @@ def eval_model(db: FeverDocDB, args) -> Model:
                                  token_indexers=TokenIndexer.dict_from_params(ds_params.pop('token_indexers', {})))
 
     logger.info("Reading training data from %s", args.in_file)
+
+    # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etcThis takes along time.
+    #  so almost always we do it only once, and load it from disk . Hence do_annotation_live = False
     do_annotation_live = False
     data = reader.read(args.in_file,"dev",do_annotation_live).instances
     joblib.dump(data, "fever_dev_dataset_format.pkl")
