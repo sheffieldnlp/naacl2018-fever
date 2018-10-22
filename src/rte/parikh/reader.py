@@ -71,7 +71,7 @@ class FEVERReader(DatasetReader):
     @overrides
     def read(self, file_path: str, run_name,do_annotation):
         logger.info("got inside read")
-        sys.exit(1)
+
 
         instances = []
 
@@ -143,15 +143,19 @@ class FEVERReader(DatasetReader):
             objUofaTrainTest = UofaTrainTest()
 
             if (run_name == "dev"):
+                print("run_name == dev")
                 data_folder = objUofaTrainTest.data_folder_dev
             else:
                 if (run_name == "train"):
+                    print("run_name == train")
                     data_folder = objUofaTrainTest.data_folder_train
                 else:
                     if (run_name == "small"):
+                        print("run_name == small")
                         data_folder = objUofaTrainTest.data_folder_train_small
                     else:
                         if (run_name == "test"):
+                            print("run_name == test")
                             data_folder = objUofaTrainTest.data_folder_test
 
             bf = data_folder + objUofaTrainTest.annotated_body_split_folder
@@ -221,6 +225,7 @@ class FEVERReader(DatasetReader):
                     print(f"type(premise): {type(premise)}")
                     print(f"premise_ann: {premise_ann}")
                     print(f"premise_ann: {premise_ann}")
+                    sys.exit(1)
 
 
 
