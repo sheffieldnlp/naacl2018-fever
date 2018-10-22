@@ -95,7 +95,6 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
                                    Dataset([instance for dataset in all_datasets
                                             for instance in dataset.instances]))
     vocab.save_to_files(os.path.join(serialization_dir, "vocabulary"))
-    print("done with vocab. it is"+vocab)
 
 
     model = Model.from_params(vocab, params.pop('model'))

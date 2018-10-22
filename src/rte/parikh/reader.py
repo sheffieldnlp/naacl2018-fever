@@ -159,9 +159,9 @@ class FEVERReader(DatasetReader):
             hfw = hf + objUofaTrainTest.annotated_words
             hfe = hf + objUofaTrainTest.annotated_only_entities
 
-            print(f"hfl:{hfl}")
-            print(f"bfl:{bfl}")
-            print("going to read annotated data from disk:")
+            #print(f"hfl:{hfl}")
+            #print(f"bfl:{bfl}")
+            #print("going to read annotated data from disk:")
 
             heads_lemmas = objUofaTrainTest.read_json(hfl)
             bodies_lemmas = objUofaTrainTest.read_json(bfl)
@@ -199,9 +199,9 @@ class FEVERReader(DatasetReader):
 
                 premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
                 #premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,hl_split, bl_split,hw_split, bw_split)
-                print("value of the first premise and hypothesis after smart ner replacement is")
-                print(premise_ann)
-                print(hypothesis_ann)
+                #print("value of the first premise and hypothesis after smart ner replacement is")
+                #print(premise_ann)
+                #print(hypothesis_ann)
 
 
                 label = instance["label_text"]
