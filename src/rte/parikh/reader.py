@@ -70,6 +70,7 @@ class FEVERReader(DatasetReader):
 
     @overrides
     def read(self, file_path: str, run_name,do_annotation):
+        logger.info("got inside read")
 
         instances = []
 
@@ -80,16 +81,19 @@ class FEVERReader(DatasetReader):
         objUOFADataReader = UOFADataReader()
 
         if (run_name == "train"):
+            logger.info("run_name == train")
             head_file = objUOFADataReader.ann_head_tr
             body_file = objUOFADataReader.ann_body_tr
         else:
             if (run_name == "dev"):
+                logger.info("run_name == dev")
                 head_file = objUOFADataReader.ann_head_dev
                 body_file = objUOFADataReader.ann_body_dev
 
-        # replacing hypothesis with the annotated one-either load pre-annotated data
-        # from disk or do live annotation (Takes more time)
+        # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etc.
+        # This takes along time. so almost always we do it only once, and load it from disk
         if(do_annotation):
+            logger.info("do_annotation == true")
           # DELETE THE annotated file IF IT EXISTS every time before the loop
             self.delete_if_exists(head_file)
             self.delete_if_exists(body_file)
@@ -124,9 +128,12 @@ class FEVERReader(DatasetReader):
 
                 instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
 
+        # replacing hypothesis with the annotated one-either load pre-annotated data
+        # from disk
         else:
-            # load it from the disk
-            logging.info("going to load annotated data from the disk")
+
+            logging.info("(do_annotation=false):going to load annotated data from the disk")
+            sys.exit(1)
 
             objUofaTrainTest = UofaTrainTest()
 
@@ -190,8 +197,8 @@ class FEVERReader(DatasetReader):
 
 
 
-                #premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
-                premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,
+                premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
+                #premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,
                                                                                               hl_split, bl_split,
                                                                                               hw_split, bw_split)
 
