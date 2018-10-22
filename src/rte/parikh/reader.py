@@ -210,7 +210,7 @@ class FEVERReader(DatasetReader):
 
 
         print(f"after reading and converting training data to smart ner format. The length of the number of training data is:{len(instances)}")
-        sys.exit(1)
+
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
                                      "Is the path correct?".format(file_path))

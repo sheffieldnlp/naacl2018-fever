@@ -86,6 +86,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
         datasets_in_vocab.append("validation")
         joblib.dump(validation_data, "fever_dev_dataset_format.pkl")
     else:
+        print("validation path is None")
+        sys.exit(1)
         validation_data = None
 
     logger.info("Creating a vocabulary using %s data.", ", ".join(datasets_in_vocab))
