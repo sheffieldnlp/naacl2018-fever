@@ -214,6 +214,7 @@ class FEVERReader(DatasetReader):
 
                 premise = " ".join(premise_ann)
                 hypothesis = " ".join(hypothesis_ann)
+                label = instance["label_text"]
 
                 if(counter==1):
                     print(f"premise_ann: {premise_ann}")
@@ -225,13 +226,15 @@ class FEVERReader(DatasetReader):
                     print(f"type(premise): {type(premise)}")
                     print(f"premise_ann: {premise_ann}")
                     print(f"premise_ann: {premise_ann}")
+                    print(f"label: {label}")
                     sys.exit(1)
 
 
 
 
 
-                label = instance["label_text"]
+
+
 
                 instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
 
