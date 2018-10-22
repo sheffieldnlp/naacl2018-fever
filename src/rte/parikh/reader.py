@@ -207,12 +207,19 @@ class FEVERReader(DatasetReader):
                 #print(premise_ann)
                 #print(hypothesis_ann)
 
-                print(premise_ann)
-                print(hypothesis_ann )
                 premise = " ".join(premise_ann)
                 hypothesis = " ".join(hypothesis_ann)
-                print(premise)
-                print(hypothesis)
+
+                print(f"premise_ann: {premise_ann}")
+                print(f"hypothesis_ann: {hypothesis_ann}")
+                print(f"premise: {premise}")
+                print(f"hypothesis: {hypothesis}")
+                print(f"premise_ann: {premise_ann}")
+                print(f"type(premise_ann): {type(premise_ann)}")
+                print(f"type(premise): {type(premise)}")
+                print(f"premise_ann: {premise_ann}")
+                print(f"premise_ann: {premise_ann}")
+
 
                 sys.exit(1)
 
