@@ -30,7 +30,7 @@ def setup_custom_logger(name, args):
     '''critical, error > warning,info, debug'''
 
     ch=logging.StreamHandler()
-    ch.setLevel(logging.WARNING)
+    #ch.setLevel(logging.WARNING)
     logging.getLogger('').addHandler(ch)
 
 

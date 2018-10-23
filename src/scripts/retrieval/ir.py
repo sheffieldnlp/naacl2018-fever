@@ -76,6 +76,7 @@ if __name__ == "__main__":
         uofa_training(args,jlr)
     else:
         if(args.mode=="dev"):
+            logger.info("found that args.mode is dev")
             uofa_dev(args,jlr,method ,logger)
             logger.info("Done, testing ")
 
