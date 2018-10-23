@@ -117,10 +117,11 @@ def read_claims_annotate(args,jlr,method,logger):
                     if (index>20 ):
                         print(claim)
                         print(all_evidences)
+                        print(label)
                         print("found label to be NEI going to exit. Inside reader.py")
                         sys.exit(1)
 
-                    
+
 
                 #uncomment this is to annotate using pyprocessors
             annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
