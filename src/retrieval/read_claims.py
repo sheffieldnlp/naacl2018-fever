@@ -6,7 +6,8 @@ from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,
 import numpy as np
 import os,sys
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from processors import *
+from processors import Document
+from processors import ProcessorsBaseAPI
 
 ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
@@ -16,8 +17,7 @@ load_ann_corpus=True
 from scorer.src.fever.scorer import fever_score
 import json
 from sklearn.externals import joblib
-API = ProcessorsAPI(port=8886)
-
+self.API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 
 predicted_results="predicted_results.pkl"
 
@@ -244,6 +244,7 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
     doc1 = API.fastnlp.annotate(headline)
+
     doc1.id=index
     with open(json_file_tr_annotated_headline, "a") as out:
       out.write(doc1.to_JSON())
