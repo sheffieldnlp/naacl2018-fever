@@ -22,6 +22,10 @@ API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 predicted_results="predicted_results.pkl"
 
 def read_claims_annotate(args,jlr,method,logger):
+    logger.debug("inside read_claims_annotate. the args .infile is:" + str(args.in_file))
+    logger.debug("inside read_claims_annotate. the args .lmode is:" + str(args.lmode))
+    sys.exit(1)
+
     try:
         os.remove(ann_head_tr)
         os.remove(ann_body_tr)
@@ -29,7 +33,7 @@ def read_claims_annotate(args,jlr,method,logger):
     except OSError:
         logger.error("not able to find file")
 
-    logger.debug("inside read_claims_annotate. the args file is:"+str(args.in_file))
+
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
@@ -365,7 +369,7 @@ def uofa_dev(args, jlr,method,logger):
 
 
     gold_labels = get_gold_labels(args, jlr)
-    logging.warning("got inside uofa_dev")
+    logger.warning("got inside uofa_dev")
 
     #for annotation: you will probably run this only once in your lifetime.
     tr_data = read_claims_annotate(args, jlr, method,logger)
