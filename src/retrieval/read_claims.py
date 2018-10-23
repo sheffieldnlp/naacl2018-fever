@@ -113,12 +113,19 @@ def read_claims_annotate(args,jlr,method,logger):
                         ev_claim.append(sent)
                     all_evidences=' '.join(ev_claim)
                     logger.debug("all_evidences  is:" + str((all_evidences)))
-                    sys.exit(1)
+
+                    if (index>20 ):
+                        print(claim)
+                        print(all_evidences)
+                        print("found label to be NEI going to exit. Inside reader.py")
+                        sys.exit(1)
+
+                    
 
                 #uncomment this is to annotate using pyprocessors
             annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
- 
+
 
         return obj_all_heads_bodies
 
