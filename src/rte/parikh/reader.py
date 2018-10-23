@@ -172,7 +172,7 @@ class FEVERReader(DatasetReader):
 
             #print(f"hfl:{hfl}")
             #print(f"bfl:{bfl}")
-            #print("going to read annotated data from disk:")
+            print("going to read annotated data from disk:")
 
             heads_lemmas = objUofaTrainTest.read_json(hfl)
             bodies_lemmas = objUofaTrainTest.read_json(bfl)
@@ -181,6 +181,7 @@ class FEVERReader(DatasetReader):
             heads_words = objUofaTrainTest.read_json(hfw)
             bodies_words = objUofaTrainTest.read_json(bfw)
 
+            print(f"length of bodies_words:{len(bodies_words)}")
 
             counter=0
             for he, be, hl, bl, hw, bw,instance in\
@@ -220,7 +221,7 @@ class FEVERReader(DatasetReader):
                     print(f"premise_ann: {premise_ann}")
                     print(f"hypothesis_ann: {hypothesis_ann}")
                     print(f"label: {label}")
-                
+
                     
 
 
