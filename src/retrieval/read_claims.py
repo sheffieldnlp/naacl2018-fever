@@ -17,7 +17,7 @@ load_ann_corpus=True
 from scorer.src.fever.scorer import fever_score
 import json
 from sklearn.externals import joblib
-self.API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
+API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 
 predicted_results="predicted_results.pkl"
 
