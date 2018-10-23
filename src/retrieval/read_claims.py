@@ -116,14 +116,9 @@ def read_claims_annotate(args,jlr,method,logger):
                     sys.exit(1)
 
                 #uncomment this is to annotate using pyprocessors
-                annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+            annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
-        if (label == "NOT ENOUGH INFO"):
-        #
-        #     print(hypothesis)
-        #     print(premise)
-        #     print("found label to be NEI going to exit. Inside reader.py")
-        #     sys.exit(1)
+ 
 
         return obj_all_heads_bodies
 
