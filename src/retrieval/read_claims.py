@@ -114,12 +114,12 @@ def read_claims_annotate(args,jlr,method,logger):
                     all_evidences=' '.join(ev_claim)
                     logger.debug("all_evidences  is:" + str((all_evidences)))
 
-                    if (index>20 ):
-                        print(claim)
-                        print(all_evidences)
-                        print(label)
-                        print("found label to be NEI going to exit. Inside reader.py")
-                        sys.exit(1)
+                    # if (index>20 ):
+                    #     print(claim)
+                    #     print(all_evidences)
+                    #     print(label)
+                    #     print("found label to be NEI going to exit. Inside reader.py")
+                    #     sys.exit(1)
 
 
 
