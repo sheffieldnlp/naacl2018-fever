@@ -25,7 +25,7 @@ predicted_results="predicted_results.pkl"
 def read_claims_annotate(args,jlr,method,logger):
     logger.debug("inside read_claims_annotate. the args .infile is:" + str(args.in_file))
     logger.debug("inside read_claims_annotate. the args .lmode is:" + str(args.lmode))
-    sys.exit(1)
+
 
     try:
         my_file = Path(ann_head_tr)
@@ -54,7 +54,13 @@ def read_claims_annotate(args,jlr,method,logger):
             x = indiv_headline_body()
             evidences=claim_full["evidence"]
             label=claim_full["label"]
-            #if not (label=="NOT ENOUGH INFO"):
+
+            logger.debug(" claim alone is:"+str(evidences))
+            logger.debug("label is:" + str(label))
+            
+
+            if (label=="NOT ENOUGH INFO"):
+                sys.exit(1)
             ver_count=ver_count+1
             logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
             logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
