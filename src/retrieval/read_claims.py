@@ -26,7 +26,7 @@ def read_claims_annotate(args,jlr,logger,method):
     except OSError:
         logger.error("not able to find file")
 
-    logger.debug("inside read_claims_annotate")
+    logger.debug("inside read_claims_annotate. the args file is:"+str(args.in_file))
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
@@ -364,10 +364,10 @@ def uofa_dev(args, jlr):
     logging.warning("got inside uofa_dev")
 
     #for annotation: you will probably run this only once in your lifetime.
-    # tr_data = read_claims_annotate(args, jlr, logger, method)
-    # logger.info(
-    #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
-    # sys.exit(1)
+    tr_data = read_claims_annotate(args, jlr, logger, method)
+    logger.info(
+        "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    sys.exit(1)
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
