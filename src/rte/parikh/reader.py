@@ -71,6 +71,7 @@ class FEVERReader(DatasetReader):
     @overrides
     def read(self, file_path: str, run_name,do_annotation):
         logger.info("got inside read")
+        sys.exit(1)
 
 
         instances = []
@@ -82,7 +83,7 @@ class FEVERReader(DatasetReader):
         objUOFADataReader = UOFADataReader()
 
         if (run_name == "train"):
-            print("run_name == train")
+            logger.info("run_name == train")
             head_file = objUOFADataReader.ann_head_tr
             body_file = objUOFADataReader.ann_body_tr
         else:
@@ -217,7 +218,7 @@ class FEVERReader(DatasetReader):
                 label = instance["label_text"]
 
                 if(counter==1):
-                    print(f"premise_ann: {premise_ann}")
+                    logging.info(f"premise_ann: {premise_ann}")
                     print(f"hypothesis_ann: {hypothesis_ann}")
                     print(f"premise: {premise}")
                     print(f"hypothesis: {hypothesis}")
