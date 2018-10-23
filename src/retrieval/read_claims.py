@@ -8,6 +8,7 @@ import os,sys
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from processors import Document
 from processors import ProcessorsBaseAPI
+from pathlib import Path
 
 ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
@@ -27,8 +28,11 @@ def read_claims_annotate(args,jlr,method,logger):
     sys.exit(1)
 
     try:
-        os.remove(ann_head_tr)
-        os.remove(ann_body_tr)
+        my_file = Path(ann_head_tr)
+        #check if the file exists. if yes remove
+        if my_file.is_file():
+            os.remove(ann_head_tr)
+            os.remove(ann_body_tr)
 
     except OSError:
         logger.error("not able to find file")
@@ -369,7 +373,7 @@ def uofa_dev(args, jlr,method,logger):
 
 
     gold_labels = get_gold_labels(args, jlr)
-    logger.warning("got inside uofa_dev")
+    logger.debug("got inside uofa_dev")
 
     #for annotation: you will probably run this only once in your lifetime.
     tr_data = read_claims_annotate(args, jlr, method,logger)
