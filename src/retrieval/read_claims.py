@@ -18,7 +18,7 @@ from sklearn.externals import joblib
 
 predicted_results="predicted_results.pkl"
 
-def read_claims_annotate(args,jlr,logger,method):
+def read_claims_annotate(args,jlr,method,logger):
     try:
         os.remove(ann_head_tr)
         os.remove(ann_body_tr)
@@ -357,14 +357,14 @@ def get_gold_labels_small(args,jlr):
     return labels
 
 
-def uofa_dev(args, jlr,method):
+def uofa_dev(args, jlr,method,logger):
 
 
     gold_labels = get_gold_labels(args, jlr)
     logging.warning("got inside uofa_dev")
 
     #for annotation: you will probably run this only once in your lifetime.
-    tr_data = read_claims_annotate(args, jlr, logger, method)
+    tr_data = read_claims_annotate(args, jlr, method,logger)
     logger.info(
         "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
     sys.exit(1)
