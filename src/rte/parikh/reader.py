@@ -216,17 +216,17 @@ class FEVERReader(DatasetReader):
                 hypothesis = " ".join(hypothesis_ann)
                 label = instance["label_text"]
 
-                if(counter==1):
-                    print(f"premise_ann: {premise_ann}")
-                    print(f"hypothesis_ann: {hypothesis_ann}")
-                    print(f"premise: {premise}")
-                    print(f"hypothesis: {hypothesis}")
-                    print(f"premise_ann: {premise_ann}")
-                    print(f"type(premise_ann): {type(premise_ann)}")
-                    print(f"type(premise): {type(premise)}")
-                    print(f"premise_ann: {premise_ann}")
-                    print(f"premise_ann: {premise_ann}")
-                    print(f"label: {label}")
+                # if(counter==1):
+                #     print(f"premise_ann: {premise_ann}")
+                #     print(f"hypothesis_ann: {hypothesis_ann}")
+                #     print(f"premise: {premise}")
+                #     print(f"hypothesis: {hypothesis}")
+                #     print(f"premise_ann: {premise_ann}")
+                #     print(f"type(premise_ann): {type(premise_ann)}")
+                #     print(f"type(premise): {type(premise)}")
+                #     print(f"premise_ann: {premise_ann}")
+                #     print(f"premise_ann: {premise_ann}")
+                #     print(f"label: {label}")
                     
 
 

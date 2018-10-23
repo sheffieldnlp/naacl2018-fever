@@ -71,7 +71,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     run_name="train"
     do_annotation_live=False
     train_data = dataset_reader.read(train_data_path,run_name,do_annotation_live)
-    joblib.dump(train_data, "fever_tr_dataset_format.pkl")
+    #joblib.dump(train_data, "fever_tr_dataset_format.pkl")
 
 
     all_datasets = [train_data]
