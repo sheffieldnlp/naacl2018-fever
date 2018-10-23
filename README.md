@@ -15,9 +15,9 @@ or use these commands below
 
 `PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/dev.ns.pages.p1.jsonl`
 
-This assumes that you are on the same folder. If your data folder is somewhere else
+This assumes that you are on the same folder. If your data folder is somewhere else, use this for training.
 
-`PYTHONPATH=src python src/scripts/rte/da/train_da.py /net/kate/storage/work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db /net/kate/storage/work/mithunpaul/fever/my_fork/fever-baselines/config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE`
+`PYTHONPATH=src python src/scripts/rte/da/train_da.py /net/kate/storage/work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE`
 
 
 
