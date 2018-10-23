@@ -94,7 +94,7 @@ class FEVERReader(DatasetReader):
         # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etc.
         # This takes along time. so almost always we do it only once, and load it from disk
         if(do_annotation):
-            print("do_annotation == true")
+            logger.info("do_annotation == true")
           # DELETE THE annotated file IF IT EXISTS every time before the loop
             self.delete_if_exists(head_file)
             self.delete_if_exists(body_file)
@@ -206,8 +206,8 @@ class FEVERReader(DatasetReader):
 
 
 
-                premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
-                #premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,hl_split, bl_split,hw_split, bw_split)
+                #premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
+                premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,hl_split, bl_split,hw_split, bw_split)
                 #print("value of the first premise and hypothesis after smart ner replacement is")
                 #print(premise_ann)
                 #print(hypothesis_ann)
@@ -216,17 +216,18 @@ class FEVERReader(DatasetReader):
                 hypothesis = " ".join(hypothesis_ann)
                 label = instance["label_text"]
 
-                # if(counter==1):
-                #     print(f"premise_ann: {premise_ann}")
-                #     print(f"hypothesis_ann: {hypothesis_ann}")
-                #     print(f"premise: {premise}")
-                #     print(f"hypothesis: {hypothesis}")
-                #     print(f"premise_ann: {premise_ann}")
-                #     print(f"type(premise_ann): {type(premise_ann)}")
-                #     print(f"type(premise): {type(premise)}")
-                #     print(f"premise_ann: {premise_ann}")
-                #     print(f"premise_ann: {premise_ann}")
-                #     print(f"label: {label}")
+                if(counter==1):
+                    print(f"premise_ann: {premise_ann}")
+                    print(f"hypothesis_ann: {hypothesis_ann}")
+                    print(f"premise: {premise}")
+                    print(f"hypothesis: {hypothesis}")
+                    print(f"premise_ann: {premise_ann}")
+                    print(f"type(premise_ann): {type(premise_ann)}")
+                    print(f"type(premise): {type(premise)}")
+                    print(f"premise_ann: {premise_ann}")
+                    print(f"premise_ann: {premise_ann}")
+                    print(f"label: {label}")
+                    sys.exit(1)
                     
 
 
