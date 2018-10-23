@@ -73,7 +73,7 @@ class FEVERReader(DatasetReader):
         #logger.info("got inside read")
         #logging.info("got inside read")
         print("got inside read")
-        
+
 
         instances = []
 
@@ -84,7 +84,7 @@ class FEVERReader(DatasetReader):
         objUOFADataReader = UOFADataReader()
 
         if (run_name == "train"):
-            logger.info("run_name == train")
+            print("run_name == train")
             head_file = objUOFADataReader.ann_head_tr
             body_file = objUOFADataReader.ann_body_tr
         else:
@@ -96,7 +96,7 @@ class FEVERReader(DatasetReader):
         # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etc.
         # This takes along time. so almost always we do it only once, and load it from disk
         if(do_annotation):
-            logger.info("do_annotation == true")
+            print("do_annotation == true")
           # DELETE THE annotated file IF IT EXISTS every time before the loop
             self.delete_if_exists(head_file)
             self.delete_if_exists(body_file)
@@ -214,20 +214,11 @@ class FEVERReader(DatasetReader):
                 #print(premise_ann)
                 #print(hypothesis_ann)
 
-                premise = " ".join(premise_ann)
-                hypothesis = " ".join(hypothesis_ann)
                 label = instance["label_text"]
 
                 if(counter==1):
-                    logging.info(f"premise_ann: {premise_ann}")
+                    print(f"premise_ann: {premise_ann}")
                     print(f"hypothesis_ann: {hypothesis_ann}")
-                    print(f"premise: {premise}")
-                    print(f"hypothesis: {hypothesis}")
-                    print(f"premise_ann: {premise_ann}")
-                    print(f"type(premise_ann): {type(premise_ann)}")
-                    print(f"type(premise): {type(premise)}")
-                    print(f"premise_ann: {premise_ann}")
-                    print(f"premise_ann: {premise_ann}")
                     print(f"label: {label}")
                     sys.exit(1)
                     
