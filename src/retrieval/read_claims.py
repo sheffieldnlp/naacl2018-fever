@@ -6,6 +6,7 @@ from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,
 import numpy as np
 import os,sys
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from processors import *
 
 ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
@@ -15,6 +16,8 @@ load_ann_corpus=True
 from scorer.src.fever.scorer import fever_score
 import json
 from sklearn.externals import joblib
+API = ProcessorsAPI(port=8886)
+
 
 predicted_results="predicted_results.pkl"
 
