@@ -128,9 +128,10 @@ class FEVERReader(DatasetReader):
                 #premise= " ".join(premise_ann)
                 #hypothesis = " ".join(hypothesis_ann)
 
-                if(label=="NOT ENOUGH INFO"):
-                    print(premise)
+                if(label=="NOT ENOUGH INFO" ):
                     print(hypothesis)
+                    print(premise)
+                if (counter > 50):
                     sys.exit(1)
 
 
