@@ -284,8 +284,8 @@ class FEVERReader(DatasetReader):
         bw = doc2.words
         objUofaTrainTest=UofaTrainTest()
         # print(f'{he}{hl}{hw}{be}{bl}{bw}')
-        premise, hyp= objUofaTrainTest.convert_SMARTNER_form_per_sent(he, be, hl, bl, hw, bw)
-        #premise, hyp = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he, be, hl, bl, hw, bw)
+        #premise, hyp= objUofaTrainTest.convert_SMARTNER_form_per_sent(he, be, hl, bl, hw, bw)
+        premise, hyp = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he, be, hl, bl, hw, bw)
 
 
         # print(premise,hyp)
