@@ -69,7 +69,7 @@ class FEVERReader(DatasetReader):
             return non_empty_lines[SimpleRandom.get_instance().next_rand(0,len(non_empty_lines)-1)]
 
     @overrides
-    def read(self, file_path: str, run_name,do_annotation):
+    def read(self, file_path: str, run_name, do_annotation_on_the_fly):
         #logger.info("got inside read")
         #logging.info("got inside read")
         print("got inside read")
@@ -95,8 +95,8 @@ class FEVERReader(DatasetReader):
 
         # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etc.
         # This takes along time. so almost always we do it only once, and load it from disk
-        if(do_annotation):
-            print("do_annotation == true")
+        if(do_annotation_on_the_fly):
+            print("do_annotation_on_the_fly == true")
           # DELETE THE annotated file IF IT EXISTS every time before the loop
             self.delete_if_exists(head_file)
             self.delete_if_exists(body_file)
@@ -209,8 +209,8 @@ class FEVERReader(DatasetReader):
 
 
 
-                #premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
-                premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,hl_split, bl_split,hw_split, bw_split)
+                premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
+                #premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,hl_split, bl_split,hw_split, bw_split)
                 #print("value of the first premise and hypothesis after smart ner replacement is")
                 #print(premise_ann)
                 #print(hypothesis_ann)
@@ -282,8 +282,8 @@ class FEVERReader(DatasetReader):
         bw = doc2.words
         objUofaTrainTest=UofaTrainTest()
         # print(f'{he}{hl}{hw}{be}{bl}{bw}')
-        #premise, hyp= objUofaTrainTest.convert_SMARTNER_form_per_sent(he, be, hl, bl, hw, bw)
-        premise, hyp = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he, be, hl, bl, hw, bw)
+        premise, hyp= objUofaTrainTest.convert_SMARTNER_form_per_sent(he, be, hl, bl, hw, bw)
+        #premise, hyp = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he, be, hl, bl, hw, bw)
 
 
         # print(premise,hyp)

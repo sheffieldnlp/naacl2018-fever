@@ -69,8 +69,8 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     train_data_path = params.pop('train_data_path')
     logger.info("Reading training data from %s", train_data_path)
     run_name="train"
-    do_annotation_live=False
-    train_data = dataset_reader.read(train_data_path,run_name,do_annotation_live)
+    do_annotation_on_the_fly=True
+    train_data = dataset_reader.read(train_data_path,run_name,do_annotation_on_the_fly)
     #joblib.dump(train_data, "fever_tr_dataset_format.pkl")
 
 

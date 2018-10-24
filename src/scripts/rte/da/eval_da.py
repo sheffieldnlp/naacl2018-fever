@@ -58,8 +58,14 @@ def eval_model(db: FeverDocDB, args) -> Model:
         if item.fields["premise"] is None or item.fields["premise"].sequence_length() == 0:
             cls = "NOT ENOUGH INFO"
         else:
+
+
             prediction = model.forward_on_instance(item, args.cuda_device)
             cls = model.vocab._index_to_token["labels"][np.argmax(prediction["label_probs"])]
+
+            if (cls == "NOT ENOUGH INFO"):
+                print("found nei")
+                sys.exit(1)
 
         if "label" in item.fields:
             actual.append(item.fields["label"].label)
