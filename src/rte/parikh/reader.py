@@ -123,17 +123,15 @@ class FEVERReader(DatasetReader):
                 # if (label == "NOT ENOUGH INFO"):
                 #
                 # if (counter > 50):
-                print("hypothesis:" + hypothesis)
-                print("premise:" + premise)
 
-                sys.exit(1)
 
 
                 premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
 
+                print("hypothesis:" + hypothesis)
+                print("premise:" + premise)
 
-                #premise= " ".join(premise_ann)
-                #hypothesis = " ".join(hypothesis_ann)
+                sys.exit(1)
 
 
 
