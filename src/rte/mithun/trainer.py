@@ -1291,8 +1291,8 @@ class UofaTrainTest():
 
             #print("done")
 
-            premise = " ".join(neutered_headline)
-            hypothesis = " ".join(neutered_body)
+            premise = " ".join(neutered_body)
+            hypothesis = " ".join(neutered_headline)
             # print(premise)
             # print(hypothesis)
 
