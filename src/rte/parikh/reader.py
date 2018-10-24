@@ -128,9 +128,11 @@ class FEVERReader(DatasetReader):
                 premise= " ".join(premise_ann)
                 hypothesis = " ".join(hypothesis_ann)
 
-                print(premise)
-                print(hypothesis)
-                sys.exit(1)
+                if(label=="NOT ENOUGH INFO"):
+                    print(premise)
+                    print(hypothesis)
+                    sys.exit(1)
+
 
 
                 instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
