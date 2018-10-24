@@ -128,8 +128,8 @@ class FEVERReader(DatasetReader):
 
                 premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
 
-                print("hypothesis:" + hypothesis)
-                print("premise:" + premise)
+                print("hypothesis:" + hypothesis_ann)
+                print("premise:" + premise_ann)
 
                 sys.exit(1)
 
