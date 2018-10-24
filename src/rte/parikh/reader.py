@@ -125,8 +125,8 @@ class FEVERReader(DatasetReader):
                 premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
 
 
-                premise= " ".join(premise_ann)
-                hypothesis = " ".join(hypothesis_ann)
+                #premise= " ".join(premise_ann)
+                #hypothesis = " ".join(hypothesis_ann)
 
                 if(label=="NOT ENOUGH INFO"):
                     print(premise)
