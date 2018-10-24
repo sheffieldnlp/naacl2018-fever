@@ -132,7 +132,8 @@ class FEVERReader(DatasetReader):
                 print("hypothesis:" + hypothesis_ann)
                 print("premise:" + premise_ann)
 
-                sys.exit(1)
+                if(counter==5):
+                    sys.exit(1)
 
 
 
