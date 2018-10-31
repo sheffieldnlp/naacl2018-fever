@@ -1,6 +1,12 @@
 # UofA-Fact Extraction and VERification
 ## Instructions to do AFTER you run the shefiield [instructions for manual install](https://github.com/sheffieldnlp/fever-baselines/wiki/Manual-Install)
 
+- To annotate data once you have Docker you need to pull pyprocessors using :docker pull myedibleenso/processors-server:latest
+
+- Then run this image using: docker run -d -e _JAVA_OPTIONS="-Xmx3G" -p 127.0.0.1:8886:8888 --name procserv myedibleenso/processors-server
+
+note: the docker run command is for the very first time you create this container. Second time onwards use: docker start procserv
+
 - source activate fever
 
 ## to run training from my_fork folder on jenny

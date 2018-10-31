@@ -21,6 +21,7 @@ from sklearn.externals import joblib
 API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 
 predicted_results="predicted_results.pkl"
+snli_filename='snli_fever.json'
 
 def read_claims_annotate(args,jlr,method,logger):
     logger.debug("inside read_claims_annotate. the args .infile is:" + str(args.in_file))
@@ -43,9 +44,19 @@ def read_claims_annotate(args,jlr,method,logger):
         obj_all_heads_bodies=[]
         ver_count=0
 
-        #dictionary to dump to json for allennlp format
+
+
+
+
+        #DELETE THE FILE IF IT EXISTS every time before the loop
+        if os.path.exists(snli_filename):
+            append_write = 'w' # make a new file if not
+            with open(snli_filename, append_write) as outfile:
+                outfile.write("")
+
 
         for index,claim_full in tqdm(enumerate(all_claims),total=len(all_claims),desc="annotation:"):
+
             logger.debug("entire claim_full is:")
             logger.debug(claim_full)
             claim=claim_full["claim"]
@@ -54,6 +65,7 @@ def read_claims_annotate(args,jlr,method,logger):
             x = indiv_headline_body()
             evidences=claim_full["evidence"]
             label=claim_full["label"]
+
 
             logger.debug(" evidence is:"+str(evidences))
 
@@ -64,6 +76,7 @@ def read_claims_annotate(args,jlr,method,logger):
             ev_claim=[]
             pl_list=[]
             if not (label == "NOT ENOUGH INFO"):
+
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
                     for inside_ev in evidences:
@@ -114,12 +127,17 @@ def read_claims_annotate(args,jlr,method,logger):
                     all_evidences=' '.join(ev_claim)
                     logger.debug("all_evidences  is:" + str((all_evidences)))
 
+
                     # if (index>20 ):
                     #     print(claim)
                     #     print(all_evidences)
                     #     print(label)
                     #     print("found label to be NEI going to exit. Inside reader.py")
                     #     sys.exit(1)
+
+
+                #this is to feed data into attention model of allen nlp.
+                #write_snli_format(claim, all_evidences,logger,label)
 
 
 
@@ -282,27 +300,32 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     return
 
 
-def write_snli_format(headline,body,logger):
+def write_snli_format(headline,body,logger,label):
 
     logger.debug("got inside write_snli_format")
-
-    snli={}
-    snli["sentence1"]=headline
-    snli["sentence2"]=body
-
-
+    #dictionary to dump to json for allennlp format
+    snli={"annotator_labels": [""],
+        "captionID": "",
+    "gold_label": label,
+     "pairID": "",
+     "sentence1": headline,
+     "sentence1_binary_parse": "",
+     "sentence1_parse": "",
+     "sentence2": body,
+     "sentence2_binary_parse": "",
+     "sentence2_parse": ""
+             }
 
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
-    filename='snli_fever.json'
 
-    if os.path.exists(filename):
+    if os.path.exists(snli_filename):
         append_write = 'a' # append if already exists
     else:
         append_write = 'w' # make a new file if not
 
 
-    with open(filename, append_write) as outfile:
+    with open(snli_filename, append_write) as outfile:
         json.dump(snli, outfile)
         outfile.write("\n")
 
