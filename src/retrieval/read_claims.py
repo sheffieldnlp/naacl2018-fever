@@ -1,5 +1,6 @@
 from common.util.log_helper import LogHelper
 from rte.mithun.ds import indiv_headline_body
+
 from processors import ProcessorsBaseAPI
 from tqdm import tqdm
 from processors import Document
@@ -30,6 +31,9 @@ class UOFADataReader():
 
     def read_claims_annotate(self,args,jlr,logger,method):
         try:
+          my_file = Path(ann_head_tr)
+          #check if the file exists. if yes remove
+          if my_file.is_file():
             os.remove(ann_head_tr)
             os.remove(ann_body_tr)
 
@@ -41,7 +45,6 @@ class UOFADataReader():
             all_claims = jlr.process(f)
             obj_all_heads_bodies=[]
             ver_count=0
-
 
 
 
@@ -78,8 +81,10 @@ class UOFADataReader():
                 logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
                 ev_claim=[]
                 pl_list=[]
-                #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
-                if (len(evidences) >1):
+                if not (label == "NOT ENOUGH INFO"):
+
+                  #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
+                  if (len(evidences) >1):
                     for inside_ev in evidences:
                         evidence=inside_ev[0]
                         logger.debug(evidence)
@@ -108,7 +113,8 @@ class UOFADataReader():
                     logger.debug("found the len(evidences)>1")
 
 
-                else :
+
+            else :
                     for evidence in evidences[0]:
                         page=evidence[2]
                         lineno=evidence[3]
@@ -118,6 +124,7 @@ class UOFADataReader():
                         ev_claim.append(sent)
                     all_evidences=' '.join(ev_claim)
                     logger.debug("all_evidences  is:" + str((all_evidences)))
+
 
                 #uncomment this is to annotate using pyprocessors
 
@@ -427,4 +434,3 @@ class UOFADataReader():
         #logging.debug(trained_model.n_support_)
         logging.info("done with testing. going to exit")
         sys.exit(1)
-
