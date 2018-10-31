@@ -88,6 +88,14 @@ class FEVERReader(DatasetReader):
 
             hypothesis = instance["claim"]
             label = instance["label_text"]
+
+            # if(label=="NOT ENOUGH INFO"):
+            #
+            #     print(hypothesis)
+            #     print(premise)
+            #     print("found label to be NEI going to exit. Inside reader.py")
+            #     sys.exit(1)
+
             instances.append(self.text_to_instance(premise, hypothesis, label))
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "

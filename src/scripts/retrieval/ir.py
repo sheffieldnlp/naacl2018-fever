@@ -63,11 +63,11 @@ if __name__ == "__main__":
 
 
 
-    #db = FeverDocDB(args.db)
+    db = FeverDocDB(args.db)
     jlr = JSONLineReader()
     formatter = FEVERGoldFormatter(set(), FEVERLabelSchema())
 
-    #method = TopNDocsTopNSents(db, args.max_page, args.max_sent, args.model)
+    method = TopNDocsTopNSents(db, args.max_page, args.max_sent, args.model)
 
 
     processed = dict()
@@ -76,7 +76,8 @@ if __name__ == "__main__":
         uofa_training(args,jlr)
     else:
         if(args.mode=="dev"):
-            uofa_dev(args,jlr)
+            logger.info("found that args.mode is dev")
+            uofa_dev(args,jlr,method ,logger)
             logger.info("Done, testing ")
 
         else:

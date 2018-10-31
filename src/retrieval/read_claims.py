@@ -6,6 +6,9 @@ from rte.mithun.trainer import read_json_create_feat_vec,do_training,do_testing,
 import numpy as np
 import os,sys
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from processors import Document
+from processors import ProcessorsBaseAPI
+from pathlib import Path
 
 ann_head_tr = "ann_head_tr.json"
 ann_body_tr = "ann_body_tr.json"
@@ -15,19 +18,27 @@ load_ann_corpus=True
 from scorer.src.fever.scorer import fever_score
 import json
 from sklearn.externals import joblib
+API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886, keep_alive=True)
 
 predicted_results="predicted_results.pkl"
 snli_filename='snli_fever.json'
 
-def read_claims_annotate(args,jlr,logger,method):
+def read_claims_annotate(args,jlr,method,logger):
+    logger.debug("inside read_claims_annotate. the args .infile is:" + str(args.in_file))
+    logger.debug("inside read_claims_annotate. the args .lmode is:" + str(args.lmode))
+
+
     try:
-        os.remove(ann_head_tr)
-        os.remove(ann_body_tr)
+        my_file = Path(ann_head_tr)
+        #check if the file exists. if yes remove
+        if my_file.is_file():
+            os.remove(ann_head_tr)
+            os.remove(ann_body_tr)
 
     except OSError:
         logger.error("not able to find file")
 
-    logger.debug("inside read_claims_annotate")
+
     with open(args.in_file,"r") as f, open(args.out_file, "w+") as out_file:
         all_claims = jlr.process(f)
         obj_all_heads_bodies=[]
@@ -56,19 +67,16 @@ def read_claims_annotate(args,jlr,logger,method):
             label=claim_full["label"]
 
 
+            logger.debug(" evidence is:"+str(evidences))
 
 
-            if not (label=="NOT ENOUGH INFO"):
+            ver_count=ver_count+1
+            logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
+            logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
+            ev_claim=[]
+            pl_list=[]
+            if not (label == "NOT ENOUGH INFO"):
 
-                if label not in ['SUPPORTS', 'REFUTES']:
-                    print(f'BAD label: {label}')
-                    sys.exit()
-
-                ver_count=ver_count+1
-                logger.debug("len(evidences)for this claim_full  is:" + str(len(evidences)))
-                logger.debug("len(evidences[0])) for this claim_full  is:" + str(len(evidences[0])))
-                ev_claim=[]
-                pl_list=[]
                 #if len(evidences) is more, take that, else take evidences[0]- this is because they do chaining only if the evidences collectively support the claim.
                 if (len(evidences) >1):
                     for inside_ev in evidences:
@@ -108,7 +116,7 @@ def read_claims_annotate(args,jlr,logger,method):
                     logger.debug("found the len(evidences)>1")
 
 
-                else :
+            else :
                     for evidence in evidences[0]:
                         page=evidence[2]
                         lineno=evidence[3]
@@ -119,13 +127,22 @@ def read_claims_annotate(args,jlr,logger,method):
                     all_evidences=' '.join(ev_claim)
                     logger.debug("all_evidences  is:" + str((all_evidences)))
 
-                #uncomment this is to annotate using pyprocessors
 
-                annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
+                    # if (index>20 ):
+                    #     print(claim)
+                    #     print(all_evidences)
+                    #     print(label)
+                    #     print("found label to be NEI going to exit. Inside reader.py")
+                    #     sys.exit(1)
+
 
                 #this is to feed data into attention model of allen nlp.
                 #write_snli_format(claim, all_evidences,logger,label)
 
+
+
+                #uncomment this is to annotate using pyprocessors
+            annotate_and_save_doc(claim, all_evidences,index, API, ann_head_tr, ann_body_tr, logger)
 
 
 
@@ -265,6 +282,7 @@ def annotate_and_save_doc(headline,body, index, API, json_file_tr_annotated_head
     logger.debug("headline:"+headline)
     logger.debug("body:" + body)
     doc1 = API.fastnlp.annotate(headline)
+
     doc1.id=index
     with open(json_file_tr_annotated_headline, "a") as out:
       out.write(doc1.to_JSON())
@@ -386,17 +404,17 @@ def get_gold_labels_small(args,jlr):
     return labels
 
 
-def uofa_dev(args, jlr):
+def uofa_dev(args, jlr,method,logger):
 
 
     gold_labels = get_gold_labels(args, jlr)
-    logging.warning("got inside uofa_dev")
+    logger.debug("got inside uofa_dev")
 
     #for annotation: you will probably run this only once in your lifetime.
-    # tr_data = read_claims_annotate(args, jlr, logger, method)
-    # logger.info(
-    #     "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
-    # sys.exit(1)
+    tr_data = read_claims_annotate(args, jlr, method,logger)
+    logger.info(
+        "Finished writing annotated json to disk . going to quit. names of the files are:" + ann_head_tr + ";" + ann_body_tr)
+    sys.exit(1)
     combined_vector= read_json_create_feat_vec(load_ann_corpus,args)
     #print_cv(combined_vector, gold_labels)
     logging.info("done with generating feature vectors. Model loading and predicting next")
