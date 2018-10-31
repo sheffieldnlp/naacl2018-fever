@@ -1,5 +1,38 @@
-# UofA-Fact Extraction and VERification
-## Instructions to do AFTER you run the shefiield [instructions for manual install](https://github.com/sheffieldnlp/fever-baselines/wiki/Manual-Install)
+
+# UOFA- Fact Extraction and VERification
+## Smart NER: replace tokens with NER tags but checking if they exists in the claim 
+
+To run the the training and evaluation using the smartNER either just do `./run_all_train_test.sh`
+or use these commands below
+@server@jenny
+
+`rm -rf logs/`
+
+`PYTHONPATH=src python src/scripts/rte/da/train_da.py data/fever/fever.db config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE`
+
+`mkdir -p data/models`
+
+`cp logs/da_nn_sent/model.tar.gz data/models/decomposable_attention.tar.gz`
+
+`PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/dev.ns.pages.p1.jsonl`
+
+This assumes that you are on the same folder. If your data folder is somewhere else, use this 
+
+for training:
+`PYTHONPATH=src python src/scripts/rte/da/train_da.py /net/kate/storage/work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db config/fever_nn_ora_sent.json logs/da_nn_sent --cuda-device $CUDA_DEVICE`
+for dev:
+`PYTHONPATH=src python src/scripts/rte/da/eval_da.py /net/kate/storage/work/mithunpaul/fever/my_fork/fever-baselines/data/fever/fever.db data/models/decomposable_attention.tar.gz /net/kate/storage/work/mithunpaul/fever/my_fork/fever-baselines/data/fever/dev.ns.pages.p1.jsonl`
+
+
+
+
+
+
+`source activate fever`
+`PYTHONPATH=src python src/scripts/rte/da/eval_da.py data/fever/fever.db data/models/decomposable_attention.tar.gz data/fever/dev.ns.pages.p1.jsonl`
+    
+# Fact Extraction and VERification
+
 
 - To annotate data once you have Docker you need to pull pyprocessors using :docker pull myedibleenso/processors-server:latest
 
@@ -75,7 +108,8 @@ To train the Decomposable Attention models, it is highly recommended to use a GP
 
 
 ## Change Log
-
+ 
+* **v0.3** - Added the ability to read unlabelled data (i.e. the blind dataset for the competition). **You must update to this version to take part in the competition**
 * **v0.2** - updated the Information Retrieval component to use a modified version of DrQA that allows multi-threaded document/sentence retrieval. This yields a >10x speed-up the in IR stage of the pipeline as I/O waits are no longer blocking computation of TF*IDF vectors  
 * **v0.1** - original implementation (tagged as naacl2018)
 

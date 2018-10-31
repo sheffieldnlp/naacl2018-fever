@@ -13,15 +13,17 @@ from common.util.log_helper import LogHelper
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
 from rte.parikh.reader import FEVERReader
+from sklearn.externals import joblib
 
 import argparse
 import logging
 import sys
 import json
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)  # pylint:    disable=invalid-name
 
-def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int, serialization_dir: str, filtering: str) -> Model:
+def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_device:int,
+                serialization_dir: str, filtering: str) -> Model:
     """
     This function can be used as an entry point to running models in AllenNLP
     directly from a JSON specification using a :class:`Driver`. Note that if
@@ -55,7 +57,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     with open(os.path.join(serialization_dir, "model_params.json"), "w") as param_file:
         json.dump(serialization_params, param_file, indent=4)
 
-    # Now we begin assembling the required parts for the Trainer.
+    # Now we begin assembling    the required parts for the Trainer.
     ds_params = params.pop('dataset_reader', {})
     dataset_reader = FEVERReader(db,
                                  sentence_level=ds_params.pop("sentence_level",False),
@@ -66,7 +68,11 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
 
     train_data_path = params.pop('train_data_path')
     logger.info("Reading training data from %s", train_data_path)
-    train_data = dataset_reader.read(train_data_path)
+    run_name="train"
+    do_annotation_on_the_fly=False
+    train_data = dataset_reader.read(train_data_path,run_name,do_annotation_on_the_fly)
+    #joblib.dump(train_data, "fever_tr_dataset_format.pkl")
+
 
     all_datasets = [train_data]
     datasets_in_vocab = ["train"]
@@ -74,10 +80,14 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
     validation_data_path = params.pop('validation_data_path', None)
     if validation_data_path is not None:
         logger.info("Reading validation data from %s", validation_data_path)
-        validation_data = dataset_reader.read(validation_data_path)
+        run_name = "dev"
+        validation_data = dataset_reader.read(validation_data_path,run_name)
         all_datasets.append(validation_data)
         datasets_in_vocab.append("validation")
+        joblib.dump(validation_data, "fever_dev_dataset_format.pkl")
     else:
+
+
         validation_data = None
 
     logger.info("Creating a vocabulary using %s data.", ", ".join(datasets_in_vocab))
@@ -85,6 +95,7 @@ def train_model(db: FeverDocDB, params: Union[Params, Dict[str, Any]], cuda_devi
                                    Dataset([instance for dataset in all_datasets
                                             for instance in dataset.instances]))
     vocab.save_to_files(os.path.join(serialization_dir, "vocabulary"))
+
 
     model = Model.from_params(vocab, params.pop('model'))
     iterator = DataIterator.from_params(params.pop("iterator"))

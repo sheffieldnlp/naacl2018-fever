@@ -1,2 +1,5 @@
-git commit -a
+
+git add --all
+git commit 
+
 git push
