@@ -1,10 +1,11 @@
 from typing import Dict
-import json
+import json,os
 import logging
 
 from overrides import overrides
 import tqdm
-
+import sys
+from tqdm import tqdm as tq
 from allennlp.common import Params
 from allennlp.common.checks import ConfigurationError
 from allennlp.common.file_utils import cached_path
@@ -17,8 +18,11 @@ from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from common.dataset.reader import JSONLineReader
 from common.util.random import SimpleRandom
 from retrieval.fever_doc_db import FeverDocDB
+from retrieval.read_claims import UOFADataReader
 from rte.riedel.data import FEVERPredictions2Formatter, FEVERLabelSchema, FEVERGoldFormatter
 from common.dataset.data_set import DataSet as FEVERDataSet
+from rte.mithun.trainer import UofaTrainTest
+
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
@@ -31,7 +35,7 @@ class FEVERReader(DatasetReader):
     "premise" and "hypothesis".
 
     Parameters
-    ----------
+    ----------   
     tokenizer : ``Tokenizer``, optional (default=``WordTokenizer()``)
         We use this ``Tokenizer`` for both the premise and the hypothesis.  See :class:`Tokenizer`.
     token_indexers : ``Dict[str, TokenIndexer]``, optional (default=``{"tokens": SingleIdTokenIndexer()}``)
@@ -65,30 +69,175 @@ class FEVERReader(DatasetReader):
             return non_empty_lines[SimpleRandom.get_instance().next_rand(0,len(non_empty_lines)-1)]
 
     @overrides
-    def read(self, file_path: str):
+    def read(self, file_path: str, run_name, do_annotation_on_the_fly):
+        #logger.info("got inside read")
+        #logging.info("got inside read")
+
+
 
         instances = []
 
         ds = FEVERDataSet(file_path,reader=self.reader, formatter=self.formatter)
         ds.read()
+        counter=0
 
-        for instance in tqdm.tqdm(ds.data):
-            if instance is None:
-                continue
+        objUOFADataReader = UOFADataReader()
 
-            if not self._sentence_level:
-                pages = set(ev[0] for ev in instance["evidence"])
-                premise = " ".join([self.db.get_doc_text(p) for p in pages])
+        if (run_name == "train"):
+            print("run_name == train")
+            head_file = objUOFADataReader.ann_head_tr
+            body_file = objUOFADataReader.ann_body_tr
+        else:
+            if (run_name == "dev"):
+                print("run_name == dev")
+                head_file = objUOFADataReader.ann_head_dev
+                body_file = objUOFADataReader.ann_body_dev
+
+        # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etc.
+        # This takes along time. so almost always we do it only once, and load it from disk
+        if(do_annotation_on_the_fly):
+            #print("do_annotation_on_the_fly == true")
+          # DELETE THE annotated file IF IT EXISTS every time before the loop
+            self.delete_if_exists(head_file)
+            self.delete_if_exists(body_file)
+
+            for instance in tqdm.tqdm(ds.data):
+                counter=counter+1
+
+                if instance is None:
+                    continue
+
+                if not self._sentence_level:
+                    pages = set(ev[0] for ev in instance["evidence"])
+                    premise = " ".join([self.db.get_doc_text(p) for p in pages])
+                else:
+                    lines = set([self.get_doc_line(d[0],d[1]) for d in instance['evidence']])
+                    premise = " ".join(lines)
+
+                if len(premise.strip()) == 0:
+                    premise = ""
+
+                hypothesis = instance["claim"]
+                label = instance["label_text"]
+
+                # if (label == "NOT ENOUGH INFO"):
+                #
+                # if (counter > 50):
+
+                #print("hypothesis:" + hypothesis)
+               # print("premise:" + premise)
+
+                premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
+
+                #print("hypothesis:" + hypothesis_ann)
+                #print("premise:" + premise_ann)
+
+
+
+
+
+                instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
+
+        # replacing hypothesis with the annotated one-either load pre-annotated data
+        # from disk
+        else:
+
+            print("(do_annotation=false):going to load annotated data from the disk. going to exit")
+
+
+            objUofaTrainTest = UofaTrainTest()
+
+            if (run_name == "dev"):
+                print("run_name == dev")
+                data_folder = objUofaTrainTest.data_folder_dev
             else:
-                lines = set([self.get_doc_line(d[0],d[1]) for d in instance['evidence']])
-                premise = " ".join(lines)
+                if (run_name == "train"):
+                    print("run_name == train")
+                    data_folder = objUofaTrainTest.data_folder_train
+                else:
+                    if (run_name == "small"):
+                        print("run_name == small")
+                        data_folder = objUofaTrainTest.data_folder_train_small
+                    else:
+                        if (run_name == "test"):
+                            print("run_name == test")
+                            data_folder = objUofaTrainTest.data_folder_test
 
-            if len(premise.strip()) == 0:
-                premise = ""
+            bf = data_folder + objUofaTrainTest.annotated_body_split_folder
+            bfl = bf + objUofaTrainTest.annotated_only_lemmas
+            bfw = bf + objUofaTrainTest.annotated_words
+            bfe = bf + objUofaTrainTest.annotated_only_entities
 
-            hypothesis = instance["claim"]
-            label = instance["label_text"]
-            instances.append(self.text_to_instance(premise, hypothesis, label))
+            hf = data_folder + objUofaTrainTest.annotated_head_split_folder
+            hfl = hf + objUofaTrainTest.annotated_only_lemmas
+            hfw = hf + objUofaTrainTest.annotated_words
+            hfe = hf + objUofaTrainTest.annotated_only_entities
+
+            #print(f"hfl:{hfl}")
+            #print(f"bfl:{bfl}")
+            #print("going to read annotated data from disk:")
+
+            heads_lemmas = objUofaTrainTest.read_json(hfl)
+            bodies_lemmas = objUofaTrainTest.read_json(bfl)
+            heads_entities = objUofaTrainTest.read_json(hfe)
+            bodies_entities = objUofaTrainTest.read_json(bfe)
+            heads_words = objUofaTrainTest.read_json(hfw)
+            bodies_words = objUofaTrainTest.read_json(bfw)
+
+            print(f"length of bodies_words:{len(bodies_words)}")
+
+            counter=0
+            for he, be, hl, bl, hw, bw,instance in\
+                    tq(zip(heads_entities, bodies_entities, heads_lemmas,
+                                                        bodies_lemmas,
+                                                          heads_words,
+                                                          bodies_words,ds.data),
+                       total=len(ds.data),desc="reading annotated data"):
+
+                counter=counter+1
+
+
+
+                he_split=  he.split(" ")
+                be_split = be.split(" ")
+                hl_split = hl.split(" ")
+                bl_split = bl.split(" ")
+                hw_split = hw.split(" ")
+                bw_split = bw.split(" ")
+
+                # hypothesis == = claim = headline
+                # premise == = evidence = body
+
+                premise_ann, hypothesis_ann = objUofaTrainTest.convert_SMARTNER_form_per_sent(he_split, be_split, hl_split, bl_split, hw_split, bw_split)
+                #premise_ann, hypothesis_ann = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he_split, be_split,hl_split, bl_split,hw_split, bw_split)
+                #print("value of the first premise and hypothesis after smart ner replacement is")
+                #print(premise_ann)
+                #print(hypothesis_ann)
+
+                label = instance["label_text"]
+
+                # if(label=="NOT ENOUGH INFO"):
+                #     print(f"hw: {hw}")
+                #     print(f"bw: {bw}")
+                #     print(f"premise_ann: {premise_ann}")
+                #     print(f"hypothesis_ann: {hypothesis_ann}")
+                #     #print(f"label: {label}")
+                #     sys.exit(1)
+                #
+                #
+
+
+
+
+
+
+
+
+                instances.append(self.text_to_instance(premise_ann, hypothesis_ann, label))
+
+
+        print(f"after reading and converting training data to smart ner format. The length of the number of training data is:{len(instances)}")
+
         if not instances:
             raise ConfigurationError("No instances were read from the given filepath {}. "
                                      "Is the path correct?".format(file_path))
@@ -108,6 +257,46 @@ class FEVERReader(DatasetReader):
         if label is not None:
             fields['label'] = LabelField(label)
         return Instance(fields)
+
+
+
+    def uofa_load_ann_disk(self,objUOFADataReader,run_name):
+
+
+        # print(f'premise:{premise}')
+        # print(f'hyp:{hyp}')
+        # sys.exit(1)
+
+
+
+        # print(premise,hyp)
+        return premise, hyp
+
+    def uofa_annotate(self, claim, evidence, index,objUOFADataReader,head_file,body_file):
+        doc1,doc2 = objUOFADataReader.annotate_and_save_doc\
+            (claim, evidence, index, objUOFADataReader.API,head_file,body_file,logger)
+
+        he=doc1._entities
+        hl=doc1.lemmas
+        hw=doc1.words
+        be = doc2._entities
+        bl = doc2.lemmas
+        bw = doc2.words
+        objUofaTrainTest=UofaTrainTest()
+        # print(f'{he}{hl}{hw}{be}{bl}{bw}')
+        #premise, hyp= objUofaTrainTest.convert_SMARTNER_form_per_sent(he, be, hl, bl, hw, bw)
+        premise, hyp = objUofaTrainTest.convert_NER_form_per_sent_plain_NER(he, be, hl, bl, hw, bw)
+
+
+        # print(premise,hyp)
+        return premise,hyp
+
+    def delete_if_exists(self, name):
+
+        if os.path.exists(name):
+            append_write = 'w'  # make a new file if not
+            with open(name, append_write) as outfile:
+                outfile.write("")
 
     @classmethod
     def from_params(cls, params: Params) -> 'FEVERReader':
