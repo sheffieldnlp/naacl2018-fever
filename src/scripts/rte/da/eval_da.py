@@ -22,6 +22,7 @@ import sys
 import json
 import numpy as np
 from sklearn.externals import joblib
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -53,29 +54,34 @@ def eval_model(db: FeverDocDB, args) -> Model:
 
     if args.log is not None:
         f = open(args.log,"w+")
+    if_ctr, else_ctr = 0, 0
+    pred_dict = defaultdict(int)
 
     for item in tqdm(data):
         if item.fields["premise"] is None or item.fields["premise"].sequence_length() == 0:
             cls = "NOT ENOUGH INFO"
+            if_ctr += 1
         else:
-
+            else_ctr += 1
 
             prediction = model.forward_on_instance(item, args.cuda_device)
             cls = model.vocab._index_to_token["labels"][np.argmax(prediction["label_probs"])]
 
-            if (cls == "NOT ENOUGH INFO"):
-                print("found nei")
-                sys.exit(1)
-
+            
         if "label" in item.fields:
             actual.append(item.fields["label"].label)
         predicted.append(cls)
+        pred_dict[cls] += 1
 
         if args.log is not None:
             if "label" in item.fields:
                 f.write(json.dumps({"actual":item.fields["label"].label,"predicted":cls})+"\n")
             else:
                 f.write(json.dumps({"predicted":cls})+"\n")
+    print(f'if_ctr = {if_ctr}')
+    print(f'else_ctr = {else_ctr}')
+    print(f'pred_dict = {pred_dict}')
+    sys.exit(0)
 
     if args.log is not None:
         f.close()
