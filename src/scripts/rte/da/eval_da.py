@@ -81,7 +81,7 @@ def eval_model(db: FeverDocDB, args) -> Model:
     print(f'if_ctr = {if_ctr}')
     print(f'else_ctr = {else_ctr}')
     print(f'pred_dict = {pred_dict}')
-    sys.exit(0)
+    
 
     if args.log is not None:
         f.close()
