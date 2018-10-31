@@ -72,7 +72,7 @@ class FEVERReader(DatasetReader):
     def read(self, file_path: str, run_name, do_annotation_on_the_fly):
         #logger.info("got inside read")
         #logging.info("got inside read")
-        print("got inside read")
+
 
 
         instances = []
@@ -96,7 +96,7 @@ class FEVERReader(DatasetReader):
         # do annotation on the fly  using pyprocessors. i.e creating NER tags, POS Tags etc.
         # This takes along time. so almost always we do it only once, and load it from disk
         if(do_annotation_on_the_fly):
-            print("do_annotation_on_the_fly == true")
+            #print("do_annotation_on_the_fly == true")
           # DELETE THE annotated file IF IT EXISTS every time before the loop
             self.delete_if_exists(head_file)
             self.delete_if_exists(body_file)
@@ -124,16 +124,13 @@ class FEVERReader(DatasetReader):
                 #
                 # if (counter > 50):
 
-                print("hypothesis:" + hypothesis)
-                print("premise:" + premise)
+                #print("hypothesis:" + hypothesis)
+               # print("premise:" + premise)
 
                 premise_ann,hypothesis_ann =self.uofa_annotate(hypothesis, premise, counter,objUOFADataReader,head_file,body_file)
 
-                print("hypothesis:" + hypothesis_ann)
-                print("premise:" + premise_ann)
-
-                if(counter==5):
-                    sys.exit(1)
+                #print("hypothesis:" + hypothesis_ann)
+                #print("premise:" + premise_ann)
 
 
 
@@ -178,7 +175,7 @@ class FEVERReader(DatasetReader):
 
             #print(f"hfl:{hfl}")
             #print(f"bfl:{bfl}")
-            print("going to read annotated data from disk:")
+            #print("going to read annotated data from disk:")
 
             heads_lemmas = objUofaTrainTest.read_json(hfl)
             bodies_lemmas = objUofaTrainTest.read_json(bfl)
@@ -219,15 +216,15 @@ class FEVERReader(DatasetReader):
 
                 label = instance["label_text"]
 
-                if(label=="NOT ENOUGH INFO"):
-                    print(f"hw: {hw}")
-                    print(f"bw: {bw}")
-                    print(f"premise_ann: {premise_ann}")
-                    print(f"hypothesis_ann: {hypothesis_ann}")
-                    #print(f"label: {label}")
-                    sys.exit(1)
-
-                    
+                # if(label=="NOT ENOUGH INFO"):
+                #     print(f"hw: {hw}")
+                #     print(f"bw: {bw}")
+                #     print(f"premise_ann: {premise_ann}")
+                #     print(f"hypothesis_ann: {hypothesis_ann}")
+                #     #print(f"label: {label}")
+                #     sys.exit(1)
+                #
+                #
 
 
 

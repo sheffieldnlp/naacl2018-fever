@@ -67,7 +67,7 @@ def eval_model(db: FeverDocDB, args) -> Model:
             prediction = model.forward_on_instance(item, args.cuda_device)
             cls = model.vocab._index_to_token["labels"][np.argmax(prediction["label_probs"])]
 
-            
+
         if "label" in item.fields:
             actual.append(item.fields["label"].label)
         predicted.append(cls)
