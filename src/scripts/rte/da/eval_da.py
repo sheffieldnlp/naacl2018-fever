@@ -50,6 +50,7 @@ def eval_model(db: FeverDocDB, args) -> Model:
     joblib.dump(data, "fever_dev_dataset_format.pkl")
 
     actual = []
+
     predicted = []
 
     if args.log is not None:
@@ -78,10 +79,10 @@ def eval_model(db: FeverDocDB, args) -> Model:
                 f.write(json.dumps({"actual":item.fields["label"].label,"predicted":cls})+"\n")
             else:
                 f.write(json.dumps({"predicted":cls})+"\n")
-    print(f'if_ctr = {if_ctr}')
-    print(f'else_ctr = {else_ctr}')
-    print(f'pred_dict = {pred_dict}')
-    
+    # print(f'if_ctr = {if_ctr}')
+    # print(f'else_ctr = {else_ctr}')
+    # print(f'pred_dict = {pred_dict}')
+
 
     if args.log is not None:
         f.close()
