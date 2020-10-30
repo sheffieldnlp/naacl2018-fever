@@ -9,4 +9,4 @@ allennlp==0.2.3
 pytz
 tensorboard-pytorch
 fever-drqa
-git+git://github.com/sheffieldnlp/fever-scorer@master
+fever-scorer
