@@ -36,7 +36,7 @@ See this post on [StackExchange](https://apple.stackexchange.com/questions/25438
 
 Support for Windows operating systems is not provided.
 
-To train the Decomposable Attention models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be [downloaded](https://jamesthorne.co/fever/model.tar.gz). To use the pretrained model, simply replace any path to a model.tar.gz file with the path to the file you downloaded. (e.g. `logs/da_nn_sent/model.tar.gz` could become `~/Downloads/model.tar.gz`) 
+To train the Decomposable Attention models, it is highly recommended to use a GPU. Training will take about 3 hours on a GTX 1080Ti whereas training on a CPU will take days. We offer a pre-trained model.tar.gz that can be [downloaded](http://jamesthorne.co.uk/fever/fever-da.tar.gz). To use the pretrained model, simply replace any path to a model.tar.gz file with the path to the file you downloaded. (e.g. `logs/da_nn_sent/model.tar.gz` could become `~/Downloads/model.tar.gz`) 
 
 
 ## Change Log
